@@ -1,0 +1,957 @@
+WEBVTT
+
+NOTE SA1 Topic 6.3: Security and Audit Policies. Timings are estimates at 150 words a minute; re-sync after recording.
+
+1
+00:00:00.000 --> 00:00:01.600
+Welcome to Topic 6.
+
+2
+00:00:01.850 --> 00:00:03.850
+3, Security and Audit Policies.
+
+3
+00:00:04.100 --> 00:00:08.500
+In the last two topics you created, linked
+and filtered GPOs.
+
+4
+00:00:08.750 --> 00:00:11.950
+Now you use them to harden the domain.
+
+5
+00:00:12.200 --> 00:00:17.800
+You will see why domain password and
+lockout rules must come from the domain
+
+6
+00:00:18.050 --> 00:00:22.450
+itself, and you will set them in the
+Default Domain Policy.
+
+7
+00:00:22.700 --> 00:00:27.900
+You will give the IT group stricter rules
+with a fine-grained password policy.
+
+8
+00:00:28.150 --> 00:00:32.150
+You will stop students from signing in at
+server consoles.
+
+9
+00:00:32.400 --> 00:00:38.800
+And you will turn on auditing, lock out a
+test account on purpose, find the events
+
+10
+00:00:39.050 --> 00:00:41.050
+it leaves, and unlock it.
+
+11
+00:00:41.300 --> 00:00:43.700
+Account policies come in three groups.
+
+12
+00:00:43.950 --> 00:00:49.550
+The password policy says what a good
+password is: how long, how complex, how
+
+13
+00:00:49.800 --> 00:00:54.200
+often it may be reused, and how old it may
+get.
+
+14
+00:00:54.450 --> 00:01:00.850
+The defaults are a history of 24, a
+maximum age of 42 days, and a minimum
+
+15
+00:01:01.100 --> 00:01:02.700
+length of only 7.
+
+16
+00:01:02.950 --> 00:01:07.750
+The lockout policy decides when to lock an
+account after bad guesses.
+
+17
+00:01:08.000 --> 00:01:12.000
+By default the threshold is 0, so accounts
+never lock.
+
+18
+00:01:12.250 --> 00:01:18.250
+The Kerberos policy sets how long sign-in
+tickets last, 10 hours for a user ticket,
+
+19
+00:01:18.500 --> 00:01:21.700
+and allows a clock difference of 5
+minutes.
+
+20
+00:01:21.950 --> 00:01:25.150
+Here is the rule that surprises many
+people.
+
+21
+00:01:25.400 --> 00:01:29.800
+Domain accounts are checked by domain
+controllers, and domain controllers only
+
+22
+00:01:30.050 --> 00:01:33.650
+use account policies from GPOs linked at
+the domain.
+
+23
+00:01:33.900 --> 00:01:36.300
+That is the Default Domain Policy.
+
+24
+00:01:36.550 --> 00:01:42.150
+If you put a password policy in a GPO
+linked to OU Workstations, CLIENT01
+
+25
+00:01:42.400 --> 00:01:48.000
+applies it, but only to its own local
+accounts, like the local student account.
+
+26
+00:01:48.250 --> 00:01:53.050
+Domain users such as alee or emoss are not
+affected at all.
+
+27
+00:01:53.300 --> 00:01:56.100
+So there is one domain password policy.
+
+28
+00:01:56.350 --> 00:02:01.150
+If one group needs different rules, you
+use a fine-grained password policy
+
+29
+00:02:01.400 --> 00:02:02.600
+instead.
+
+30
+00:02:02.850 --> 00:02:04.850
+What should those rules be?
+
+31
+00:02:05.100 --> 00:02:07.900
+Microsoft's current guidance has changed a
+lot.
+
+32
+00:02:08.150 --> 00:02:12.950
+Length matters more than complexity, and
+Microsoft recommends a minimum of 14
+
+33
+00:02:13.200 --> 00:02:14.400
+characters.
+
+34
+00:02:14.650 --> 00:02:18.250
+Passphrases help, because long phrases are
+easy to remember.
+
+35
+00:02:18.500 --> 00:02:20.100
+Forced expiration is discouraged.
+
+36
+00:02:20.350 --> 00:02:25.150
+Change a password when it may be
+compromised, not every few weeks.
+
+37
+00:02:25.400 --> 00:02:28.600
+Ban the obvious passwords, and add
+multifactor authentication.
+
+38
+00:02:28.850 --> 00:02:36.050
+In our pod, we use a minimum of 12 and
+lock after 5 bad attempts for 15 minutes.
+
+39
+00:02:36.300 --> 00:02:42.300
+And remember: a new rule is checked only
+when a password is set or changed.
+
+40
+00:02:42.550 --> 00:02:44.150
+Existing passwords keep working.
+
+41
+00:02:44.400 --> 00:02:46.000
+Let's make the change.
+
+42
+00:02:46.250 --> 00:02:49.450
+In Group Policy Management, under Domains
+and sa1.
+
+43
+00:02:49.700 --> 00:02:52.900
+lab, right-click Default Domain Policy and
+choose Edit.
+
+44
+00:02:53.150 --> 00:02:57.550
+In the Group Policy Management Editor, go
+to Computer Configuration, Policies,
+
+45
+00:02:57.800 --> 00:03:00.200
+Windows Settings, Security Settings,
+Account Policies.
+
+46
+00:03:00.450 --> 00:03:04.450
+Select Password Policy, double-click
+Minimum password length, and type 12.
+
+47
+00:03:04.700 --> 00:03:07.900
+The box accepts 0 to 14 by default.
+
+48
+00:03:08.150 --> 00:03:10.150
+Then select Account Lockout Policy.
+
+49
+00:03:10.400 --> 00:03:12.400
+Set the threshold to 5.
+
+50
+00:03:12.650 --> 00:03:18.250
+Windows suggests values for the other two
+settings; set the duration and the reset
+
+51
+00:03:18.500 --> 00:03:20.500
+counter to 15 minutes each.
+
+52
+00:03:20.750 --> 00:03:23.150
+Now check the result on DC01.
+
+53
+00:03:23.400 --> 00:03:28.600
+First, gpupdate with dash force, so DC01
+applies the changed GPO right away.
+
+54
+00:03:28.850 --> 00:03:30.050
+Then run
+Get-ADDefaultDomainPasswordPolicy.
+
+55
+00:03:30.300 --> 00:03:32.700
+Look for LockoutThreshold 5,
+LockoutDuration and
+
+56
+00:03:32.950 --> 00:03:35.750
+LockoutObservationWindow both 15 minutes,
+and MinPasswordLength 12.
+
+57
+00:03:36.000 --> 00:03:39.200
+The observation window is the reset
+counter setting.
+
+58
+00:03:39.450 --> 00:03:41.850
+You may notice a
+Set-ADDefaultDomainPasswordPolicy cmdlet
+
+59
+00:03:42.100 --> 00:03:43.300
+too.
+
+60
+00:03:43.550 --> 00:03:49.550
+It works, but Group Policy writes these
+values from the GPO and can overwrite your
+
+61
+00:03:49.800 --> 00:03:51.000
+direct change.
+
+62
+00:03:51.250 --> 00:03:57.650
+So keep the Default Domain Policy as the
+one place you edit, and check with this
+
+63
+00:03:57.900 --> 00:03:59.100
+cmdlet afterward.
+
+64
+00:03:59.350 --> 00:04:04.150
+What if the IT staff should use longer
+passwords than everyone else?
+
+65
+00:04:04.400 --> 00:04:10.000
+That is the job of a fine-grained password
+policy, stored as a Password Settings
+
+66
+00:04:10.250 --> 00:04:11.450
+Object, or PSO.
+
+67
+00:04:11.700 --> 00:04:16.100
+Our PSO-IT has precedence 10 and a minimum
+length of 15.
+
+68
+00:04:16.350 --> 00:04:22.350
+It applies to the global group GG-IT, so
+alee, a member, must use 15 characters.
+
+69
+00:04:22.600 --> 00:04:27.000
+Everyone else, with no PSO, keeps the
+domain rules of 12.
+
+70
+00:04:27.250 --> 00:04:28.850
+Three rules to remember.
+
+71
+00:04:29.100 --> 00:04:33.500
+PSOs apply to users and global security
+groups, never to OUs.
+
+72
+00:04:33.750 --> 00:04:35.750
+The lowest precedence number wins.
+
+73
+00:04:36.000 --> 00:04:40.800
+And a PSO linked to a user directly beats
+any group PSO.
+
+74
+00:04:41.050 --> 00:04:44.650
+You create a PSO in Active Directory
+Administrative Center.
+
+75
+00:04:44.900 --> 00:04:49.700
+Select the domain, open System, then
+Password Settings Container, and in the
+
+76
+00:04:49.950 --> 00:04:52.350
+Tasks pane choose New, Password Settings.
+
+77
+00:04:52.600 --> 00:04:55.400
+Type the name PSO-IT and precedence 10.
+
+78
+00:04:55.650 --> 00:04:58.450
+Under Enforce minimum password length,
+type 15.
+
+79
+00:04:58.700 --> 00:05:01.100
+Keep the password history and complexity.
+
+80
+00:05:01.350 --> 00:05:08.150
+Fill the password age options and turn on
+the lockout policy with the same 5, 15 and
+
+81
+00:05:08.400 --> 00:05:10.000
+15 as the domain.
+
+82
+00:05:10.250 --> 00:05:14.250
+Last, under Directly Applies To, select
+Add and choose GG-IT.
+
+83
+00:05:14.500 --> 00:05:17.300
+Select OK, and the PSO is live.
+
+84
+00:05:17.550 --> 00:05:20.750
+The same PSO in PowerShell takes two
+cmdlets.
+
+85
+00:05:21.000 --> 00:05:25.000
+New-ADFineGrainedPasswordPolicy creates
+PSO-IT, with every value you saw in the
+
+86
+00:05:25.250 --> 00:05:28.450
+dialog: precedence, length, history,
+complexity, ages and lockout.
+
+87
+00:05:28.700 --> 00:05:31.100
+Add-ADFineGrainedPasswordPolicySubject
+then applies it to GG-IT.
+
+88
+00:05:31.350 --> 00:05:35.350
+To see which policy really applies to a
+user, run
+
+89
+00:05:35.600 --> 00:05:36.800
+Get-ADUserResultantPasswordPolicy.
+
+90
+00:05:37.050 --> 00:05:41.050
+For alee it returns PSO-IT, precedence 10,
+minimum length 15.
+
+91
+00:05:41.300 --> 00:05:44.100
+For dpatel it returns nothing at all.
+
+92
+00:05:44.350 --> 00:05:49.950
+An empty result means no PSO applies, so
+dpatel gets the Default Domain Policy.
+
+93
+00:05:50.200 --> 00:05:55.000
+In the lab you create the PSO once, in the
+Administrative Center.
+
+94
+00:05:55.250 --> 00:05:58.450
+User rights decide who may sign in where.
+
+95
+00:05:58.700 --> 00:06:03.100
+Allow log on locally lets you sign in at
+the console.
+
+96
+00:06:03.350 --> 00:06:09.750
+On member servers, that includes the Users
+group, so any domain user could sign in at
+
+97
+00:06:10.000 --> 00:06:11.200
+SRV01.
+
+98
+00:06:11.450 --> 00:06:15.450
+Allow log on through Remote Desktop
+Services covers Remote Desktop.
+
+99
+00:06:15.700 --> 00:06:20.100
+Each right has a Deny partner, and Deny
+wins over Allow.
+
+100
+00:06:20.350 --> 00:06:26.750
+In the new GPO SA1 Server Rights, linked
+to OU Servers, open Deny log on locally,
+
+101
+00:06:27.000 --> 00:06:31.000
+select Define these policy settings, and
+add SA1 backslash GG-Students.
+
+102
+00:06:31.250 --> 00:06:35.250
+Students can no longer sign in at any
+server console.
+
+103
+00:06:35.500 --> 00:06:36.700
+Now auditing.
+
+104
+00:06:36.950 --> 00:06:39.750
+Windows has two kinds of audit policy.
+
+105
+00:06:40.000 --> 00:06:46.000
+Basic audit policy has 9 broad categories,
+and one switch turns on a whole category.
+
+106
+00:06:46.250 --> 00:06:51.450
+Advanced audit policy splits 10 categories
+into subcategories, so you audit only what
+
+107
+00:06:51.700 --> 00:06:52.900
+you need.
+
+108
+00:06:53.150 --> 00:06:54.350
+Use advanced.
+
+109
+00:06:54.600 --> 00:06:59.000
+A Security Option controls this: Audit,
+Force audit policy subcategory settings.
+
+110
+00:06:59.250 --> 00:07:02.850
+It is enabled by default, so advanced
+settings win.
+
+111
+00:07:03.100 --> 00:07:05.900
+Just do not mix the two kinds.
+
+112
+00:07:06.150 --> 00:07:10.150
+This is security hardening, as in Server
+Plus domain 3.
+
+113
+00:07:10.400 --> 00:07:14.400
+Auditing adds accountability, the
+accounting A in AAA from Information
+
+114
+00:07:14.650 --> 00:07:15.850
+Security Principles.
+
+115
+00:07:16.100 --> 00:07:21.300
+In the GPO SA1 Workstation Audit, linked
+to OU Workstations, go to Security
+
+116
+00:07:21.550 --> 00:07:24.350
+Settings, Advanced Audit Policy
+Configuration, Audit Policies.
+
+117
+00:07:24.600 --> 00:07:27.400
+Under Logon and Logoff, double-click Audit
+Logon.
+
+118
+00:07:27.650 --> 00:07:31.650
+Select Configure the following audit
+events, then Success and Failure.
+
+119
+00:07:31.900 --> 00:07:34.700
+Success gives event 4624, failure gives
+4625.
+
+120
+00:07:34.950 --> 00:07:39.350
+Then under Account Management, set Audit
+User Account Management to Success.
+
+121
+00:07:39.600 --> 00:07:43.600
+That records accounts being created,
+changed, locked out and unlocked.
+
+122
+00:07:43.850 --> 00:07:49.850
+Recent Windows versions already audit some
+of this, but the GPO makes it certain on
+
+123
+00:07:50.100 --> 00:07:51.300
+every workstation.
+
+124
+00:07:51.550 --> 00:07:54.350
+The GroupPolicy module creates and links
+GPOs.
+
+125
+00:07:54.600 --> 00:08:01.000
+New-GPO with a name, piped to New-GPLink
+with a target OU, does both in one line:
+
+126
+00:08:01.250 --> 00:08:05.650
+SA1 Server Rights on Servers, and SA1
+Workstation Audit on Workstations.
+
+127
+00:08:05.900 --> 00:08:09.100
+Get-GPInheritance shows what is linked to
+an OU.
+
+128
+00:08:09.350 --> 00:08:13.350
+The security settings themselves you still
+add in the editor.
+
+129
+00:08:13.600 --> 00:08:18.800
+Then on CLIENT01, run gpupdate dash force
+and auditpol slash get slash category
+
+130
+00:08:19.050 --> 00:08:20.250
+star.
+
+131
+00:08:20.500 --> 00:08:25.300
+Auditpol shows the audit policy the
+computer really uses: Logon, Success and
+
+132
+00:08:25.550 --> 00:08:27.950
+Failure, and User Account Management,
+Success.
+
+133
+00:08:28.200 --> 00:08:29.800
+Picture the lockout test.
+
+134
+00:08:30.050 --> 00:08:33.650
+emoss types a wrong password five times at
+CLIENT01.
+
+135
+00:08:33.900 --> 00:08:40.300
+Each failure writes event 4625, an account
+failed to log on, in the Security log of
+
+136
+00:08:40.550 --> 00:08:41.750
+CLIENT01.
+
+137
+00:08:42.000 --> 00:08:48.000
+DC01 counts the bad attempts and, at five,
+locks the account and writes event 4740.
+
+138
+00:08:48.250 --> 00:08:54.250
+4740 is logged on the DC that processed
+the lockout; with several DCs, check the
+
+139
+00:08:54.500 --> 00:08:55.700
+PDC emulator first.
+
+140
+00:08:55.950 --> 00:08:58.350
+In the pod DC01 is both.
+
+141
+00:08:58.600 --> 00:09:03.800
+The account unlocks itself after 15
+minutes, or an admin unlocks it, which
+
+142
+00:09:04.050 --> 00:09:05.250
+writes 4767.
+
+143
+00:09:05.500 --> 00:09:07.900
+Learn 4624, 4625, 4740 and 4720.
+
+144
+00:09:08.150 --> 00:09:12.550
+On DC01, first ask which DC holds the PDC
+emulator role.
+
+145
+00:09:12.800 --> 00:09:14.000
+Get-ADDomain says DC01.
+
+146
+00:09:14.250 --> 00:09:19.850
+Then Get-WinEvent with a filter for the
+Security log and ID 4740 returns the
+
+147
+00:09:20.100 --> 00:09:21.300
+newest lockout.
+
+148
+00:09:21.550 --> 00:09:26.750
+Two fields matter: the account that was
+locked out, emoss, and Caller Computer
+
+149
+00:09:27.000 --> 00:09:28.200
+Name, CLIENT01.
+
+150
+00:09:28.450 --> 00:09:32.050
+That tells you where the bad passwords
+came from.
+
+151
+00:09:32.300 --> 00:09:35.100
+Search-ADAccount dash LockedOut lists
+every locked account.
+
+152
+00:09:35.350 --> 00:09:36.950
+Unlock-ADAccount emoss unlocks it.
+
+153
+00:09:37.200 --> 00:09:42.800
+In the GUI, open the user's properties in
+Active Directory Users and Computers and
+
+154
+00:09:43.050 --> 00:09:44.650
+use the Account tab.
+
+155
+00:09:44.900 --> 00:09:47.300
+Here are four mistakes to avoid.
+
+156
+00:09:47.550 --> 00:09:52.750
+One: setting password length or lockout in
+a GPO linked to an OU.
+
+157
+00:09:53.000 --> 00:09:57.800
+Domain accounts ignore it; use the Default
+Domain Policy, or a PSO.
+
+158
+00:09:58.050 --> 00:10:02.050
+Two: expecting a new minimum length to
+change existing passwords.
+
+159
+00:10:02.300 --> 00:10:06.700
+It is only checked when a password is set
+or changed.
+
+160
+00:10:06.950 --> 00:10:12.150
+Three: applying a PSO to an OU or to a
+domain local group.
+
+161
+00:10:12.400 --> 00:10:15.600
+PSOs apply to users and global security
+groups.
+
+162
+00:10:15.850 --> 00:10:18.650
+Four: mixing basic and advanced audit
+policy.
+
+163
+00:10:18.900 --> 00:10:22.500
+Use advanced only and check the result
+with auditpol.
+
+164
+00:10:22.750 --> 00:10:24.350
+Time to check yourself.
+
+165
+00:10:24.600 --> 00:10:26.200
+Assume the Lab 6.
+
+166
+00:10:26.450 --> 00:10:30.850
+3 settings: minimum 12, lockout after 5,
+and PSO-IT for GG-IT.
+
+167
+00:10:31.100 --> 00:10:35.100
+First, a GPO on OU Staff sets minimum
+length 14.
+
+168
+00:10:35.350 --> 00:10:38.550
+Why can cdiaz still choose a 12-character
+password?
+
+169
+00:10:38.800 --> 00:10:44.000
+Second, PSO-IT reaches alee through GG-IT,
+and another PSO with precedence 20 is
+
+170
+00:10:44.250 --> 00:10:45.850
+linked to alee directly.
+
+171
+00:10:46.100 --> 00:10:47.300
+Which wins?
+
+172
+00:10:47.550 --> 00:10:52.750
+Third, dpatel cannot sign in at the SRV01
+console but can at CLIENT01.
+
+173
+00:10:53.000 --> 00:10:54.200
+Why?
+
+174
+00:10:54.450 --> 00:10:59.650
+Fourth, which event, on which computer,
+shows where the bad passwords for emoss
+
+175
+00:10:59.900 --> 00:11:01.100
+came from?
+
+176
+00:11:01.350 --> 00:11:02.550
+Pause and answer.
+
+177
+00:11:02.800 --> 00:11:04.400
+Here are the answers.
+
+178
+00:11:04.650 --> 00:11:07.850
+One: domain accounts use only the domain
+policy.
+
+179
+00:11:08.100 --> 00:11:14.900
+The GPO on OU Staff would only touch local
+accounts, so cdiaz gets the minimum of 12.
+
+180
+00:11:15.150 --> 00:11:19.950
+Two: the PSO linked directly to alee wins,
+whatever the precedence numbers.
+
+181
+00:11:20.200 --> 00:11:25.800
+Three: SA1 Server Rights is linked only to
+OU Servers, where it denies GG-Students
+
+182
+00:11:26.050 --> 00:11:27.250
+console sign-in.
+
+183
+00:11:27.500 --> 00:11:29.500
+CLIENT01 is in OU Workstations.
+
+184
+00:11:29.750 --> 00:11:32.950
+Four: event 4740 on DC01, the PDC
+emulator.
+
+185
+00:11:33.200 --> 00:11:39.200
+Its Caller Computer Name says CLIENT01,
+which also has a 4625 for each failed try.
+
+186
+00:11:39.450 --> 00:11:41.850
+Let's do it in the pod.
+
+187
+00:11:42.100 --> 00:11:48.100
+On DC01 I edit the Default Domain Policy:
+minimum length 12, threshold 5, and 15
+
+188
+00:11:48.350 --> 00:11:51.150
+minutes for the duration and the reset.
+
+189
+00:11:51.400 --> 00:11:53.000
+After gpupdate,
+Get-ADDefaultDomainPasswordPolicy shows
+
+190
+00:11:53.250 --> 00:11:54.450
+the new values.
+
+191
+00:11:54.700 --> 00:11:59.500
+In the Administrative Center I create
+PSO-IT for GG-IT and check alee.
+
+192
+00:11:59.750 --> 00:12:04.950
+Then I link SA1 Workstation Audit to
+Workstations with Audit Logon and User
+
+193
+00:12:05.200 --> 00:12:06.400
+Account Management.
+
+194
+00:12:06.650 --> 00:12:08.650
+On CLIENT01, auditpol confirms it.
+
+195
+00:12:08.900 --> 00:12:14.500
+I type a wrong password for emoss five
+times, and she is locked out.
+
+196
+00:12:14.750 --> 00:12:18.750
+CLIENT01 shows 4625, DC01 shows 4740, and
+I unlock her.
+
+197
+00:12:19.000 --> 00:12:20.200
+To wrap up.
+
+198
+00:12:20.450 --> 00:12:26.050
+Domain password and lockout rules come
+from a GPO linked at the domain, the
+
+199
+00:12:26.300 --> 00:12:31.500
+Default Domain Policy, and new length
+rules apply at the next password change.
+
+200
+00:12:31.750 --> 00:12:36.950
+A PSO gives a global group stricter rules,
+and the lowest precedence wins.
+
+201
+00:12:37.200 --> 00:12:42.000
+Deny log on locally beats Allow, so link
+it where it belongs.
+
+202
+00:12:42.250 --> 00:12:45.850
+Use advanced audit policy for logons and
+account management.
+
+203
+00:12:46.100 --> 00:12:50.900
+Look for 4625 on the computer and 4740 on
+the PDC emulator.
+
+204
+00:12:51.150 --> 00:12:52.350
+In Lab 6.
+
+205
+00:12:52.600 --> 00:12:58.600
+3, about 75 minutes and practice only, you
+do all of this in your pod.

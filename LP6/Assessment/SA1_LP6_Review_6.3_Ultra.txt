@@ -1,0 +1,5 @@
+MC	Where do you set the domain password and lockout policy?	In a GPO linked at the domain, such as the Default Domain Policy	correct	In a GPO linked to OU Staff	incorrect	In the Default Domain Controllers Policy	incorrect	In a WMI filter	incorrect
+MC	Which cmdlet shows the PSO that applies to alee?	Get-ADUserResultantPasswordPolicy	correct	Get-ADDefaultDomainPasswordPolicy	incorrect	Get-GPPermission	incorrect	Get-GPInheritance	incorrect
+TF	With several PSOs that reach a user through groups, the lowest precedence number wins.	true
+MC	Which event shows a failed sign-in on CLIENT01?	4625	correct	4740	incorrect	3076	incorrect	4767	incorrect
+MC	Which event shows an account lockout on the domain controller?	4740	correct	4625	incorrect	4624	incorrect	3077	incorrect

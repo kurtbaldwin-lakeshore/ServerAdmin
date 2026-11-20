@@ -1,0 +1,1077 @@
+1
+00:00:00,000 --> 00:00:01,600
+Welcome to Topic 5.
+
+2
+00:00:01,850 --> 00:00:03,050
+2, DHCP Server.
+
+3
+00:00:03,300 --> 00:00:06,900
+So far every pod address was typed by
+hand.
+
+4
+00:00:07,150 --> 00:00:09,950
+Now a server takes over that job.
+
+5
+00:00:10,200 --> 00:00:15,800
+You will learn how a client gets an
+address with four messages called DORA,
+
+6
+00:00:16,050 --> 00:00:17,650
+and how leases renew.
+
+7
+00:00:17,900 --> 00:00:23,500
+You will install the DHCP Server role on
+SRV01, finish its post-install wizard, and
+
+8
+00:00:23,750 --> 00:00:27,750
+see why the server must be authorized in
+Active Directory.
+
+9
+00:00:28,000 --> 00:00:34,000
+Then you build a scope with options,
+reserve an address, and test it all from
+
+10
+00:00:34,250 --> 00:00:35,450
+CLIENT01.
+
+11
+00:00:35,700 --> 00:00:38,500
+DHCP stands for Dynamic Host Configuration
+Protocol.
+
+12
+00:00:38,750 --> 00:00:41,150
+It hands out IPv4 settings automatically.
+
+13
+00:00:41,400 --> 00:00:45,000
+Servers like SRV01 keep static addresses,
+and clients ask.
+
+14
+00:00:45,250 --> 00:00:47,250
+A few words to learn.
+
+15
+00:00:47,500 --> 00:00:52,300
+A scope is one subnet's range of addresses
+the server may lease.
+
+16
+00:00:52,550 --> 00:00:58,950
+A lease is permission to use one address
+for a set time, eight days by default.
+
+17
+00:00:59,200 --> 00:01:04,800
+Options are the extra settings that ride
+along, like the gateway and DNS server.
+
+18
+00:01:05,050 --> 00:01:10,650
+An exclusion is never handed out, and a
+reservation always goes to the same
+
+19
+00:01:10,900 --> 00:01:12,100
+client.
+
+20
+00:01:12,350 --> 00:01:15,950
+How does a client with no address get one?
+
+21
+00:01:16,200 --> 00:01:17,800
+Four messages, called DORA.
+
+22
+00:01:18,050 --> 00:01:21,250
+First, Discover: is any DHCP server out
+there?
+
+23
+00:01:21,500 --> 00:01:26,300
+Second, Offer: the server suggests an
+address, a lease time and options.
+
+24
+00:01:26,550 --> 00:01:30,150
+Third, Request: the client says, I take
+that offer.
+
+25
+00:01:30,400 --> 00:01:34,000
+Fourth, Acknowledge: the server confirms,
+and the lease starts.
+
+26
+00:01:34,250 --> 00:01:39,050
+Discover and Request are broadcasts,
+because the client has no address yet.
+
+27
+00:01:39,300 --> 00:01:42,500
+Offer and Acknowledge can be broadcast or
+unicast.
+
+28
+00:01:42,750 --> 00:01:47,950
+The server listens on UDP port 67 and the
+client on UDP 68.
+
+29
+00:01:48,200 --> 00:01:50,600
+Another subnet needs a relay agent.
+
+30
+00:01:50,850 --> 00:01:52,850
+Take the default eight-day lease.
+
+31
+00:01:53,100 --> 00:01:58,700
+At fifty percent, day four, the client
+sends a unicast request straight to SRV01
+
+32
+00:01:58,950 --> 00:02:00,150
+to renew.
+
+33
+00:02:00,400 --> 00:02:02,800
+If SRV01 agrees, the clock restarts.
+
+34
+00:02:03,050 --> 00:02:08,650
+If SRV01 is silent, the client keeps
+trying, and at eighty-seven and a half
+
+35
+00:02:08,900 --> 00:02:13,300
+percent, day seven, it rebinds by
+broadcasting to any DHCP server.
+
+36
+00:02:13,550 --> 00:02:19,150
+If the lease runs out, the client drops
+the address and starts DORA again.
+
+37
+00:02:19,400 --> 00:02:25,000
+With no server at all, it ends up with an
+APIPA address in 169.
+
+38
+00:02:25,250 --> 00:02:26,450
+254.
+
+39
+00:02:26,700 --> 00:02:30,300
+Installing the role looks just like
+installing AD DS.
+
+40
+00:02:30,550 --> 00:02:34,950
+In Server Manager on SRV01, choose Manage,
+Add Roles and Features.
+
+41
+00:02:35,200 --> 00:02:41,200
+On Server Roles, select DHCP Server, then
+Add Features so you get the DHCP console
+
+42
+00:02:41,450 --> 00:02:42,650
+and PowerShell module.
+
+43
+00:02:42,900 --> 00:02:44,500
+No restart is needed.
+
+44
+00:02:44,750 --> 00:02:49,550
+When it finishes, Server Manager raises a
+flag: configuration required for DHCP
+
+45
+00:02:49,800 --> 00:02:53,400
+Server at SRV01, with the link Complete
+DHCP configuration.
+
+46
+00:02:53,650 --> 00:02:57,250
+In PowerShell, one line does it:
+Install-WindowsFeature DHCP, dash
+
+47
+00:02:57,500 --> 00:02:58,700
+IncludeManagementTools.
+
+48
+00:02:58,950 --> 00:03:01,350
+The role alone leases nothing yet.
+
+49
+00:03:01,600 --> 00:03:05,200
+The flag link opens the DHCP Post-Install
+configuration wizard.
+
+50
+00:03:05,450 --> 00:03:11,050
+Description tells you the two jobs it will
+do: create the local groups DHCP
+
+51
+00:03:11,300 --> 00:03:15,700
+Administrators and DHCP Users, and
+authorize the server in Active Directory.
+
+52
+00:03:15,950 --> 00:03:20,350
+On Authorization, keep Use the following
+user's credentials with SA1 backslash
+
+53
+00:03:20,600 --> 00:03:21,800
+Administrator.
+
+54
+00:03:22,050 --> 00:03:26,450
+That account belongs to Enterprise Admins,
+which is who may authorize.
+
+55
+00:03:26,700 --> 00:03:27,900
+Select Commit.
+
+56
+00:03:28,150 --> 00:03:33,350
+The Summary page should show Done for
+security groups creation and Done for
+
+57
+00:03:33,600 --> 00:03:35,200
+authorizing the DHCP server.
+
+58
+00:03:35,450 --> 00:03:37,850
+Close it and the flag clears.
+
+59
+00:03:38,100 --> 00:03:39,700
+Why does authorization exist?
+
+60
+00:03:39,950 --> 00:03:43,150
+A rogue DHCP server is one nobody
+approved.
+
+61
+00:03:43,400 --> 00:03:49,000
+Its offers could send clients to a wrong
+gateway or a fake DNS server.
+
+62
+00:03:49,250 --> 00:03:55,250
+In a domain, a Windows DHCP server checks
+a list in Active Directory before it
+
+63
+00:03:55,500 --> 00:03:56,700
+leases.
+
+64
+00:03:56,950 --> 00:04:01,350
+If its name is on the list, like SRV01, it
+works.
+
+65
+00:04:01,600 --> 00:04:03,600
+If not, it leases nothing.
+
+66
+00:04:03,850 --> 00:04:07,450
+The limit: only Windows DHCP servers check
+that list.
+
+67
+00:04:07,700 --> 00:04:13,700
+A home router plugged into a wall port
+does not, and switches stop those with
+
+68
+00:04:13,950 --> 00:04:15,150
+DHCP snooping.
+
+69
+00:04:15,400 --> 00:04:18,200
+Here are the wizard's jobs in PowerShell.
+
+70
+00:04:18,450 --> 00:04:22,450
+Add-DhcpServerSecurityGroup creates the
+two groups; older guides use netsh dhcp
+
+71
+00:04:22,700 --> 00:04:25,100
+add securitygroups for the same thing.
+
+72
+00:04:25,350 --> 00:04:28,550
+Then restart the DHCPServer service so
+they apply.
+
+73
+00:04:28,800 --> 00:04:30,800
+Add-DhcpServerInDC, with the name srv01.
+
+74
+00:04:31,050 --> 00:04:32,250
+sa1.
+
+75
+00:04:32,500 --> 00:04:34,500
+lab and the address 192.
+
+76
+00:04:34,750 --> 00:04:35,950
+168.
+
+77
+00:04:36,200 --> 00:04:37,400
+50.
+
+78
+00:04:37,650 --> 00:04:40,450
+20, puts SRV01 on the authorized list.
+
+79
+00:04:40,700 --> 00:04:45,500
+Get-DhcpServerInDC reads the list back,
+and you should see that one line.
+
+80
+00:04:45,750 --> 00:04:50,550
+Last, a Set-ItemProperty on a Server
+Manager registry key tells Server Manager
+
+81
+00:04:50,800 --> 00:04:54,800
+the post-install work is done, so the flag
+goes away.
+
+82
+00:04:55,050 --> 00:04:56,250
+Now the scope.
+
+83
+00:04:56,500 --> 00:04:58,900
+Open the DHCP console, expand srv01.
+
+84
+00:04:59,150 --> 00:05:00,350
+sa1.
+
+85
+00:05:00,600 --> 00:05:03,400
+lab, right-click IPv4 and choose New
+Scope.
+
+86
+00:05:03,650 --> 00:05:06,850
+Name it SA1 Clients, a label for people.
+
+87
+00:05:07,100 --> 00:05:09,900
+On IP Address Range, start at 192.
+
+88
+00:05:10,150 --> 00:05:11,350
+168.
+
+89
+00:05:11,600 --> 00:05:12,800
+50.
+
+90
+00:05:13,050 --> 00:05:15,050
+100 and end at 192.
+
+91
+00:05:15,300 --> 00:05:16,500
+168.
+
+92
+00:05:16,750 --> 00:05:17,950
+50.
+
+93
+00:05:18,200 --> 00:05:20,600
+199, with a mask of 255.
+
+94
+00:05:20,850 --> 00:05:22,050
+255.
+
+95
+00:05:22,300 --> 00:05:23,500
+255.
+
+96
+00:05:23,750 --> 00:05:24,950
+0.
+
+97
+00:05:25,200 --> 00:05:26,800
+Our servers use .
+
+98
+00:05:27,050 --> 00:05:28,250
+10 to .
+
+99
+00:05:28,500 --> 00:05:31,300
+50, so they stay outside the range.
+
+100
+00:05:31,550 --> 00:05:33,550
+The scope ID becomes 192.
+
+101
+00:05:33,800 --> 00:05:35,000
+168.
+
+102
+00:05:35,250 --> 00:05:36,450
+50.
+
+103
+00:05:36,700 --> 00:05:37,900
+0.
+
+104
+00:05:38,150 --> 00:05:40,950
+On Add Exclusions and Delay, exclude .
+
+105
+00:05:41,200 --> 00:05:42,400
+100 to .
+
+106
+00:05:42,650 --> 00:05:44,250
+109 and select Add.
+
+107
+00:05:44,500 --> 00:05:49,300
+Those ten addresses are kept back for
+devices you set by hand.
+
+108
+00:05:49,550 --> 00:05:50,750
+The wizard continues.
+
+109
+00:05:51,000 --> 00:05:55,000
+Lease Duration shows eight days, the
+default, so keep it.
+
+110
+00:05:55,250 --> 00:05:57,650
+Say yes to configuring options now.
+
+111
+00:05:57,900 --> 00:06:00,300
+On Router, Default Gateway, add 192.
+
+112
+00:06:00,550 --> 00:06:01,750
+168.
+
+113
+00:06:02,000 --> 00:06:03,200
+50.
+
+114
+00:06:03,450 --> 00:06:04,650
+1.
+
+115
+00:06:04,900 --> 00:06:06,500
+That is option 003.
+
+116
+00:06:06,750 --> 00:06:12,750
+The pod has no router, so this is only
+option data on the client side.
+
+117
+00:06:13,000 --> 00:06:17,400
+On Domain Name and DNS Servers, the parent
+domain is sa1.
+
+118
+00:06:17,650 --> 00:06:21,650
+lab, option 015, and the DNS server is
+DC01, 192.
+
+119
+00:06:21,900 --> 00:06:23,100
+168.
+
+120
+00:06:23,350 --> 00:06:24,550
+50.
+
+121
+00:06:24,800 --> 00:06:26,000
+10, option 006.
+
+122
+00:06:26,250 --> 00:06:27,450
+Skip WINS.
+
+123
+00:06:27,700 --> 00:06:32,500
+Finally, activate the scope now, because
+only an active scope answers clients.
+
+124
+00:06:32,750 --> 00:06:35,550
+The whole wizard fits in three commands.
+
+125
+00:06:35,800 --> 00:06:40,600
+Add-DhcpServerv4Scope takes the name,
+start and end of the range, the subnet
+
+126
+00:06:40,850 --> 00:06:44,050
+mask and the lease duration of eight days.
+
+127
+00:06:44,300 --> 00:06:46,300
+Scopes are active by default.
+
+128
+00:06:46,550 --> 00:06:49,750
+Add-DhcpServerv4ExclusionRange uses dash
+ScopeId, the network address 192.
+
+129
+00:06:50,000 --> 00:06:51,200
+168.
+
+130
+00:06:51,450 --> 00:06:52,650
+50.
+
+131
+00:06:52,900 --> 00:06:58,100
+0, to pick the scope, then the start and
+end of the exclusion.
+
+132
+00:06:58,350 --> 00:07:02,750
+Set-DhcpServerv4OptionValue sets the
+router, the DNS server and the DNS domain
+
+133
+00:07:03,000 --> 00:07:04,200
+in one go.
+
+134
+00:07:04,450 --> 00:07:09,650
+Dash DnsServer validates the DNS server
+address, unless you add dash Force, so
+
+135
+00:07:09,900 --> 00:07:11,100
+keep DC01 running.
+
+136
+00:07:11,350 --> 00:07:14,150
+The two Get commands prove it worked.
+
+137
+00:07:14,400 --> 00:07:18,000
+In the DHCP console, your scope sits under
+IPv4.
+
+138
+00:07:18,250 --> 00:07:23,450
+Inside it, Address Pool holds the range
+and exclusions, Address Leases shows who
+
+139
+00:07:23,700 --> 00:07:26,900
+has which address, and Reservations holds
+fixed ones.
+
+140
+00:07:27,150 --> 00:07:31,550
+Scope Options shows 003, 006 and 015 for
+this scope only.
+
+141
+00:07:31,800 --> 00:07:35,800
+Further down, Server Options apply to
+every scope on SRV01.
+
+142
+00:07:36,050 --> 00:07:40,050
+What if the same option is set in two
+places?
+
+143
+00:07:40,300 --> 00:07:42,300
+The most specific one wins.
+
+144
+00:07:42,550 --> 00:07:45,350
+Reservation beats scope, and scope beats
+server.
+
+145
+00:07:45,600 --> 00:07:50,000
+The gateway differs per subnet, so it
+belongs on the scope.
+
+146
+00:07:50,250 --> 00:07:53,850
+A reservation always gives a client the
+same address.
+
+147
+00:07:54,100 --> 00:07:57,700
+Under the scope, right-click Reservations
+and choose New Reservation.
+
+148
+00:07:57,950 --> 00:08:01,550
+Give it a name, CLIENT01, and the address
+192.
+
+149
+00:08:01,800 --> 00:08:03,000
+168.
+
+150
+00:08:03,250 --> 00:08:04,450
+50.
+
+151
+00:08:04,700 --> 00:08:05,900
+150.
+
+152
+00:08:06,150 --> 00:08:09,350
+It is inside the range, outside the
+exclusion.
+
+153
+00:08:09,600 --> 00:08:15,200
+Then type the client's MAC address, which
+you read as Physical Address in ipconfig
+
+154
+00:08:15,450 --> 00:08:16,650
+slash all.
+
+155
+00:08:16,900 --> 00:08:19,300
+One wrong character means no match.
+
+156
+00:08:19,550 --> 00:08:21,950
+Why not just a static address?
+
+157
+00:08:22,200 --> 00:08:28,200
+A reservation is managed in one place, and
+the client still receives all the options.
+
+158
+00:08:28,450 --> 00:08:32,450
+In PowerShell, Get-DhcpServerv4Lease lists
+the active leases in the scope.
+
+159
+00:08:32,700 --> 00:08:36,300
+CLIENT01's first address can be anything
+free from .
+
+160
+00:08:36,550 --> 00:08:37,750
+110 to .
+
+161
+00:08:38,000 --> 00:08:39,200
+199.
+
+162
+00:08:39,450 --> 00:08:41,450
+Look at the ClientId column.
+
+163
+00:08:41,700 --> 00:08:44,900
+For Windows clients, that is the MAC
+address.
+
+164
+00:08:45,150 --> 00:08:51,550
+So instead of typing, you can grab it from
+the lease into a variable, then run
+
+165
+00:08:51,800 --> 00:08:54,600
+Add-DhcpServerv4Reservation with the
+scope, the address .
+
+166
+00:08:54,850 --> 00:08:57,250
+150, that ClientId and the name.
+
+167
+00:08:57,500 --> 00:09:01,100
+After CLIENT01 releases and renews, list
+the leases again.
+
+168
+00:09:01,350 --> 00:09:03,350
+The address is now .
+
+169
+00:09:03,600 --> 00:09:06,000
+150 and the state reads ActiveReservation.
+
+170
+00:09:06,250 --> 00:09:09,850
+On CLIENT01, ipconfig slash all is your
+best friend.
+
+171
+00:09:10,100 --> 00:09:14,100
+Physical Address is the MAC you need for a
+reservation.
+
+172
+00:09:14,350 --> 00:09:15,950
+DHCP Enabled says Yes.
+
+173
+00:09:16,200 --> 00:09:22,200
+The IPv4 address, the gateway, the DNS
+server and the DNS suffix all came from
+
+174
+00:09:22,450 --> 00:09:23,650
+the scope.
+
+175
+00:09:23,900 --> 00:09:27,100
+DHCP Server names who gave the lease, 192.
+
+176
+00:09:27,350 --> 00:09:28,550
+168.
+
+177
+00:09:28,800 --> 00:09:30,000
+50.
+
+178
+00:09:30,250 --> 00:09:31,450
+20.
+
+179
+00:09:31,700 --> 00:09:37,700
+To get a new lease, run ipconfig slash
+release to give the address back, then
+
+180
+00:09:37,950 --> 00:09:40,350
+slash renew to run DORA again.
+
+181
+00:09:40,600 --> 00:09:46,200
+By default CLIENT01 registers its own A
+record, and SRV01 would register the PTR
+
+182
+00:09:46,450 --> 00:09:48,850
+record if a reverse zone existed.
+
+183
+00:09:49,100 --> 00:09:50,300
+Four mistakes.
+
+184
+00:09:50,550 --> 00:09:52,950
+One: skipping authorization in a domain.
+
+185
+00:09:53,200 --> 00:09:57,200
+The role and scope look fine, but nothing
+gets leased.
+
+186
+00:09:57,450 --> 00:09:59,450
+Authorize, then check with
+Get-DhcpServerInDC.
+
+187
+00:09:59,700 --> 00:10:02,500
+Two: a range that covers static addresses.
+
+188
+00:10:02,750 --> 00:10:08,750
+Keep servers outside the range or exclude
+them, or two machines will fight over one
+
+189
+00:10:09,000 --> 00:10:10,200
+address.
+
+190
+00:10:10,450 --> 00:10:14,850
+Three: pointing option 006 at a public or
+wrong DNS server.
+
+191
+00:10:15,100 --> 00:10:18,700
+Domain clients must ask a domain
+controller, here 192.
+
+192
+00:10:18,950 --> 00:10:20,150
+168.
+
+193
+00:10:20,400 --> 00:10:21,600
+50.
+
+194
+00:10:21,850 --> 00:10:23,050
+10.
+
+195
+00:10:23,300 --> 00:10:26,500
+Four: a reservation with a mistyped MAC
+address.
+
+196
+00:10:26,750 --> 00:10:29,550
+Copy it carefully, then release and renew.
+
+197
+00:10:29,800 --> 00:10:31,400
+Time to check yourself.
+
+198
+00:10:31,650 --> 00:10:34,850
+SRV01 leases from SA1 Clients for eight
+days.
+
+199
+00:10:35,100 --> 00:10:41,500
+First: name the four DORA messages in
+order, and say why the first one is a
+
+200
+00:10:41,750 --> 00:10:42,950
+broadcast.
+
+201
+00:10:43,200 --> 00:10:49,200
+Second: when does CLIENT01 first try to
+renew its lease, and whom does it ask?
+
+202
+00:10:49,450 --> 00:10:55,050
+Third: the role and scope are in place,
+but no client gets an address.
+
+203
+00:10:55,300 --> 00:10:57,700
+Which step was most likely skipped?
+
+204
+00:10:57,950 --> 00:11:01,950
+Fourth: option 006 differs between server
+options and scope options.
+
+205
+00:11:02,200 --> 00:11:04,200
+Which value does CLIENT01 get?
+
+206
+00:11:04,450 --> 00:11:05,650
+Pause and answer.
+
+207
+00:11:05,900 --> 00:11:07,500
+Here are the answers.
+
+208
+00:11:07,750 --> 00:11:09,750
+One: Discover, Offer, Request,
+Acknowledge.
+
+209
+00:11:10,000 --> 00:11:16,000
+The first is a broadcast because the
+client has no address and knows no server
+
+210
+00:11:16,250 --> 00:11:17,450
+yet to ask.
+
+211
+00:11:17,700 --> 00:11:23,300
+Two: after four days, at fifty percent,
+with a unicast request straight to SRV01.
+
+212
+00:11:23,550 --> 00:11:26,750
+At seven days it broadcasts to any server.
+
+213
+00:11:27,000 --> 00:11:29,000
+Three: authorization in Active Directory.
+
+214
+00:11:29,250 --> 00:11:33,250
+An unauthorized Windows DHCP server in a
+domain leases nothing.
+
+215
+00:11:33,500 --> 00:11:38,300
+Four: the scope option, because the most
+specific level wins: reservation first,
+
+216
+00:11:38,550 --> 00:11:40,150
+then scope, then server.
+
+217
+00:11:40,400 --> 00:11:41,600
+Let's build it.
+
+218
+00:11:41,850 --> 00:11:48,250
+On SRV01 I add the DHCP Server role, then
+use the flag to run the post-install
+
+219
+00:11:48,500 --> 00:11:50,900
+wizard with SA1 Administrator and commit.
+
+220
+00:11:51,150 --> 00:11:53,150
+The console shows green checks.
+
+221
+00:11:53,400 --> 00:11:56,200
+Now a new scope: SA1 Clients, .
+
+222
+00:11:56,450 --> 00:11:57,650
+100 to .
+
+223
+00:11:57,900 --> 00:11:59,100
+199, excluding .
+
+224
+00:11:59,350 --> 00:12:00,550
+100 to .
+
+225
+00:12:00,800 --> 00:12:04,400
+109, eight days, with router, DNS server
+and domain.
+
+226
+00:12:04,650 --> 00:12:09,450
+On CLIENT01 I switch to automatic
+addressing, and ipconfig shows a lease
+
+227
+00:12:09,700 --> 00:12:10,900
+from SRV01.
+
+228
+00:12:11,150 --> 00:12:13,550
+Back on SRV01 I reserve .
+
+229
+00:12:13,800 --> 00:12:15,400
+150 for CLIENT01's MAC.
+
+230
+00:12:15,650 --> 00:12:18,450
+Release, renew, and there it is: 192.
+
+231
+00:12:18,700 --> 00:12:19,900
+168.
+
+232
+00:12:20,150 --> 00:12:21,350
+50.
+
+233
+00:12:21,600 --> 00:12:22,800
+150.
+
+234
+00:12:23,050 --> 00:12:27,450
+A client gets an address with DORA:
+Discover, Offer, Request, Acknowledge,
+
+235
+00:12:27,700 --> 00:12:29,700
+over UDP 67 and 68.
+
+236
+00:12:29,950 --> 00:12:35,950
+It renews at fifty percent, rebinds at
+eighty-seven and a half, and falls back to
+
+237
+00:12:36,200 --> 00:12:37,400
+APIPA.
+
+238
+00:12:37,650 --> 00:12:43,250
+To build a server, install the role,
+create the groups and authorize it in
+
+239
+00:12:43,500 --> 00:12:44,700
+Active Directory.
+
+240
+00:12:44,950 --> 00:12:51,350
+A scope is a range plus exclusions, a
+lease time and options 003, 006 and 015.
+
+241
+00:12:51,600 --> 00:12:54,400
+Reservations tie an address to a MAC.
+
+242
+00:12:54,650 --> 00:12:55,850
+Lab 5.
+
+243
+00:12:56,100 --> 00:12:59,300
+2 practices it all in about an hour.

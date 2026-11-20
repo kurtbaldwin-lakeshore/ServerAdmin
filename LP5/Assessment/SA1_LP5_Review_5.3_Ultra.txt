@@ -1,0 +1,5 @@
+MC	Which failover mode is the default?	Load balance	correct	Hot standby	incorrect	Split scope	incorrect	Partner Down	incorrect
+TF	DHCP failover in Windows Server also works for DHCPv6 scopes.	false
+MC	How many servers can one failover relationship have?	Exactly two	correct	Up to four	incorrect	One	incorrect	Any number	incorrect
+MC	You change a scope option on one partner. How does the other partner get it?	You replicate the scope or relationship	correct	It copies itself within a minute	incorrect	Through AD replication	incorrect	At the next lease renewal	incorrect
+MC	Clients on another subnet get no address. What is missing?	A DHCP relay agent on the router	correct	A second scope option	incorrect	A shared secret	incorrect	A link-local address	incorrect

@@ -1,0 +1,5 @@
+MC	What must you do before a new GPO affects anyone?	Link it to a site, the domain or an OU	correct	Restart DC01	incorrect	Copy it to every client	incorrect	Add it to Domain Users	incorrect
+MC	What does LSDOU stand for?	Local, Site, Domain, OU	correct	Logon, Startup, Domain, Users	incorrect	Link, Security, Delegation, Options	incorrect	Local, Server, DC, OU	incorrect
+TF	Enforced beats Block Inheritance.	true
+MC	Which command reapplies every Group Policy setting on CLIENT01 now?	gpupdate /force	correct	gpresult /r	incorrect	Get-GPO -All	incorrect	New-GPLink	incorrect
+MC	Which link order number wins a conflict on one OU?	1	correct	The highest number	incorrect	The newest link	incorrect	None: links never conflict	incorrect

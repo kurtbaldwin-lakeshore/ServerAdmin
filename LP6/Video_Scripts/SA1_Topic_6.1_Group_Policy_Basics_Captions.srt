@@ -1,0 +1,897 @@
+1
+00:00:00,000 --> 00:00:01,600
+Welcome to Topic 6.
+
+2
+00:00:01,850 --> 00:00:05,850
+1, Group Policy Basics, the start of
+Learning Plan 6.
+
+3
+00:00:06,100 --> 00:00:12,100
+Now you make every computer and user
+behave the way you want, from one place.
+
+4
+00:00:12,350 --> 00:00:17,150
+You will learn what Group Policy does and
+where a GPO lives.
+
+5
+00:00:17,400 --> 00:00:23,000
+You will tell computer settings from user
+settings, and predict which GPO wins with
+
+6
+00:00:23,250 --> 00:00:25,250
+LSDOU, link order and precedence.
+
+7
+00:00:25,500 --> 00:00:30,700
+You will use Block Inheritance and
+Enforced, create and link GPOs in the
+
+8
+00:00:30,950 --> 00:00:36,150
+console and in PowerShell, and prove the
+result with gpupdate, gpresult and Group
+
+9
+00:00:36,400 --> 00:00:37,600
+Policy Modeling.
+
+10
+00:00:37,850 --> 00:00:43,450
+Group Policy lets you set a setting once,
+in Active Directory, and every computer
+
+11
+00:00:43,700 --> 00:00:46,900
+and user in scope applies it by itself.
+
+12
+00:00:47,150 --> 00:00:51,150
+The setting lives in a Group Policy
+Object, or GPO.
+
+13
+00:00:51,400 --> 00:00:54,200
+A GPO on its own does nothing.
+
+14
+00:00:54,450 --> 00:00:58,850
+You link it to a site, the domain or an
+OU.
+
+15
+00:00:59,100 --> 00:01:05,100
+Link SA1 Student Desktop to the Students
+OU, and Dev, Erin and every new student
+
+16
+00:01:05,350 --> 00:01:06,550
+get it.
+
+17
+00:01:06,800 --> 00:01:11,600
+For the Server+ exam, think centralized
+configuration: one baseline, and drift is
+
+18
+00:01:11,850 --> 00:01:13,850
+fixed at the next refresh.
+
+19
+00:01:14,100 --> 00:01:20,100
+Every GPO is stored in two halves, and
+both carry the same ID, a GUID.
+
+20
+00:01:20,350 --> 00:01:25,950
+The Group Policy container is an object in
+Active Directory, under Policies in the
+
+21
+00:01:26,200 --> 00:01:27,400
+System container.
+
+22
+00:01:27,650 --> 00:01:30,450
+It holds the name, version and status.
+
+23
+00:01:30,700 --> 00:01:35,900
+The Group Policy template is a folder in
+SYSVOL on every domain controller.
+
+24
+00:01:36,150 --> 00:01:42,950
+It holds a file called GPT dot INI and the
+Machine and User folders with the actual
+
+25
+00:01:43,200 --> 00:01:44,400
+settings.
+
+26
+00:01:44,650 --> 00:01:47,050
+The link is a third piece.
+
+27
+00:01:47,300 --> 00:01:54,900
+It is stored on the site, domain or OU,
+which is why one GPO can be linked in many
+
+28
+00:01:55,150 --> 00:01:56,350
+places.
+
+29
+00:01:56,600 --> 00:01:59,000
+Every GPO has two halves inside.
+
+30
+00:01:59,250 --> 00:02:03,250
+Computer Configuration applies to computer
+objects in the linked OU.
+
+31
+00:02:03,500 --> 00:02:08,300
+Windows applies it when the computer
+starts, and then in the background.
+
+32
+00:02:08,550 --> 00:02:12,150
+The logon message on CLIENT01 is a
+computer setting.
+
+33
+00:02:12,400 --> 00:02:18,400
+User Configuration applies to user objects
+in the linked OU, at sign-in and then in
+
+34
+00:02:18,650 --> 00:02:19,850
+the background.
+
+35
+00:02:20,100 --> 00:02:26,100
+Blocking Control Panel for dpatel is a
+user setting, and it follows him to any
+
+36
+00:02:26,350 --> 00:02:27,550
+PC.
+
+37
+00:02:27,800 --> 00:02:29,800
+Each half has two nodes.
+
+38
+00:02:30,050 --> 00:02:34,450
+Policies are enforced, and they disappear
+when the GPO stops applying.
+
+39
+00:02:34,700 --> 00:02:37,100
+Preferences only set a starting value.
+
+40
+00:02:37,350 --> 00:02:41,350
+Administrative Templates are the thousands
+of registry-based settings, such as
+
+41
+00:02:41,600 --> 00:02:43,600
+Prohibit access to Control Panel.
+
+42
+00:02:43,850 --> 00:02:49,850
+ADMX files define the settings, and ADML
+files hold the words for a language, like
+
+43
+00:02:50,100 --> 00:02:51,300
+English.
+
+44
+00:02:51,550 --> 00:02:56,350
+Each setting writes a value under a
+Policies key in the registry.
+
+45
+00:02:56,600 --> 00:03:02,600
+With no central store, which is how our
+pod starts, the editor reads the templates
+
+46
+00:03:02,850 --> 00:03:06,850
+from C Windows PolicyDefinitions on the
+computer you work on.
+
+47
+00:03:07,100 --> 00:03:11,900
+A central store is one PolicyDefinitions
+folder in SYSVOL that every administrator
+
+48
+00:03:12,150 --> 00:03:13,350
+uses.
+
+49
+00:03:13,600 --> 00:03:19,200
+New templates are a download from
+Microsoft, and our pod has no internet, so
+
+50
+00:03:19,450 --> 00:03:21,450
+we use the built-in ones.
+
+51
+00:03:21,700 --> 00:03:23,700
+When does a setting arrive?
+
+52
+00:03:23,950 --> 00:03:26,750
+Computer Configuration applies when the
+computer starts.
+
+53
+00:03:27,000 --> 00:03:30,200
+User Configuration applies when the user
+signs in.
+
+54
+00:03:30,450 --> 00:03:36,050
+After that, Windows checks again in the
+background every 90 minutes, plus a random
+
+55
+00:03:36,300 --> 00:03:43,100
+extra of up to 30 minutes, so that
+hundreds of clients do not all ask at the
+
+56
+00:03:43,350 --> 00:03:44,550
+same moment.
+
+57
+00:03:44,800 --> 00:03:47,200
+Domain controllers check every 5 minutes.
+
+58
+00:03:47,450 --> 00:03:53,450
+So in the worst case a change takes about
+two hours to reach a client.
+
+59
+00:03:53,700 --> 00:03:58,100
+If you cannot wait, run gpupdate dash
+force on the client.
+
+60
+00:03:58,350 --> 00:04:03,950
+GPOs are applied in a fixed order, and you
+can remember it as LSDOU.
+
+61
+00:04:04,200 --> 00:04:07,000
+First the local policy on the computer.
+
+62
+00:04:07,250 --> 00:04:09,650
+Then GPOs linked to the site.
+
+63
+00:04:09,900 --> 00:04:13,500
+Then the domain, where the Default Domain
+Policy lives.
+
+64
+00:04:13,750 --> 00:04:16,950
+Then the OUs, parent first and child last.
+
+65
+00:04:17,200 --> 00:04:23,200
+When two GPOs set the same setting in
+different ways, the one applied last wins.
+
+66
+00:04:23,450 --> 00:04:29,850
+That means the OU closest to the object
+wins, unless a link higher up is Enforced.
+
+67
+00:04:30,100 --> 00:04:33,700
+For Dev Patel, that is the link on
+Students.
+
+68
+00:04:33,950 --> 00:04:35,950
+By default, settings flow down.
+
+69
+00:04:36,200 --> 00:04:41,400
+A GPO linked to Lakeshore reaches
+Students, Staff and every other child OU.
+
+70
+00:04:41,650 --> 00:04:42,850
+That is inheritance.
+
+71
+00:04:43,100 --> 00:04:46,300
+Block Inheritance is a setting on an OU.
+
+72
+00:04:46,550 --> 00:04:53,350
+Turn it on for Staff and GPOs linked above
+Staff no longer reach it, and GPMC marks
+
+73
+00:04:53,600 --> 00:04:56,400
+the OU with a blue exclamation mark.
+
+74
+00:04:56,650 --> 00:04:59,450
+Enforced is a setting on a link.
+
+75
+00:04:59,700 --> 00:05:04,900
+An enforced GPO cannot be overridden by
+lower links, and it passes straight
+
+76
+00:05:05,150 --> 00:05:06,350
+through Block Inheritance.
+
+77
+00:05:06,600 --> 00:05:10,600
+So the rule to remember is simple:
+Enforced beats Block.
+
+78
+00:05:10,850 --> 00:05:15,650
+When several GPOs are linked to the same
+OU, link order decides.
+
+79
+00:05:15,900 --> 00:05:20,300
+Link order 1 is applied last, so it wins a
+conflict.
+
+80
+00:05:20,550 --> 00:05:26,150
+To see the full picture for an OU, open
+its Group Policy Inheritance tab.
+
+81
+00:05:26,400 --> 00:05:31,200
+It lists every GPO that reaches the OU,
+and precedence 1 wins.
+
+82
+00:05:31,450 --> 00:05:34,250
+Every domain also has two default GPOs.
+
+83
+00:05:34,500 --> 00:05:40,100
+The Default Domain Policy is linked to the
+domain and holds password, lockout and
+
+84
+00:05:40,350 --> 00:05:41,550
+Kerberos policy.
+
+85
+00:05:41,800 --> 00:05:45,400
+The Default Domain Controllers Policy
+covers the domain controllers.
+
+86
+00:05:45,650 --> 00:05:50,850
+Leave them for those jobs and create a new
+GPO for everything else.
+
+87
+00:05:51,100 --> 00:05:56,300
+Your main tool is the Group Policy
+Management Console, or GPMC, from Server
+
+88
+00:05:56,550 --> 00:05:57,750
+Manager's Tools menu.
+
+89
+00:05:58,000 --> 00:06:00,400
+Expand the forest, Domains and sa1.
+
+90
+00:06:00,650 --> 00:06:04,650
+lab, and you see the OU tree with its
+links.
+
+91
+00:06:04,900 --> 00:06:10,100
+To create and link in one step,
+right-click the OU, here Students, and
+
+92
+00:06:10,350 --> 00:06:14,750
+choose Create a GPO in this domain, and
+Link it here.
+
+93
+00:06:15,000 --> 00:06:18,600
+Name the GPO for its job, SA1 Student
+Desktop.
+
+94
+00:06:18,850 --> 00:06:22,050
+Block Inheritance is on the same
+right-click menu.
+
+95
+00:06:22,300 --> 00:06:25,900
+Right-click a link for Edit, Enforced and
+Link Enabled.
+
+96
+00:06:26,150 --> 00:06:30,550
+Edit opens the Group Policy Management
+Editor for that one GPO.
+
+97
+00:06:30,800 --> 00:06:34,800
+Under User Configuration, Policies, you
+find Administrative Templates, and the
+
+98
+00:06:35,050 --> 00:06:40,650
+label tells you the templates come from
+the local computer, because there is no
+
+99
+00:06:40,900 --> 00:06:42,100
+central store yet.
+
+100
+00:06:42,350 --> 00:06:47,150
+Open Control Panel and double-click
+Prohibit access to Control Panel and PC
+
+101
+00:06:47,400 --> 00:06:48,600
+settings.
+
+102
+00:06:48,850 --> 00:06:50,850
+Choose Enabled and select OK.
+
+103
+00:06:51,100 --> 00:06:53,100
+There is no Save button.
+
+104
+00:06:53,350 --> 00:06:59,350
+The GPO changes in Active Directory and
+SYSVOL right away, and clients pick it up
+
+105
+00:06:59,600 --> 00:07:01,200
+at their next refresh.
+
+106
+00:07:01,450 --> 00:07:05,050
+The GroupPolicy module does the same work
+in PowerShell.
+
+107
+00:07:05,300 --> 00:07:11,300
+New-GPO creates an empty GPO, and you can
+pipe it straight into New-GPLink with the
+
+108
+00:07:11,550 --> 00:07:12,750
+target OU.
+
+109
+00:07:13,000 --> 00:07:16,200
+Set-GPRegistryValue can write
+registry-based settings, like the Control
+
+110
+00:07:16,450 --> 00:07:20,050
+Panel setting, but not every setting has a
+cmdlet.
+
+111
+00:07:20,300 --> 00:07:25,100
+Security options such as the logon message
+are set in the editor.
+
+112
+00:07:25,350 --> 00:07:29,750
+Finally, Get-GPInheritance shows an OU's
+own links, whether it blocks inheritance,
+
+113
+00:07:30,000 --> 00:07:32,800
+and the inherited links in precedence
+order.
+
+114
+00:07:33,050 --> 00:07:37,050
+That last line is what a client in
+Students gets.
+
+115
+00:07:37,300 --> 00:07:40,500
+Here is how those ideas look in GPMC.
+
+116
+00:07:40,750 --> 00:07:45,950
+Right-click an OU, such as Staff, and
+choose Block Inheritance, and the blue
+
+117
+00:07:46,200 --> 00:07:47,400
+exclamation mark appears.
+
+118
+00:07:47,650 --> 00:07:52,450
+Right-click a link, such as SA1 Student
+Desktop under Lakeshore, and choose
+
+119
+00:07:52,700 --> 00:07:55,500
+Enforced, and a padlock appears on it.
+
+120
+00:07:55,750 --> 00:07:59,750
+Now select Students and open the Group
+Policy Inheritance tab.
+
+121
+00:08:00,000 --> 00:08:05,600
+The enforced link from Lakeshore sits at
+precedence 1, above the link on Students
+
+122
+00:08:05,850 --> 00:08:09,050
+itself, because nothing can override an
+enforced GPO.
+
+123
+00:08:09,300 --> 00:08:11,700
+In PowerShell, use Set-GPInheritance and
+Set-GPLink.
+
+124
+00:08:11,950 --> 00:08:14,350
+Always test on a real client.
+
+125
+00:08:14,600 --> 00:08:18,600
+On CLIENT01, signed in as dpatel, run
+gpupdate dash force.
+
+126
+00:08:18,850 --> 00:08:22,050
+Then run gpresult slash r slash scope
+user.
+
+127
+00:08:22,300 --> 00:08:27,100
+It shows the user's distinguished name,
+the domain controller that delivered the
+
+128
+00:08:27,350 --> 00:08:32,950
+policy, and the list of applied GPOs,
+where you should see SA1 Student Desktop.
+
+129
+00:08:33,200 --> 00:08:37,600
+For the full picture, gpresult slash h
+writes an HTML report.
+
+130
+00:08:37,850 --> 00:08:43,450
+One catch: the computer part of gpresult
+needs an administrator window, so sign in
+
+131
+00:08:43,700 --> 00:08:45,700
+as an admin for that.
+
+132
+00:08:45,950 --> 00:08:48,350
+GPMC has two wizards for checking.
+
+133
+00:08:48,600 --> 00:08:54,200
+Group Policy Results reads what really
+applied on a computer for a user who
+
+134
+00:08:54,450 --> 00:08:56,850
+signed in there, much like gpresult.
+
+135
+00:08:57,100 --> 00:09:02,300
+Group Policy Modeling asks a domain
+controller what would apply for any user
+
+136
+00:09:02,550 --> 00:09:07,350
+and computer, before you change anything,
+so it is perfect for planning.
+
+137
+00:09:07,600 --> 00:09:11,200
+Its Advanced Simulation Options page even
+simulates loopback processing.
+
+138
+00:09:11,450 --> 00:09:16,650
+Loopback makes user settings follow the
+computer, which suits shared lab PCs or
+
+139
+00:09:16,900 --> 00:09:18,100
+Remote Desktop servers.
+
+140
+00:09:18,350 --> 00:09:22,350
+Merge adds the computer's user settings to
+the user's own.
+
+141
+00:09:22,600 --> 00:09:24,600
+Replace uses only the computer's.
+
+142
+00:09:24,850 --> 00:09:26,050
+Four common mistakes.
+
+143
+00:09:26,300 --> 00:09:30,700
+One: linking a GPO with user settings to
+the Workstations OU.
+
+144
+00:09:30,950 --> 00:09:37,350
+User settings follow user objects, so link
+it where the users are, or use loopback on
+
+145
+00:09:37,600 --> 00:09:38,800
+purpose.
+
+146
+00:09:39,050 --> 00:09:42,250
+Two: putting everything into the Default
+Domain Policy.
+
+147
+00:09:42,500 --> 00:09:48,500
+Keep it for password, lockout and Kerberos
+policy, and create one new GPO per job.
+
+148
+00:09:48,750 --> 00:09:50,350
+Three: expecting changes instantly.
+
+149
+00:09:50,600 --> 00:09:56,600
+Wait for the refresh or run gpupdate dash
+force, and prove the result with gpresult.
+
+150
+00:09:56,850 --> 00:09:59,650
+Four: using Block Inheritance and Enforced
+everywhere.
+
+151
+00:09:59,900 --> 00:10:01,900
+Fix the OU design first.
+
+152
+00:10:02,150 --> 00:10:05,350
+Time to check yourself, using the
+Lakeshore tree.
+
+153
+00:10:05,600 --> 00:10:10,400
+First, a GPO with only User Configuration
+settings is linked to Workstations.
+
+154
+00:10:10,650 --> 00:10:15,050
+Does dpatel get those settings when he
+signs in to CLIENT01?
+
+155
+00:10:15,300 --> 00:10:21,300
+Second, the Default Domain Policy and a
+GPO on Students set the same setting in
+
+156
+00:10:21,550 --> 00:10:22,750
+opposite ways.
+
+157
+00:10:23,000 --> 00:10:25,000
+Which one wins for dpatel?
+
+158
+00:10:25,250 --> 00:10:30,050
+Third, Staff blocks inheritance, and a GPO
+linked to Lakeshore is Enforced.
+
+159
+00:10:30,300 --> 00:10:31,900
+Does it reach cdiaz?
+
+160
+00:10:32,150 --> 00:10:38,150
+Fourth, you changed a GPO ten minutes ago,
+and CLIENT01 does not show it yet.
+
+161
+00:10:38,400 --> 00:10:40,000
+What do you run?
+
+162
+00:10:40,250 --> 00:10:42,250
+Pause the video and answer.
+
+163
+00:10:42,500 --> 00:10:44,100
+Here are the answers.
+
+164
+00:10:44,350 --> 00:10:45,550
+One: no.
+
+165
+00:10:45,800 --> 00:10:51,000
+Dev Patel's user object is in Students,
+not Workstations, and user settings follow
+
+166
+00:10:51,250 --> 00:10:54,050
+the user, unless loopback is turned on.
+
+167
+00:10:54,300 --> 00:10:56,700
+Two: the GPO on Students wins.
+
+168
+00:10:56,950 --> 00:11:03,350
+In LSDOU order the OU is applied after the
+domain, so it has the last word.
+
+169
+00:11:03,600 --> 00:11:04,800
+Three: yes.
+
+170
+00:11:05,050 --> 00:11:09,450
+Enforced passes through Block Inheritance,
+while the non-enforced GPOs from above
+
+171
+00:11:09,700 --> 00:11:10,900
+stay blocked.
+
+172
+00:11:11,150 --> 00:11:17,150
+Four: run gpupdate dash force on CLIENT01,
+then gpresult slash r, and look for the
+
+173
+00:11:17,400 --> 00:11:21,000
+GPO in the list of applied Group Policy
+Objects.
+
+174
+00:11:21,250 --> 00:11:24,050
+Let me show you on the pod.
+
+175
+00:11:24,300 --> 00:11:29,500
+In GPMC on DC01, I find the two default
+GPOs and their links.
+
+176
+00:11:29,750 --> 00:11:35,350
+I create SA1 Student Desktop on the
+Students OU and enable the Control Panel
+
+177
+00:11:35,600 --> 00:11:36,800
+setting.
+
+178
+00:11:37,050 --> 00:11:42,650
+Then PowerShell creates the logon message
+GPO and links it to Workstations, and I
+
+179
+00:11:42,900 --> 00:11:46,100
+set the title and text in the editor.
+
+180
+00:11:46,350 --> 00:11:52,350
+On CLIENT01 I run gpupdate dash force and
+sign out, and the message appears before
+
+181
+00:11:52,600 --> 00:11:53,800
+sign-in.
+
+182
+00:11:54,050 --> 00:11:55,250
+No restart needed.
+
+183
+00:11:55,500 --> 00:11:59,900
+As dpatel, Control Panel is blocked, and
+gpresult names the GPO.
+
+184
+00:12:00,150 --> 00:12:06,150
+Finally I link the GPO to Lakeshore, block
+Staff, enforce the link, and read the
+
+185
+00:12:06,400 --> 00:12:07,600
+precedence list.
+
+186
+00:12:07,850 --> 00:12:09,050
+To wrap up.
+
+187
+00:12:09,300 --> 00:12:15,700
+A GPO is a container in Active Directory
+plus a template in SYSVOL, and links put
+
+188
+00:12:15,950 --> 00:12:17,150
+it to work.
+
+189
+00:12:17,400 --> 00:12:21,000
+Computer settings follow computers and
+user settings follow users.
+
+190
+00:12:21,250 --> 00:12:27,250
+LSDOU sets the order, the closest OU wins,
+link order 1 wins, and Enforced beats
+
+191
+00:12:27,500 --> 00:12:28,700
+Block Inheritance.
+
+192
+00:12:28,950 --> 00:12:34,150
+Leave the default GPOs for their jobs and
+make one GPO per job.
+
+193
+00:12:34,400 --> 00:12:39,200
+Refresh with gpupdate dash force and prove
+it with gpresult or Modeling.
+
+194
+00:12:39,450 --> 00:12:40,650
+In Lab 6.
+
+195
+00:12:40,900 --> 00:12:46,500
+1 you do all of this on DC01 and CLIENT01,
+in about 75 minutes.

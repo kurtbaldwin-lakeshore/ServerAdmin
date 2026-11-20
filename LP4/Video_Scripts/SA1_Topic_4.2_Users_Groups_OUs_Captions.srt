@@ -1,0 +1,917 @@
+1
+00:00:00,000 --> 00:00:01,600
+Welcome to Topic 4.
+
+2
+00:00:01,850 --> 00:00:03,850
+2, Users, Groups and OUs.
+
+3
+00:00:04,100 --> 00:00:05,300
+In Topic 4.
+
+4
+00:00:05,550 --> 00:00:07,950
+1 you built the domain sa1.
+
+5
+00:00:08,200 --> 00:00:09,400
+lab.
+
+6
+00:00:09,650 --> 00:00:11,250
+Now you fill it.
+
+7
+00:00:11,500 --> 00:00:15,900
+You will learn the difference between the
+built-in containers and organizational
+
+8
+00:00:16,150 --> 00:00:20,150
+units, and how to design OUs around what
+administrators need.
+
+9
+00:00:20,400 --> 00:00:25,200
+You will read distinguished names and
+protect OUs from being deleted by
+
+10
+00:00:25,450 --> 00:00:26,650
+accident.
+
+11
+00:00:26,900 --> 00:00:32,500
+You will create users with the right logon
+names, in Active Directory Users and
+
+12
+00:00:32,750 --> 00:00:35,950
+Computers, in the Administrative Center
+and in PowerShell.
+
+13
+00:00:36,200 --> 00:00:42,600
+Then you will manage accounts day to day,
+and finish with group types, scopes and a
+
+14
+00:00:42,850 --> 00:00:44,450
+nesting pattern called AGDLP.
+
+15
+00:00:44,700 --> 00:00:49,100
+Open a brand new domain and you already
+see several folders.
+
+16
+00:00:49,350 --> 00:00:51,350
+Most of them are containers.
+
+17
+00:00:51,600 --> 00:00:53,600
+Their names start with CN.
+
+18
+00:00:53,850 --> 00:00:58,650
+Users holds new users and groups by
+default, including Domain Admins and
+
+19
+00:00:58,900 --> 00:01:00,100
+Domain Users.
+
+20
+00:01:00,350 --> 00:01:02,350
+Computers holds newly joined computers.
+
+21
+00:01:02,600 --> 00:01:08,600
+Containers come with the domain, and you
+cannot link Group Policy to them or create
+
+22
+00:01:08,850 --> 00:01:10,050
+your own.
+
+23
+00:01:10,300 --> 00:01:12,700
+Organizational units, OUs, start with OU.
+
+24
+00:01:12,950 --> 00:01:18,950
+You create them, you can link Group Policy
+to them, delegate control of them, and
+
+25
+00:01:19,200 --> 00:01:20,400
+nest them.
+
+26
+00:01:20,650 --> 00:01:25,050
+Domain Controllers is the one OU that
+exists from the start.
+
+27
+00:01:25,300 --> 00:01:30,500
+Build OUs for the jobs administrators do,
+not to copy the org chart.
+
+28
+00:01:30,750 --> 00:01:33,950
+Our tree starts with an OU called
+Lakeshore.
+
+29
+00:01:34,200 --> 00:01:36,600
+Staff holds Ann, Ben and Carla.
+
+30
+00:01:36,850 --> 00:01:40,050
+Students holds the students, and in Topic
+4.
+
+31
+00:01:40,300 --> 00:01:44,700
+3 the help desk gets the right to reset
+passwords there.
+
+32
+00:01:44,950 --> 00:01:47,750
+Groups keeps every group in one place.
+
+33
+00:01:48,000 --> 00:01:51,200
+Servers and Workstations will get
+different policies later.
+
+34
+00:01:51,450 --> 00:01:54,650
+Every object has a distinguished name, or
+DN.
+
+35
+00:01:54,900 --> 00:02:00,900
+For Dev Patel it is CN equals Dev Patel,
+OU equals Students, OU equals Lakeshore,
+
+36
+00:02:01,150 --> 00:02:03,550
+DC equals sa1, DC equals lab.
+
+37
+00:02:03,800 --> 00:02:08,200
+The object comes first, then each parent
+up to the domain.
+
+38
+00:02:08,450 --> 00:02:11,250
+Move the object and the DN changes.
+
+39
+00:02:11,500 --> 00:02:16,700
+To create an OU in Active Directory Users
+and Computers, right-click the domain,
+
+40
+00:02:16,950 --> 00:02:18,150
+sa1.
+
+41
+00:02:18,400 --> 00:02:20,800
+lab, and choose New, Organizational Unit.
+
+42
+00:02:21,050 --> 00:02:24,250
+Create in shows where the OU will go.
+
+43
+00:02:24,500 --> 00:02:26,100
+Type the name, Lakeshore.
+
+44
+00:02:26,350 --> 00:02:29,950
+Notice the check box Protect container
+from accidental deletion.
+
+45
+00:02:30,200 --> 00:02:34,600
+It is ticked by default, and you should
+leave it ticked.
+
+46
+00:02:34,850 --> 00:02:38,450
+For a child OU like Staff, right-click
+Lakeshore instead.
+
+47
+00:02:38,700 --> 00:02:44,300
+If you ever really need to delete a
+protected OU, turn on View, Advanced
+
+48
+00:02:44,550 --> 00:02:49,750
+Features, open its properties, and clear
+the box on the Object tab first.
+
+49
+00:02:50,000 --> 00:02:52,800
+Here is the same job in PowerShell.
+
+50
+00:02:53,050 --> 00:02:57,050
+New-ADOrganizationalUnit with dash Name
+Lakeshore and dash Path, the domain,
+
+51
+00:02:57,300 --> 00:02:58,900
+creates the top OU.
+
+52
+00:02:59,150 --> 00:03:02,750
+Store its distinguished name in a variable
+called root.
+
+53
+00:03:03,000 --> 00:03:07,400
+Then one foreach loop creates the five
+child OUs under it.
+
+54
+00:03:07,650 --> 00:03:11,250
+Get-ADOrganizationalUnit with dash
+SearchBase lists only what is under
+
+55
+00:03:11,500 --> 00:03:13,500
+Lakeshore, with each distinguished name.
+
+56
+00:03:13,750 --> 00:03:16,550
+Finally, try to remove the Servers OU.
+
+57
+00:03:16,800 --> 00:03:18,800
+You get Access is denied.
+
+58
+00:03:19,050 --> 00:03:24,650
+The cmdlet protects new OUs by default,
+just like the check box in ADUC.
+
+59
+00:03:24,900 --> 00:03:28,500
+That is a safety net you want to keep.
+
+60
+00:03:28,750 --> 00:03:31,150
+Right-click Staff and choose New, User.
+
+61
+00:03:31,400 --> 00:03:36,200
+Type the first and last name, and the Full
+name fills in.
+
+62
+00:03:36,450 --> 00:03:42,450
+Full name is the object name, so Ann's DN
+starts with CN equals Ann Lee.
+
+63
+00:03:42,700 --> 00:03:49,100
+User logon name plus the suffix is her
+user principal name, or UPN: alee at sa1.
+
+64
+00:03:49,350 --> 00:03:50,550
+lab.
+
+65
+00:03:50,800 --> 00:03:53,600
+It must be unique in the forest.
+
+66
+00:03:53,850 --> 00:03:58,650
+The pre-Windows 2000 logon name is the
+sAMAccountName, SA1 backslash alee, with
+
+67
+00:03:58,900 --> 00:04:00,500
+at most twenty characters.
+
+68
+00:04:00,750 --> 00:04:05,550
+On the next page, type the password shown
+in your NetLab pod.
+
+69
+00:04:05,800 --> 00:04:10,200
+In our labs, clear User must change
+password at next logon.
+
+70
+00:04:10,450 --> 00:04:13,250
+For real new users, keep it ticked.
+
+71
+00:04:13,500 --> 00:04:18,700
+Active Directory Administrative Center, or
+ADAC, is the newer console for the same
+
+72
+00:04:18,950 --> 00:04:20,150
+directory.
+
+73
+00:04:20,400 --> 00:04:27,200
+You navigate with a breadcrumb at the top
+and act from the Tasks pane on the right.
+
+74
+00:04:27,450 --> 00:04:32,650
+Its best feature for learners sits at the
+bottom: the Windows PowerShell History
+
+75
+00:04:32,900 --> 00:04:34,100
+Viewer.
+
+76
+00:04:34,350 --> 00:04:40,750
+Open it, and every action you take appears
+as the real cmdlet with the values you
+
+77
+00:04:41,000 --> 00:04:42,200
+typed.
+
+78
+00:04:42,450 --> 00:04:48,050
+Create Ben Ortiz, and you see New-ADUser
+with his name, path and logon name.
+
+79
+00:04:48,300 --> 00:04:50,700
+Copy a line and reuse it.
+
+80
+00:04:50,950 --> 00:04:55,750
+Commands that only read data are hidden
+until you tick Show All.
+
+81
+00:04:56,000 --> 00:05:02,000
+To create users in PowerShell, first read
+the password shown in your NetLab pod with
+
+82
+00:05:02,250 --> 00:05:03,450
+Read-Host dash AsSecureString.
+
+83
+00:05:03,700 --> 00:05:08,500
+You see only stars, and the password never
+appears in your script.
+
+84
+00:05:08,750 --> 00:05:15,150
+Then put the user's details in a hash
+table and pass it to New-ADUser with the
+
+85
+00:05:15,400 --> 00:05:16,600
+at sign.
+
+86
+00:05:16,850 --> 00:05:18,450
+That is called splatting.
+
+87
+00:05:18,700 --> 00:05:21,500
+Two keys matter most: AccountPassword and
+Enabled.
+
+88
+00:05:21,750 --> 00:05:25,750
+Leave them out and the account is created,
+but disabled.
+
+89
+00:05:26,000 --> 00:05:30,800
+Get-ADUser with dash Filter star and dash
+SearchBase lists everyone under Lakeshore,
+
+90
+00:05:31,050 --> 00:05:33,050
+with UPN and Enabled status.
+
+91
+00:05:33,300 --> 00:05:37,300
+Most daily work starts with a right-click
+on a user.
+
+92
+00:05:37,550 --> 00:05:42,350
+Disable Account blocks sign-in but keeps
+the account, its groups and its
+
+93
+00:05:42,600 --> 00:05:43,800
+permissions.
+
+94
+00:05:44,050 --> 00:05:50,050
+Use it when someone leaves or goes on
+leave, and Enable Account brings it back.
+
+95
+00:05:50,300 --> 00:05:56,300
+Reset Password sets a new password, and
+the dialog can also unlock the account in
+
+96
+00:05:56,550 --> 00:05:57,750
+the same step.
+
+97
+00:05:58,000 --> 00:06:03,200
+Move sends the account to another OU, and
+drag and drop works too.
+
+98
+00:06:03,450 --> 00:06:09,050
+And in Properties, the Account tab shows
+the logon names, the Unlock account check
+
+99
+00:06:09,300 --> 00:06:11,300
+box and Account is disabled.
+
+100
+00:06:11,550 --> 00:06:14,350
+Each of those tasks has a cmdlet.
+
+101
+00:06:14,600 --> 00:06:16,200
+Disable-ADAccount turns off dpatel.
+
+102
+00:06:16,450 --> 00:06:20,850
+Get-ADUser with the filter Enabled equals
+false finds every disabled account.
+
+103
+00:06:21,100 --> 00:06:25,500
+You will see Guest, krbtgt and
+DefaultAccount too, because they are
+
+104
+00:06:25,750 --> 00:06:26,950
+disabled by default.
+
+105
+00:06:27,200 --> 00:06:31,600
+Set-ADAccountPassword with dash Reset is
+an administrator reset, using the password
+
+106
+00:06:31,850 --> 00:06:33,450
+you stored with Read-Host.
+
+107
+00:06:33,700 --> 00:06:35,700
+Enable-ADAccount turns dpatel back on.
+
+108
+00:06:35,950 --> 00:06:39,150
+Unlock-ADAccount clears a lockout but
+keeps the password.
+
+109
+00:06:39,400 --> 00:06:44,600
+Move-ADObject takes the object's DN and a
+target path, and afterwards the DN
+
+110
+00:06:44,850 --> 00:06:46,050
+changes.
+
+111
+00:06:46,300 --> 00:06:50,300
+Every one of these works on any user you
+name.
+
+112
+00:06:50,550 --> 00:06:53,750
+Every group has a type and a scope.
+
+113
+00:06:54,000 --> 00:06:56,400
+The type is security or distribution.
+
+114
+00:06:56,650 --> 00:07:01,050
+Security groups can be used in
+permissions, and distribution groups are
+
+115
+00:07:01,300 --> 00:07:02,500
+only email lists.
+
+116
+00:07:02,750 --> 00:07:05,950
+The scope decides what a group can
+contain.
+
+117
+00:07:06,200 --> 00:07:11,800
+A global group holds users, computers and
+other global groups from the same domain,
+
+118
+00:07:12,050 --> 00:07:16,850
+so use it to collect people with the same
+role, like GG-Faculty.
+
+119
+00:07:17,100 --> 00:07:22,300
+A domain local group can hold users,
+global groups and universal groups from
+
+120
+00:07:22,550 --> 00:07:28,550
+anywhere in the forest, and you use it for
+permissions in its own domain, like
+
+121
+00:07:28,800 --> 00:07:30,000
+DL-Shared-Read.
+
+122
+00:07:30,250 --> 00:07:33,450
+Universal groups matter in forests with
+many domains.
+
+123
+00:07:33,700 --> 00:07:36,900
+Domain Admins and Domain Users are global
+groups.
+
+124
+00:07:37,150 --> 00:07:39,950
+AGDLP is the order to nest groups.
+
+125
+00:07:40,200 --> 00:07:43,000
+A for accounts: Carla, Dev and Erin.
+
+126
+00:07:43,250 --> 00:07:48,050
+G for global groups: Carla goes into
+GG-Faculty, the students into GG-Students.
+
+127
+00:07:48,300 --> 00:07:52,700
+DL for domain local: both global groups
+become members of DL-Shared-Read.
+
+128
+00:07:52,950 --> 00:07:56,950
+P for permission: only DL-Shared-Read gets
+Read on the share.
+
+129
+00:07:57,200 --> 00:07:58,400
+Why bother?
+
+130
+00:07:58,650 --> 00:08:04,650
+People change all the time, so you add and
+remove them in one global group.
+
+131
+00:08:04,900 --> 00:08:07,700
+Each resource keeps one simple permission
+entry.
+
+132
+00:08:07,950 --> 00:08:12,750
+In a forest with many domains, universal
+groups go in the middle.
+
+133
+00:08:13,000 --> 00:08:18,600
+To create a group in ADUC, right-click the
+Groups OU and choose New, Group.
+
+134
+00:08:18,850 --> 00:08:21,650
+Type the group name, for example GG-IT.
+
+135
+00:08:21,900 --> 00:08:24,300
+The pre-Windows 2000 name fills in.
+
+136
+00:08:24,550 --> 00:08:28,950
+Our prefixes, GG and DL, show the scope at
+a glance.
+
+137
+00:08:29,200 --> 00:08:34,400
+Under Group scope, choose Global for the
+GG groups and Domain local for
+
+138
+00:08:34,650 --> 00:08:35,850
+DL-Shared-Read.
+
+139
+00:08:36,100 --> 00:08:38,900
+Under Group type, keep Security, the
+default.
+
+140
+00:08:39,150 --> 00:08:44,350
+To add members, open the group's
+properties and use the Members tab, or
+
+141
+00:08:44,600 --> 00:08:48,200
+right-click a user and choose Add to a
+group.
+
+142
+00:08:48,450 --> 00:08:53,250
+In PowerShell, New-ADGroup needs a name
+and a dash GroupScope: Global, DomainLocal
+
+143
+00:08:53,500 --> 00:08:54,700
+or Universal.
+
+144
+00:08:54,950 --> 00:08:59,350
+Add dash GroupCategory Security and a path
+to the Groups OU.
+
+145
+00:08:59,600 --> 00:09:04,800
+One loop makes the four global groups, and
+one more command makes DL-Shared-Read.
+
+146
+00:09:05,050 --> 00:09:09,050
+Add-ADGroupMember puts dpatel and emoss
+into GG-Students, then GG-Faculty and
+
+147
+00:09:09,300 --> 00:09:10,500
+GG-Students into DL-Shared-Read.
+
+148
+00:09:10,750 --> 00:09:13,150
+Get-ADGroupMember confirms the two group
+members.
+
+149
+00:09:13,400 --> 00:09:17,000
+Now try the wrong direction: put
+DL-Shared-Read into GG-IT.
+
+150
+00:09:17,250 --> 00:09:23,250
+You get a red error, because a global
+group cannot contain a domain local group.
+
+151
+00:09:23,500 --> 00:09:24,700
+Four common mistakes.
+
+152
+00:09:24,950 --> 00:09:28,150
+One: leaving new accounts in the Users
+container.
+
+153
+00:09:28,400 --> 00:09:34,800
+Create them in an OU, and move any strays,
+because Group Policy cannot be linked to
+
+154
+00:09:35,050 --> 00:09:36,250
+Users.
+
+155
+00:09:36,500 --> 00:09:40,100
+Two: a delete fails with protected from
+accidental deletion.
+
+156
+00:09:40,350 --> 00:09:42,750
+That is the safety catch working.
+
+157
+00:09:43,000 --> 00:09:47,800
+Clear it on the Object tab only when you
+really mean it.
+
+158
+00:09:48,050 --> 00:09:52,050
+Three: running New-ADUser with no password
+and no dash Enabled.
+
+159
+00:09:52,300 --> 00:09:54,700
+The account exists but is disabled.
+
+160
+00:09:54,950 --> 00:09:58,950
+Four: giving permissions to users, or
+nesting the wrong way.
+
+161
+00:09:59,200 --> 00:10:00,400
+Follow AGDLP.
+
+162
+00:10:00,650 --> 00:10:05,850
+Time to check yourself, using the
+Lakeshore tree you build in the lab.
+
+163
+00:10:06,100 --> 00:10:11,700
+First, why does Lakeshore have a Students
+OU, instead of keeping students in the
+
+164
+00:10:11,950 --> 00:10:13,150
+Users container?
+
+165
+00:10:13,400 --> 00:10:16,600
+Second, Erin Moss is in the Students OU.
+
+166
+00:10:16,850 --> 00:10:18,850
+What is her distinguished name?
+
+167
+00:10:19,100 --> 00:10:22,300
+Third, can GG-Students be a member of
+DL-Shared-Read?
+
+168
+00:10:22,550 --> 00:10:25,750
+And can it work the other way round?
+
+169
+00:10:26,000 --> 00:10:30,400
+Fourth, you ran New-ADUser with only a
+name and a sAMAccountName.
+
+170
+00:10:30,650 --> 00:10:34,250
+Where is the account, and can it sign in?
+
+171
+00:10:34,500 --> 00:10:37,300
+Pause the video and answer all four.
+
+172
+00:10:37,550 --> 00:10:39,150
+Here are the answers.
+
+173
+00:10:39,400 --> 00:10:45,400
+One: an OU can receive Group Policy and
+delegated control, so the help desk can
+
+174
+00:10:45,650 --> 00:10:47,250
+reset student passwords there.
+
+175
+00:10:47,500 --> 00:10:49,100
+The Users container cannot.
+
+176
+00:10:49,350 --> 00:10:54,550
+Two: CN equals Erin Moss, OU equals
+Students, OU equals Lakeshore, DC equals
+
+177
+00:10:54,800 --> 00:10:56,400
+sa1, DC equals lab.
+
+178
+00:10:56,650 --> 00:11:00,650
+Three: yes, a domain local group can
+contain global groups.
+
+179
+00:11:00,900 --> 00:11:06,900
+No, a global group can contain only users,
+computers and other global groups from the
+
+180
+00:11:07,150 --> 00:11:08,350
+same domain.
+
+181
+00:11:08,600 --> 00:11:14,200
+Four: the account is in the Users
+container, and it is disabled, because it
+
+182
+00:11:14,450 --> 00:11:18,050
+has no password and you did not enable it.
+
+183
+00:11:18,300 --> 00:11:20,700
+Let me show you on DC01.
+
+184
+00:11:20,950 --> 00:11:26,150
+In ADUC I create Lakeshore and Staff, and
+the protection box stays ticked.
+
+185
+00:11:26,400 --> 00:11:30,000
+PowerShell adds the other four OUs in one
+loop.
+
+186
+00:11:30,250 --> 00:11:33,450
+When I try to delete Servers, it refuses.
+
+187
+00:11:33,700 --> 00:11:40,100
+I add Ann Lee in ADUC, then Ben Ortiz in
+the Administrative Center, and the history
+
+188
+00:11:40,350 --> 00:11:43,150
+viewer shows the New-ADUser command it
+ran.
+
+189
+00:11:43,400 --> 00:11:45,400
+Carla goes in with PowerShell.
+
+190
+00:11:45,650 --> 00:11:48,450
+I build the groups and nest them.
+
+191
+00:11:48,700 --> 00:11:54,300
+Finally I disable Dev Patel, find him with
+a filter, and enable him again.
+
+192
+00:11:54,550 --> 00:11:55,750
+To wrap up.
+
+193
+00:11:56,000 --> 00:12:01,600
+Containers hold the defaults, and OUs take
+Group Policy and delegation, so design OUs
+
+194
+00:12:01,850 --> 00:12:04,250
+around administration and keep them
+protected.
+
+195
+00:12:04,500 --> 00:12:09,300
+Each user has a full name, a UPN like alee
+at sa1.
+
+196
+00:12:09,550 --> 00:12:12,750
+lab, and a sAMAccountName like SA1
+backslash alee.
+
+197
+00:12:13,000 --> 00:12:18,600
+Every GUI task has a cmdlet, and the
+Administrative Center shows you which one.
+
+198
+00:12:18,850 --> 00:12:20,450
+Nest groups with AGDLP.
+
+199
+00:12:20,700 --> 00:12:21,900
+In Lab 4.
+
+200
+00:12:22,150 --> 00:12:26,950
+2 you build this exact tree on DC01, in
+about sixty minutes.
+
+201
+00:12:27,200 --> 00:12:31,200
+Later labs depend on it, so type the names
+carefully.

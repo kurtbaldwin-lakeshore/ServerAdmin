@@ -1,0 +1,5 @@
+MC	Which one can you link Group Policy to?	An organizational unit	correct	The Users container	incorrect	The Computers container	incorrect	Builtin	incorrect
+MC	What is Ann Lee's user principal name?	alee@sa1.lab	correct	SA1\alee	incorrect	CN=Ann Lee	incorrect	Ann Lee	incorrect
+TF	A new OU is protected from accidental deletion by default.	true
+MC	In AGDLP, which group gets the permission on the resource?	The domain local group	correct	The global group	incorrect	Each user	incorrect	Domain Users	incorrect
+MC	Which cmdlet turns sign-in off but keeps the account?	Disable-ADAccount	correct	Remove-ADUser	incorrect	Unlock-ADAccount	incorrect	Move-ADObject	incorrect

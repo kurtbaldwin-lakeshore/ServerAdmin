@@ -1,0 +1,5 @@
+MC	Which switch makes Install-ADDSDomainController build an RODC?	-ReadOnlyReplica	correct	-InstallDns	incorrect	-Credential	incorrect	-ForestMode	incorrect
+TF	By default, an RODC stores the passwords of all domain users.	false
+MC	An account is on both the Allowed and the Denied list of an RODC. What happens?	Deny wins: the password is never cached	correct	Allow wins	incorrect	The first list read wins	incorrect	The RODC asks an administrator	incorrect
+MC	Which sign-in option lets Entra ID check passwords itself?	Password hash sync	correct	Pass-through authentication	incorrect	Federation with AD FS	incorrect	Kerberos	incorrect
+MC	What was Microsoft Entra ID called before?	Azure Active Directory (Azure AD)	correct	Active Directory Domain Services	incorrect	Windows Admin Center	incorrect	Intune	incorrect

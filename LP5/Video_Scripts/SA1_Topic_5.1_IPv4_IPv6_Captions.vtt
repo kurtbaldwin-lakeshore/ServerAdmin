@@ -1,0 +1,1087 @@
+WEBVTT
+
+NOTE SA1 Topic 5.1: IPv4 and IPv6 for Servers. Timings are estimates at 150 words a minute; re-sync after recording.
+
+1
+00:00:00.000 --> 00:00:01.600
+Welcome to Topic 5.
+
+2
+00:00:01.850 --> 00:00:07.850
+1, IPv4 and IPv6 for Servers, the first
+topic of Learning Plan 5 on addressing.
+
+3
+00:00:08.100 --> 00:00:11.300
+You have typed IP addresses since Lab 1.
+
+4
+00:00:11.550 --> 00:00:13.950
+4; now you will understand them.
+
+5
+00:00:14.200 --> 00:00:19.800
+You will review the four IPv4 settings
+every server needs and why servers are
+
+6
+00:00:20.050 --> 00:00:21.250
+static.
+
+7
+00:00:21.500 --> 00:00:26.300
+You will spot private ranges and the APIPA
+address that signals trouble.
+
+8
+00:00:26.550 --> 00:00:30.550
+You will work out a subnet and split a
+network.
+
+9
+00:00:30.800 --> 00:00:36.000
+Then you meet IPv6: how to read, shorten,
+classify, set and test it.
+
+10
+00:00:36.250 --> 00:00:38.650
+Every server needs four IPv4 settings.
+
+11
+00:00:38.900 --> 00:00:40.900
+Here they are for SRV01.
+
+12
+00:00:41.150 --> 00:00:42.750
+The IP address, 192.
+
+13
+00:00:43.000 --> 00:00:44.200
+168.
+
+14
+00:00:44.450 --> 00:00:45.650
+50.
+
+15
+00:00:45.900 --> 00:00:48.300
+20, identifies it on the network.
+
+16
+00:00:48.550 --> 00:00:50.150
+The subnet mask, 255.
+
+17
+00:00:50.400 --> 00:00:51.600
+255.
+
+18
+00:00:51.850 --> 00:00:53.050
+255.
+
+19
+00:00:53.300 --> 00:01:00.100
+0, or slash 24, says which part of the
+address is the network and which part is
+
+20
+00:01:00.350 --> 00:01:01.550
+the host.
+
+21
+00:01:01.800 --> 00:01:08.200
+The default gateway is the router to other
+networks; our pod has no router, so it
+
+22
+00:01:08.450 --> 00:01:09.650
+stays empty.
+
+23
+00:01:09.900 --> 00:01:11.900
+And the DNS server, 192.
+
+24
+00:01:12.150 --> 00:01:13.350
+168.
+
+25
+00:01:13.600 --> 00:01:14.800
+50.
+
+26
+00:01:15.050 --> 00:01:16.650
+10, which is DC01.
+
+27
+00:01:16.900 --> 00:01:18.900
+SRV01 sends anything inside 192.
+
+28
+00:01:19.150 --> 00:01:20.350
+168.
+
+29
+00:01:20.600 --> 00:01:21.800
+50.
+
+30
+00:01:22.050 --> 00:01:23.250
+0 directly.
+
+31
+00:01:23.500 --> 00:01:26.300
+Anything else would go to the gateway.
+
+32
+00:01:26.550 --> 00:01:28.150
+Why are servers static?
+
+33
+00:01:28.400 --> 00:01:32.400
+Because DNS records, firewall rules and
+clients point at them.
+
+34
+00:01:32.650 --> 00:01:36.650
+If a server's address changed, all of that
+would break.
+
+35
+00:01:36.900 --> 00:01:41.300
+Next, the private ranges from RFC 1918: 10
+slash 8, 172.
+
+36
+00:01:41.550 --> 00:01:43.550
+16 slash 12, and 192.
+
+37
+00:01:43.800 --> 00:01:45.000
+168 slash 16.
+
+38
+00:01:45.250 --> 00:01:50.450
+Anyone can use them inside an
+organization, and they are never routed on
+
+39
+00:01:50.700 --> 00:01:51.900
+the internet.
+
+40
+00:01:52.150 --> 00:01:53.350
+Finally, APIPA.
+
+41
+00:01:53.600 --> 00:02:00.000
+When a computer set to automatic gets no
+answer from DHCP, it gives itself a 169.
+
+42
+00:02:00.250 --> 00:02:01.450
+254 address.
+
+43
+00:02:01.700 --> 00:02:04.900
+On a server, the static address is
+missing.
+
+44
+00:02:05.150 --> 00:02:08.350
+Let's refresh subnetting with our own pod
+network.
+
+45
+00:02:08.600 --> 00:02:15.800
+Slash 24 means 24 ones in the mask, so the
+first three octets are the network and the
+
+46
+00:02:16.050 --> 00:02:19.250
+last octet, 8 bits, is the host part.
+
+47
+00:02:19.500 --> 00:02:23.100
+All host bits zero gives the network
+address, 192.
+
+48
+00:02:23.350 --> 00:02:24.550
+168.
+
+49
+00:02:24.800 --> 00:02:26.000
+50.
+
+50
+00:02:26.250 --> 00:02:27.450
+0.
+
+51
+00:02:27.700 --> 00:02:30.100
+All ones gives the broadcast, 192.
+
+52
+00:02:30.350 --> 00:02:31.550
+168.
+
+53
+00:02:31.800 --> 00:02:33.000
+50.
+
+54
+00:02:33.250 --> 00:02:34.450
+255.
+
+55
+00:02:34.700 --> 00:02:35.900
+Everything between, .
+
+56
+00:02:36.150 --> 00:02:37.350
+1 to .
+
+57
+00:02:37.600 --> 00:02:38.800
+254, is usable.
+
+58
+00:02:39.050 --> 00:02:45.050
+That is 2 to the power 8, which is 256,
+minus 2, so 254 hosts.
+
+59
+00:02:45.300 --> 00:02:48.900
+Our servers, CLIENT01 and the DHCP scope
+all fit.
+
+60
+00:02:49.150 --> 00:02:50.750
+A campus owns 10.
+
+61
+00:02:51.000 --> 00:02:52.200
+50.
+
+62
+00:02:52.450 --> 00:02:53.650
+0.
+
+63
+00:02:53.900 --> 00:02:57.900
+0 slash 16 and wants four subnets, one per
+building.
+
+64
+00:02:58.150 --> 00:03:02.150
+Four is 2 times 2, so borrow 2 host bits.
+
+65
+00:03:02.400 --> 00:03:07.200
+The prefix grows from 16 to 18, and the
+mask becomes 255.
+
+66
+00:03:07.450 --> 00:03:08.650
+255.
+
+67
+00:03:08.900 --> 00:03:10.100
+192.
+
+68
+00:03:10.350 --> 00:03:11.550
+0.
+
+69
+00:03:11.800 --> 00:03:19.400
+The block size is 256 minus 192, which is
+64, so subnets start at 0, 64, 128 and 192
+
+70
+00:03:19.650 --> 00:03:21.250
+in the third octet.
+
+71
+00:03:21.500 --> 00:03:24.700
+Each has 14 host bits, so 16,382 hosts.
+
+72
+00:03:24.950 --> 00:03:26.150
+Check: 10.
+
+73
+00:03:26.400 --> 00:03:27.600
+50.
+
+74
+00:03:27.850 --> 00:03:29.050
+130.
+
+75
+00:03:29.300 --> 00:03:33.700
+7 sits between 128 and 191, so it is in
+10.
+
+76
+00:03:33.950 --> 00:03:35.150
+50.
+
+77
+00:03:35.400 --> 00:03:36.600
+128.
+
+78
+00:03:36.850 --> 00:03:38.050
+0 slash 18.
+
+79
+00:03:38.300 --> 00:03:41.900
+IPv6 addresses are 128 bits long, four
+times IPv4.
+
+80
+00:03:42.150 --> 00:03:48.550
+They are eight groups of four hexadecimal
+digits, zero to nine and a to f, separated
+
+81
+00:03:48.800 --> 00:03:50.000
+by colons.
+
+82
+00:03:50.250 --> 00:03:56.650
+A subnet is almost always slash 64: the
+first 64 bits are the network prefix, and
+
+83
+00:03:56.900 --> 00:04:01.300
+the last 64 bits are the interface ID, the
+host part.
+
+84
+00:04:01.550 --> 00:04:03.150
+IPv4 has about 4.
+
+85
+00:04:03.400 --> 00:04:06.600
+3 billion addresses, and the world ran
+out.
+
+86
+00:04:06.850 --> 00:04:11.250
+IPv6 gives every single subnet 2 to the
+power 64 addresses.
+
+87
+00:04:11.500 --> 00:04:14.300
+Our pod prefix is fd00:50:: slash 64.
+
+88
+00:04:14.550 --> 00:04:16.550
+There are two shortening rules.
+
+89
+00:04:16.800 --> 00:04:20.400
+Rule one: drop the leading zeros in each
+group.
+
+90
+00:04:20.650 --> 00:04:24.250
+0050 becomes 50, and 0000 becomes a single
+0.
+
+91
+00:04:24.500 --> 00:04:28.100
+Zeros at the end stay, so fd00 stays fd00.
+
+92
+00:04:28.350 --> 00:04:33.150
+Rule two: replace one run of all-zero
+groups with a double colon.
+
+93
+00:04:33.400 --> 00:04:38.200
+Only once, or nobody could tell how many
+zeros each one hides.
+
+94
+00:04:38.450 --> 00:04:40.850
+Our long SRV01 address becomes
+fd00:50::20.
+
+95
+00:04:41.100 --> 00:04:47.100
+To expand, work backwards: fill each group
+to four digits, then add zero groups until
+
+96
+00:04:47.350 --> 00:04:48.550
+there are eight.
+
+97
+00:04:48.800 --> 00:04:52.000
+You will meet five kinds of IPv6 address.
+
+98
+00:04:52.250 --> 00:04:53.850
+Link-local starts with fe80.
+
+99
+00:04:54.100 --> 00:04:59.300
+Windows makes one on every adapter; it
+works only on the local link.
+
+100
+00:04:59.550 --> 00:05:05.150
+Unique local addresses, fc00 slash 7, with
+fd00 actually in use, are the private
+
+101
+00:05:05.400 --> 00:05:07.000
+ones, like RFC 1918.
+
+102
+00:05:07.250 --> 00:05:10.050
+Global unicast, 2000 slash 3, are public.
+
+103
+00:05:10.300 --> 00:05:13.500
+The loopback is colon colon 1, like 127.
+
+104
+00:05:13.750 --> 00:05:14.950
+0.
+
+105
+00:05:15.200 --> 00:05:16.400
+0.
+
+106
+00:05:16.650 --> 00:05:17.850
+1.
+
+107
+00:05:18.100 --> 00:05:21.700
+And multicast starts with ff; IPv6 has no
+broadcast.
+
+108
+00:05:21.950 --> 00:05:27.150
+The percent number after a link-local
+address is the zone ID, the adapter's
+
+109
+00:05:27.400 --> 00:05:28.600
+interface index.
+
+110
+00:05:28.850 --> 00:05:32.850
+First, every host makes a link-local
+address, with no help.
+
+111
+00:05:33.100 --> 00:05:37.900
+Then a router sends a Router Advertisement
+with the slash 64 prefix.
+
+112
+00:05:38.150 --> 00:05:40.950
+The host adds its own interface ID.
+
+113
+00:05:41.200 --> 00:05:45.200
+That is SLAAC, stateless address
+autoconfiguration, and no server is
+
+114
+00:05:45.450 --> 00:05:46.650
+needed.
+
+115
+00:05:46.900 --> 00:05:51.700
+It checks that nobody else uses the
+address, then starts using it.
+
+116
+00:05:51.950 --> 00:05:57.550
+Flags in the advertisement can also send
+hosts to DHCPv6, either for the address
+
+117
+00:05:57.800 --> 00:06:00.600
+itself or just for options like DNS.
+
+118
+00:06:00.850 --> 00:06:04.850
+Our pod has no router, so you set static
+addresses.
+
+119
+00:06:05.100 --> 00:06:08.300
+Before you change anything, read what is
+there.
+
+120
+00:06:08.550 --> 00:06:13.750
+ipconfig slash all on SRV01 shows DHCP
+Enabled: No, so IPv4 is static.
+
+121
+00:06:14.000 --> 00:06:17.600
+Next comes a link-local IPv6 address
+starting with fe80.
+
+122
+00:06:17.850 --> 00:06:24.250
+Windows made it, so yours is different,
+and you never write it down as a setting.
+
+123
+00:06:24.500 --> 00:06:30.500
+Then the IPv4 address and mask you typed,
+an empty default gateway, and the DNS
+
+124
+00:06:30.750 --> 00:06:31.950
+server 192.
+
+125
+00:06:32.200 --> 00:06:33.400
+168.
+
+126
+00:06:33.650 --> 00:06:34.850
+50.
+
+127
+00:06:35.100 --> 00:06:36.300
+10, DC01.
+
+128
+00:06:36.550 --> 00:06:38.150
+Every member of sa1.
+
+129
+00:06:38.400 --> 00:06:40.400
+lab uses DC01 for DNS.
+
+130
+00:06:40.650 --> 00:06:44.250
+Keep this output in mind: it is your
+baseline.
+
+131
+00:06:44.500 --> 00:06:46.500
+Here is the GUI way.
+
+132
+00:06:46.750 --> 00:06:47.950
+Open ncpa.
+
+133
+00:06:48.200 --> 00:06:50.600
+cpl, right-click Ethernet and choose
+Properties.
+
+134
+00:06:50.850 --> 00:06:56.050
+Select Internet Protocol Version 6, TCP
+slash IPv6, and keep its box checked.
+
+135
+00:06:56.300 --> 00:06:57.500
+Then select Properties.
+
+136
+00:06:57.750 --> 00:07:00.150
+Choose Use the following IPv6 address.
+
+137
+00:07:00.400 --> 00:07:02.000
+For DC01, type fd00:50::10.
+
+138
+00:07:02.250 --> 00:07:04.650
+In Subnet prefix length, type 64.
+
+139
+00:07:04.900 --> 00:07:08.500
+That is a number of bits, not a mask.
+
+140
+00:07:08.750 --> 00:07:14.750
+Leave Default gateway empty, because the
+pod has no router, and leave the DNS boxes
+
+141
+00:07:15.000 --> 00:07:16.200
+as they are.
+
+142
+00:07:16.450 --> 00:07:20.050
+Then select OK, and Close the Ethernet
+Properties window.
+
+143
+00:07:20.300 --> 00:07:23.100
+Every GUI task has a PowerShell twin.
+
+144
+00:07:23.350 --> 00:07:27.350
+On a new server, find the adapter name
+with Get-NetAdapter.
+
+145
+00:07:27.600 --> 00:07:32.000
+Then New-NetIPAddress with the interface
+alias, the IP address and dash
+
+146
+00:07:32.250 --> 00:07:33.450
+PrefixLength 24.
+
+147
+00:07:33.700 --> 00:07:37.300
+Then check with ipconfig that DHCP Enabled
+shows No.
+
+148
+00:07:37.550 --> 00:07:40.750
+With a router you would add dash
+DefaultGateway.
+
+149
+00:07:41.000 --> 00:07:43.400
+Set-DnsClientServerAddress sets the DNS
+server list.
+
+150
+00:07:43.650 --> 00:07:46.850
+Finally, Get-NetIPConfiguration is the
+PowerShell version of ipconfig.
+
+151
+00:07:47.100 --> 00:07:50.300
+SRV01 already has these values from Lab 1.
+
+152
+00:07:50.550 --> 00:07:52.150
+4 and Lab 4.
+
+153
+00:07:52.400 --> 00:07:56.000
+3, so in the lab you only read them.
+
+154
+00:07:56.250 --> 00:07:59.450
+For IPv6 you use the very same cmdlet.
+
+155
+00:07:59.700 --> 00:08:03.300
+New-NetIPAddress, interface Ethernet, IP
+address fd00:50::20, prefix length 64.
+
+156
+00:08:03.550 --> 00:08:07.150
+Windows sees the colons and creates an
+IPv6 address.
+
+157
+00:08:07.400 --> 00:08:11.000
+Then Get-NetIPAddress with dash
+AddressFamily IPv6 lists the IPv6
+
+158
+00:08:11.250 --> 00:08:12.450
+addresses.
+
+159
+00:08:12.700 --> 00:08:16.700
+Your new one shows PrefixOrigin Manual,
+because you typed it.
+
+160
+00:08:16.950 --> 00:08:21.350
+The link-local one shows WellKnown; it
+stays, and that is fine.
+
+161
+00:08:21.600 --> 00:08:25.600
+The loopback colon colon 1 sits on its own
+pseudo-interface.
+
+162
+00:08:25.850 --> 00:08:29.850
+Set-DnsClientServerAddress also accepts
+IPv6 DNS server addresses, if a network
+
+163
+00:08:30.100 --> 00:08:31.300
+ever needs them.
+
+164
+00:08:31.550 --> 00:08:32.750
+Now test.
+
+165
+00:08:33.000 --> 00:08:34.200
+One catch first.
+
+166
+00:08:34.450 --> 00:08:35.650
+In Lab 1.
+
+167
+00:08:35.900 --> 00:08:38.700
+4 you opened ping for IPv4 only.
+
+168
+00:08:38.950 --> 00:08:44.950
+IPv6 ping uses ICMPv6, and it has its own
+firewall rule: File and Printer Sharing,
+
+169
+00:08:45.200 --> 00:08:46.400
+Echo Request, ICMPv6-In.
+
+170
+00:08:46.650 --> 00:08:50.250
+Enable it on each computer you want to
+ping.
+
+171
+00:08:50.500 --> 00:08:52.900
+Then ping dash 6 forces IPv6.
+
+172
+00:08:53.150 --> 00:08:57.150
+Ping DC01 at fd00:50::10 and you should
+get four replies.
+
+173
+00:08:57.400 --> 00:09:01.000
+Test-Connection is the PowerShell ping;
+here it reaches CLIENT01.
+
+174
+00:09:01.250 --> 00:09:07.250
+Test by address in this lab, and you will
+see why on the next slide.
+
+175
+00:09:07.500 --> 00:09:12.700
+When a name has both IPv4 and IPv6
+addresses, Windows prefers IPv6 global
+
+176
+00:09:12.950 --> 00:09:14.150
+addresses by default.
+
+177
+00:09:14.400 --> 00:09:18.000
+A prefix policy table decides, and
+Get-NetPrefixPolicy shows it.
+
+178
+00:09:18.250 --> 00:09:24.250
+A detail: that table ranks unique local
+addresses below IPv4, so in our pod names
+
+179
+00:09:24.500 --> 00:09:26.500
+may still answer on IPv4.
+
+180
+00:09:26.750 --> 00:09:28.350
+Now the important rule.
+
+181
+00:09:28.600 --> 00:09:31.000
+Microsoft does not recommend disabling
+IPv6.
+
+182
+00:09:31.250 --> 00:09:36.850
+Windows uses it internally, and on a
+domain controller LDAP over UDP 389 stops
+
+183
+00:09:37.100 --> 00:09:38.300
+working.
+
+184
+00:09:38.550 --> 00:09:42.950
+If IPv4 really must win, set
+DisabledComponents to hex 20 instead.
+
+185
+00:09:43.200 --> 00:09:44.800
+Four mistakes to avoid.
+
+186
+00:09:45.050 --> 00:09:49.850
+One: typing a dotted mask or slash 24 for
+an IPv6 address.
+
+187
+00:09:50.100 --> 00:09:52.900
+IPv6 uses a prefix length, normally 64.
+
+188
+00:09:53.150 --> 00:09:55.550
+Two: using the double colon twice.
+
+189
+00:09:55.800 --> 00:09:59.800
+Use it once, for the longest run of zero
+groups.
+
+190
+00:10:00.050 --> 00:10:04.050
+Three: clearing the IPv6 check box to keep
+things simple.
+
+191
+00:10:04.300 --> 00:10:08.700
+Keep IPv6 bound, and prefer IPv4 with hex
+20 if needed.
+
+192
+00:10:08.950 --> 00:10:13.350
+Four: ping dash 6 times out, so you retype
+the address.
+
+193
+00:10:13.600 --> 00:10:17.600
+Check the firewall first, because the
+ICMPv6 rule is separate.
+
+194
+00:10:17.850 --> 00:10:19.450
+Time to check yourself.
+
+195
+00:10:19.700 --> 00:10:22.100
+First, a file server shows 169.
+
+196
+00:10:22.350 --> 00:10:23.550
+254.
+
+197
+00:10:23.800 --> 00:10:25.000
+20.
+
+198
+00:10:25.250 --> 00:10:26.450
+7.
+
+199
+00:10:26.700 --> 00:10:30.700
+What does that tell you, and what is the
+fix?
+
+200
+00:10:30.950 --> 00:10:33.750
+Second, how many hosts fit in 10.
+
+201
+00:10:34.000 --> 00:10:35.200
+50.
+
+202
+00:10:35.450 --> 00:10:36.650
+64.
+
+203
+00:10:36.900 --> 00:10:40.500
+0 slash 18, and what is its broadcast
+address?
+
+204
+00:10:40.750 --> 00:10:46.750
+Third, shorten fd00:0050 followed by five
+zero groups and 0020, and say what type of
+
+205
+00:10:47.000 --> 00:10:48.200
+address it is.
+
+206
+00:10:48.450 --> 00:10:54.050
+Fourth, a colleague wants to clear IPv6 on
+DC01 because we only use IPv4.
+
+207
+00:10:54.300 --> 00:10:55.900
+What do you say?
+
+208
+00:10:56.150 --> 00:11:00.150
+Pause the video, answer in your own words,
+then continue.
+
+209
+00:11:00.400 --> 00:11:02.000
+Here are the answers.
+
+210
+00:11:02.250 --> 00:11:03.850
+One: that is APIPA.
+
+211
+00:11:04.100 --> 00:11:08.100
+The adapter is on automatic and no DHCP
+server answered.
+
+212
+00:11:08.350 --> 00:11:10.750
+Give the server its static address.
+
+213
+00:11:11.000 --> 00:11:17.000
+Two: slash 18 leaves 14 host bits, so
+16,382 hosts, and the broadcast is 10.
+
+214
+00:11:17.250 --> 00:11:18.450
+50.
+
+215
+00:11:18.700 --> 00:11:19.900
+127.
+
+216
+00:11:20.150 --> 00:11:23.350
+255, just before the next subnet at 10.
+
+217
+00:11:23.600 --> 00:11:24.800
+50.
+
+218
+00:11:25.050 --> 00:11:26.250
+128.
+
+219
+00:11:26.500 --> 00:11:27.700
+0.
+
+220
+00:11:27.950 --> 00:11:33.150
+Three: fd00:50::20, a unique local
+address, because fd00 slash 8 is the ULA
+
+221
+00:11:33.400 --> 00:11:34.600
+range in use.
+
+222
+00:11:34.850 --> 00:11:36.450
+Four: keep IPv6 enabled.
+
+223
+00:11:36.700 --> 00:11:41.900
+Microsoft does not recommend disabling it,
+and Active Directory on DC01 depends on
+
+224
+00:11:42.150 --> 00:11:43.350
+it.
+
+225
+00:11:43.600 --> 00:11:46.000
+Let's do it in the pod.
+
+226
+00:11:46.250 --> 00:11:51.850
+On SRV01, ipconfig slash all shows a
+static IPv4 address and a link-local IPv6
+
+227
+00:11:52.100 --> 00:11:53.700
+address that Windows made.
+
+228
+00:11:53.950 --> 00:11:59.550
+On DC01, I open the TCP slash IPv6
+properties, choose Use the following IPv6
+
+229
+00:11:59.800 --> 00:12:03.800
+address, type fd00:50::10 with prefix
+length 64, and select OK.
+
+230
+00:12:04.050 --> 00:12:07.650
+On SRV01, New-NetIPAddress adds
+fd00:50::20, and Get-NetIPAddress shows it
+
+231
+00:12:07.900 --> 00:12:09.100
+as Manual.
+
+232
+00:12:09.350 --> 00:12:14.550
+With the ICMPv6 echo rule enabled and
+CLIENT01 addressed, ping dash 6 gets
+
+233
+00:12:14.800 --> 00:12:16.000
+replies.
+
+234
+00:12:16.250 --> 00:12:19.450
+Finally, Get-NetPrefixPolicy shows why we
+test by address.
+
+235
+00:12:19.700 --> 00:12:26.500
+To wrap up: a server needs an address, a
+prefix, a gateway if there is a router,
+
+236
+00:12:26.750 --> 00:12:29.150
+and DNS, and it is static.
+
+237
+00:12:29.400 --> 00:12:30.600
+Read 169.
+
+238
+00:12:30.850 --> 00:12:32.850
+254 as a DHCP problem.
+
+239
+00:12:33.100 --> 00:12:39.500
+A subnet has a network address, a host
+range and a broadcast, and you borrow bits
+
+240
+00:12:39.750 --> 00:12:40.950
+to split it.
+
+241
+00:12:41.200 --> 00:12:45.200
+IPv6 is 128 bits, slash 64, shortened with
+two rules.
+
+242
+00:12:45.450 --> 00:12:46.650
+Keep it on.
+
+243
+00:12:46.900 --> 00:12:48.100
+In Lab 5.
+
+244
+00:12:48.350 --> 00:12:53.950
+1, about 60 minutes and practice only, you
+read settings, subnet on paper, add
+
+245
+00:12:54.200 --> 00:12:57.400
+fd00:50 addresses and test with ping dash
+6.

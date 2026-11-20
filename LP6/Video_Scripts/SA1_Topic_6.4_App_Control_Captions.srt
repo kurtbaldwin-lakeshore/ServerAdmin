@@ -1,0 +1,913 @@
+1
+00:00:00,000 --> 00:00:01,600
+Welcome to Topic 6.
+
+2
+00:00:01,850 --> 00:00:03,850
+4, App Control for Business.
+
+3
+00:00:04,100 --> 00:00:07,700
+Now you control which programs may run at
+all.
+
+4
+00:00:07,950 --> 00:00:14,350
+You will learn the difference between an
+allow list and a block list, and when to
+
+5
+00:00:14,600 --> 00:00:16,600
+pick App Control or AppLocker.
+
+6
+00:00:16,850 --> 00:00:23,250
+You will read a policy file and start from
+an example policy that ships with Windows.
+
+7
+00:00:23,500 --> 00:00:29,100
+You will meet policy formats, deploy a
+policy with CiTool or Group Policy, read
+
+8
+00:00:29,350 --> 00:00:34,150
+the audit events, and remove a policy
+safely, all in audit mode.
+
+9
+00:00:34,400 --> 00:00:37,200
+There are two ways to control
+applications.
+
+10
+00:00:37,450 --> 00:00:41,450
+A block list allows everything except the
+files you name.
+
+11
+00:00:41,700 --> 00:00:46,500
+Brand new malware is not on the list yet,
+so it runs.
+
+12
+00:00:46,750 --> 00:00:49,950
+An allow list works the other way around.
+
+13
+00:00:50,200 --> 00:00:55,000
+Only files the policy trusts may run, so
+unknown code is stopped.
+
+14
+00:00:55,250 --> 00:00:59,650
+When a program starts, Windows asks: does
+a rule trust it?
+
+15
+00:00:59,900 --> 00:01:01,500
+If yes, it runs.
+
+16
+00:01:01,750 --> 00:01:06,150
+If no, an enforced policy blocks it and
+logs event 3077.
+
+17
+00:01:06,400 --> 00:01:11,200
+In audit mode it still runs, and Windows
+logs event 3076 instead.
+
+18
+00:01:11,450 --> 00:01:13,850
+Windows has two application control
+technologies.
+
+19
+00:01:14,100 --> 00:01:17,300
+App Control for Business arrived with
+Windows 10.
+
+20
+00:01:17,550 --> 00:01:20,750
+Its old name was Windows Defender
+Application Control.
+
+21
+00:01:21,000 --> 00:01:26,200
+Microsoft services it as a security
+feature, it covers kernel drivers, and it
+
+22
+00:01:26,450 --> 00:01:28,050
+keeps getting new features.
+
+23
+00:01:28,300 --> 00:01:32,300
+Its policies apply to the whole device and
+every user.
+
+24
+00:01:32,550 --> 00:01:34,950
+AppLocker is older, from Windows 7.
+
+25
+00:01:35,200 --> 00:01:40,400
+It only gets security fixes, but it can
+target specific users and groups.
+
+26
+00:01:40,650 --> 00:01:46,650
+So the rule of thumb: use App Control
+where you can, and add AppLocker when
+
+27
+00:01:46,900 --> 00:01:50,500
+different people on a shared PC need
+different rules.
+
+28
+00:01:50,750 --> 00:01:53,950
+An App Control policy is an XML file.
+
+29
+00:01:54,200 --> 00:01:58,200
+At the top you see the PolicyID and the
+BasePolicyID.
+
+30
+00:01:58,450 --> 00:02:04,850
+They are GUIDs, long unique numbers, and
+for a base policy both hold the same GUID.
+
+31
+00:02:05,100 --> 00:02:07,100
+Next comes the Rules section.
+
+32
+00:02:07,350 --> 00:02:12,950
+These are rule options, switches for the
+whole policy, such as Enabled colon Audit
+
+33
+00:02:13,200 --> 00:02:14,400
+Mode.
+
+34
+00:02:14,650 --> 00:02:17,450
+Then come the file rules and signers.
+
+35
+00:02:17,700 --> 00:02:21,700
+They say which files or publishers are
+trusted, or denied.
+
+36
+00:02:21,950 --> 00:02:27,550
+Near the end, the Settings section holds
+the friendly name that tools like CiTool
+
+37
+00:02:27,800 --> 00:02:29,000
+show.
+
+38
+00:02:29,250 --> 00:02:31,650
+PowerShell cmdlets edit it for you.
+
+39
+00:02:31,900 --> 00:02:33,500
+Rule options have numbers.
+
+40
+00:02:33,750 --> 00:02:38,950
+Option 0, Enabled colon UMCI, means the
+policy also checks user-mode programs, not
+
+41
+00:02:39,200 --> 00:02:40,400
+only drivers.
+
+42
+00:02:40,650 --> 00:02:47,050
+Option 3, Enabled colon Audit Mode, is the
+one to remember: it logs what would be
+
+43
+00:02:47,300 --> 00:02:48,900
+blocked, and blocks nothing.
+
+44
+00:02:49,150 --> 00:02:52,750
+Option 6 lets the policy file itself stay
+unsigned.
+
+45
+00:02:53,000 --> 00:02:55,800
+Option 11 turns off checks of scripts.
+
+46
+00:02:56,050 --> 00:03:02,050
+Option 16 lets later policy updates apply
+without a restart, and option 17 lets a
+
+47
+00:03:02,300 --> 00:03:04,300
+base policy accept supplemental policies.
+
+48
+00:03:04,550 --> 00:03:09,750
+Set-RuleOption with dash Option 3 adds
+audit mode; adding dash Delete removes it,
+
+49
+00:03:10,000 --> 00:03:11,600
+which enforces the policy.
+
+50
+00:03:11,850 --> 00:03:15,850
+A rule level is how a rule recognizes a
+file.
+
+51
+00:03:16,100 --> 00:03:18,500
+Hash trusts the exact file contents.
+
+52
+00:03:18,750 --> 00:03:21,150
+Every update needs a new rule.
+
+53
+00:03:21,400 --> 00:03:23,800
+FilePath trusts a folder or path.
+
+54
+00:03:24,050 --> 00:03:26,450
+Use it only for admin-only folders.
+
+55
+00:03:26,700 --> 00:03:33,100
+At run time App Control ignores a path
+rule for a folder that normal users can
+
+56
+00:03:33,350 --> 00:03:36,150
+write to, like C colon Users Public.
+
+57
+00:03:36,400 --> 00:03:41,600
+Publisher trusts a signing certificate and
+company name, so all of that company's
+
+58
+00:03:41,850 --> 00:03:43,050
+signed software.
+
+59
+00:03:43,300 --> 00:03:47,700
+FilePublisher narrows it to one file name
+and a minimum version.
+
+60
+00:03:47,950 --> 00:03:51,550
+New-CIPolicy picks levels with dash Level
+and dash Fallback.
+
+61
+00:03:51,800 --> 00:03:55,800
+Windows ships example policies in C colon
+Windows, schemas, CodeIntegrity,
+
+62
+00:03:56,050 --> 00:03:57,250
+ExamplePolicies.
+
+63
+00:03:57,500 --> 00:04:01,100
+DefaultWindows comes in an audit and an
+enforced version.
+
+64
+00:04:01,350 --> 00:04:07,350
+It allows Windows itself, kernel drivers
+and Store apps, and it is our lab policy.
+
+65
+00:04:07,600 --> 00:04:10,800
+AllowMicrosoft adds apps signed by
+Microsoft, like Office.
+
+66
+00:04:11,050 --> 00:04:15,050
+AllowAll allows everything, the starting
+point for a block list.
+
+67
+00:04:15,300 --> 00:04:18,900
+There is also an example supplemental
+policy for DefaultWindows.
+
+68
+00:04:19,150 --> 00:04:24,750
+Microsoft also offers a graphical App
+Control Wizard, but it is a download, and
+
+69
+00:04:25,000 --> 00:04:27,000
+our pod has no internet.
+
+70
+00:04:27,250 --> 00:04:29,250
+Policies come in two formats.
+
+71
+00:04:29,500 --> 00:04:35,100
+The old single policy format allows one
+policy per computer, in a file called
+
+72
+00:04:35,350 --> 00:04:36,550
+SiPolicy dot p7b.
+
+73
+00:04:36,800 --> 00:04:42,400
+The multiple policy format, from Windows
+10 1903 and in Windows 11, lets many
+
+74
+00:04:42,650 --> 00:04:49,050
+policies work side by side, each in a file
+named after its policy ID, dot cip.
+
+75
+00:04:49,300 --> 00:04:53,700
+Two base policies form an intersection: a
+file must pass both.
+
+76
+00:04:53,950 --> 00:04:59,150
+A supplemental policy adds trust to a
+base: a file passes either one.
+
+77
+00:04:59,400 --> 00:05:02,200
+The base needs option 17 for that.
+
+78
+00:05:02,450 --> 00:05:06,850
+Set-CIPolicyIdInfo links a supplemental to
+its base, and Merge-CIPolicy joins rules.
+
+79
+00:05:07,100 --> 00:05:10,300
+Here are the first lab commands on
+CLIENT01.
+
+80
+00:05:10,550 --> 00:05:15,350
+Make a folder, C colon AppControl, and
+copy DefaultWindows underscore Audit dot
+
+81
+00:05:15,600 --> 00:05:19,200
+xml into it as SA1 underscore Audit dot
+xml.
+
+82
+00:05:19,450 --> 00:05:23,450
+Then Set-CIPolicyIdInfo with dash
+ResetPolicyID gives the copy its own
+
+83
+00:05:23,700 --> 00:05:27,300
+unique ID and puts it in multiple policy
+format.
+
+84
+00:05:27,550 --> 00:05:31,150
+Dash PolicyName sets the friendly name,
+SA1 Audit CLIENT01.
+
+85
+00:05:31,400 --> 00:05:35,800
+Set-RuleOption with dash Option 3 makes
+sure audit mode is on.
+
+86
+00:05:36,050 --> 00:05:40,850
+Finally, list the rule options and check
+that audit mode is there.
+
+87
+00:05:41,100 --> 00:05:43,900
+How does a policy reach a computer?
+
+88
+00:05:44,150 --> 00:05:49,750
+CiTool, with dash dash update-policy, is
+built into Windows 11 22H2 and later and
+
+89
+00:05:50,000 --> 00:05:51,200
+Windows Server 2025.
+
+90
+00:05:51,450 --> 00:05:57,050
+Group Policy has a setting called Deploy
+App Control for Business, but it supports
+
+91
+00:05:57,300 --> 00:06:01,300
+only the single policy format, and a
+restart applies it.
+
+92
+00:06:01,550 --> 00:06:05,550
+Intune uses a configuration service
+provider that handles multiple policies
+
+93
+00:06:05,800 --> 00:06:07,000
+without a restart.
+
+94
+00:06:07,250 --> 00:06:11,650
+Our policy is in multiple policy format,
+so CLIENT01 uses CiTool.
+
+95
+00:06:11,900 --> 00:06:15,500
+You still learn where the Group Policy
+setting lives.
+
+96
+00:06:15,750 --> 00:06:18,950
+Windows loads a binary file, not the XML.
+
+97
+00:06:19,200 --> 00:06:23,600
+First, read the policy ID from the XML
+into a variable.
+
+98
+00:06:23,850 --> 00:06:28,650
+The binary file name is that ID with the
+extension dot cip.
+
+99
+00:06:28,900 --> 00:06:31,700
+ConvertFrom-CIPolicy turns the XML into
+that binary.
+
+100
+00:06:31,950 --> 00:06:36,350
+Then CiTool dash dash update-policy
+deploys it, and it needs administrator
+
+101
+00:06:36,600 --> 00:06:37,800
+rights.
+
+102
+00:06:38,050 --> 00:06:44,450
+To check, run CiTool dash lp with dash
+json, convert the JSON, and filter on the
+
+103
+00:06:44,700 --> 00:06:45,900
+friendly name.
+
+104
+00:06:46,150 --> 00:06:49,750
+IsEnforced True means the policy is loaded
+and active.
+
+105
+00:06:50,000 --> 00:06:56,800
+Do not let the word fool you: it is still
+an audit mode policy, so it blocks
+
+106
+00:06:57,050 --> 00:06:58,250
+nothing.
+
+107
+00:06:58,500 --> 00:07:00,900
+Here is the Group Policy way.
+
+108
+00:07:01,150 --> 00:07:05,550
+In the Group Policy Management Editor, go
+to Computer Configuration, Policies,
+
+109
+00:07:05,800 --> 00:07:07,800
+Administrative Templates, System, Device
+Guard.
+
+110
+00:07:08,050 --> 00:07:10,450
+Open Deploy App Control for Business.
+
+111
+00:07:10,700 --> 00:07:16,700
+Select Enabled, then type the path of the
+policy file in the Code Integrity Policy
+
+112
+00:07:16,950 --> 00:07:18,150
+file path box.
+
+113
+00:07:18,400 --> 00:07:20,400
+Now remember the two limits.
+
+114
+00:07:20,650 --> 00:07:26,650
+This setting takes only a single format
+policy file, and computers apply it at the
+
+115
+00:07:26,900 --> 00:07:28,100
+next restart.
+
+116
+00:07:28,350 --> 00:07:35,150
+That is why the lab only looks at this
+setting on DC01 and does not use it.
+
+117
+00:07:35,400 --> 00:07:37,800
+App Control reports in Event Viewer.
+
+118
+00:07:38,050 --> 00:07:41,250
+Open Applications and Services Logs,
+Microsoft, Windows, CodeIntegrity,
+
+119
+00:07:41,500 --> 00:07:42,700
+Operational.
+
+120
+00:07:42,950 --> 00:07:45,750
+Event 3076 is the main audit event.
+
+121
+00:07:46,000 --> 00:07:51,200
+It means this file would have been blocked
+if the policy were enforced.
+
+122
+00:07:51,450 --> 00:07:55,450
+Event 3089 adds the signature details of
+that same file.
+
+123
+00:07:55,700 --> 00:08:01,700
+Event 3099 means a policy was loaded, so
+you can confirm your policy is active.
+
+124
+00:08:01,950 --> 00:08:04,750
+The fourth number to know is 3077.
+
+125
+00:08:05,000 --> 00:08:09,000
+That one means an enforced policy actually
+blocked a file.
+
+126
+00:08:09,250 --> 00:08:14,850
+Because we stay in audit mode, you will
+not see 3077 in the lab.
+
+127
+00:08:15,100 --> 00:08:18,300
+You can read the same log with PowerShell.
+
+128
+00:08:18,550 --> 00:08:20,950
+Get-WinEvent reads the CodeIntegrity
+Operational log.
+
+129
+00:08:21,200 --> 00:08:26,400
+Filter for IDs 3076 and 3077, and group
+them to count each one.
+
+130
+00:08:26,650 --> 00:08:30,250
+The count differs on every computer, which
+is normal.
+
+131
+00:08:30,500 --> 00:08:34,100
+There is no 3077 line, because nothing was
+blocked.
+
+132
+00:08:34,350 --> 00:08:40,350
+Then filter for event 3076 with a message
+that contains hello dot exe, our unsigned
+
+133
+00:08:40,600 --> 00:08:43,400
+test program, and show the first one.
+
+134
+00:08:43,650 --> 00:08:49,650
+The message names the file in C colon
+Users Public that would have been blocked.
+
+135
+00:08:49,900 --> 00:08:51,500
+First, stop the deployment.
+
+136
+00:08:51,750 --> 00:08:57,750
+If a Group Policy Object or an Intune
+profile still deploys the policy, it comes
+
+137
+00:08:58,000 --> 00:08:59,200
+right back.
+
+138
+00:08:59,450 --> 00:09:03,850
+Second, remove it with CiTool dash rp and
+the policy ID.
+
+139
+00:09:04,100 --> 00:09:06,900
+Third, restart if your version needs it.
+
+140
+00:09:07,150 --> 00:09:12,750
+From the Windows 11 2024 update on, an
+unsigned policy goes away without a
+
+141
+00:09:13,000 --> 00:09:14,200
+restart.
+
+142
+00:09:14,450 --> 00:09:19,250
+Fourth, check with CiTool dash lp that SA1
+Audit CLIENT01 is gone.
+
+143
+00:09:19,500 --> 00:09:23,100
+One big warning: never just delete a
+signed policy.
+
+144
+00:09:23,350 --> 00:09:25,350
+Windows can fail to start.
+
+145
+00:09:25,600 --> 00:09:29,600
+You deploy a signed replacement first, as
+Microsoft Learn describes.
+
+146
+00:09:29,850 --> 00:09:31,450
+Four mistakes to avoid.
+
+147
+00:09:31,700 --> 00:09:35,700
+One: deploying a new allow list straight
+in enforced mode.
+
+148
+00:09:35,950 --> 00:09:41,950
+Start in audit mode, read the 3076 events,
+fix the policy, and only then enforce.
+
+149
+00:09:42,200 --> 00:09:45,800
+Two: trusting a user-writable folder with
+a FilePath rule.
+
+150
+00:09:46,050 --> 00:09:51,650
+App Control ignores that rule at run time,
+so use Publisher or FilePublisher rules.
+
+151
+00:09:51,900 --> 00:09:56,700
+Three: pushing a multiple-format dot cip
+file with the Group Policy setting.
+
+152
+00:09:56,950 --> 00:09:59,750
+That setting takes the single format only.
+
+153
+00:09:60,000 --> 00:10:04,800
+Four: deleting a policy while a GPO or
+Intune still deploys it.
+
+154
+00:10:05,050 --> 00:10:09,050
+Turn off the deployment first, then remove
+it with CiTool.
+
+155
+00:10:09,300 --> 00:10:10,900
+Time to check yourself.
+
+156
+00:10:11,150 --> 00:10:15,150
+CLIENT01 runs the policy SA1 Audit
+CLIENT01, made from DefaultWindows
+
+157
+00:10:15,400 --> 00:10:16,600
+underscore Audit.
+
+158
+00:10:16,850 --> 00:10:20,450
+First, you see event 3076 for hello dot
+exe.
+
+159
+00:10:20,700 --> 00:10:24,300
+Did it run, and what would event 3077
+mean?
+
+160
+00:10:24,550 --> 00:10:30,550
+Second, which rule option makes a policy
+audit only, and how do you enforce it
+
+161
+00:10:30,800 --> 00:10:32,000
+later?
+
+162
+00:10:32,250 --> 00:10:37,850
+Third, why deploy with CiTool and not with
+the Deploy App Control for Business
+
+163
+00:10:38,100 --> 00:10:39,700
+setting in a GPO?
+
+164
+00:10:39,950 --> 00:10:44,750
+And fourth, students and staff share a PC
+and need different rules.
+
+165
+00:10:45,000 --> 00:10:46,600
+What do you add?
+
+166
+00:10:46,850 --> 00:10:49,650
+Pause the video and answer all four.
+
+167
+00:10:49,900 --> 00:10:52,300
+One: yes, hello dot exe ran.
+
+168
+00:10:52,550 --> 00:10:58,950
+3076 is an audit event, so it would have
+been blocked only if the policy were
+
+169
+00:10:59,200 --> 00:11:00,400
+enforced.
+
+170
+00:11:00,650 --> 00:11:03,850
+3077 means an enforced policy really
+blocked it.
+
+171
+00:11:04,100 --> 00:11:06,900
+Two: option 3, Enabled colon Audit Mode.
+
+172
+00:11:07,150 --> 00:11:12,350
+Remove it with Set-RuleOption dash Option
+3 dash Delete, convert again and redeploy,
+
+173
+00:11:12,600 --> 00:11:14,200
+but only after testing.
+
+174
+00:11:14,450 --> 00:11:20,050
+Three: the policy is in multiple policy
+format, and the Group Policy setting takes
+
+175
+00:11:20,300 --> 00:11:21,500
+single format only.
+
+176
+00:11:21,750 --> 00:11:27,350
+Four: add AppLocker on top of App Control,
+because AppLocker rules can target users
+
+177
+00:11:27,600 --> 00:11:28,800
+and groups.
+
+178
+00:11:29,050 --> 00:11:30,250
+Now on CLIENT01.
+
+179
+00:11:30,500 --> 00:11:37,300
+I make two test programs in C colon Users
+Public: a copy of whoami, which keeps its
+
+180
+00:11:37,550 --> 00:11:41,150
+Microsoft signature, and hello dot exe,
+which nobody signed.
+
+181
+00:11:41,400 --> 00:11:47,000
+I copy DefaultWindows Audit, reset its ID,
+name it SA1 Audit CLIENT01, and confirm
+
+182
+00:11:47,250 --> 00:11:48,450
+audit mode.
+
+183
+00:11:48,700 --> 00:11:55,900
+I convert it to a dot cip file and deploy
+it with CiTool, and it shows as active.
+
+184
+00:11:56,150 --> 00:11:57,750
+Both programs still run.
+
+185
+00:11:58,000 --> 00:12:03,200
+In Event Viewer, under CodeIntegrity
+Operational, I find a 3076 event for hello
+
+186
+00:12:03,450 --> 00:12:06,650
+dot exe, but none for the whoami copy.
+
+187
+00:12:06,900 --> 00:12:09,700
+Finally, I remove the policy with CiTool.
+
+188
+00:12:09,950 --> 00:12:15,150
+An allow list stops unknown code, and you
+always start in audit mode.
+
+189
+00:12:15,400 --> 00:12:19,000
+Start from an example such as
+DefaultWindows underscore Audit.
+
+190
+00:12:19,250 --> 00:12:24,450
+Rule options switch the policy's modes,
+and rule levels decide how files are
+
+191
+00:12:24,700 --> 00:12:25,900
+matched.
+
+192
+00:12:26,150 --> 00:12:31,750
+The multiple policy format uses policy ID
+dot cip files, with base and supplemental
+
+193
+00:12:32,000 --> 00:12:33,200
+policies.
+
+194
+00:12:33,450 --> 00:12:37,450
+Deploy with CiTool, Intune, or Group
+Policy for single format.
+
+195
+00:12:37,700 --> 00:12:43,300
+Event 3076 means would block, 3077 means
+blocked, and CiTool dash rp removes a
+
+196
+00:12:43,550 --> 00:12:44,750
+policy.
+
+197
+00:12:45,000 --> 00:12:46,200
+In Lab 6.
+
+198
+00:12:46,450 --> 00:12:52,050
+4, about 60 minutes and practice only, you
+do all of this on CLIENT01.

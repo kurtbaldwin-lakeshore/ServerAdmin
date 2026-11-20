@@ -1,0 +1,5 @@
+MC	What does DORA stand for?	Discover, Offer, Request, Acknowledge	correct	Detect, Offer, Reply, Assign	incorrect	Discover, Obtain, Renew, Accept	incorrect	Deliver, Offer, Release, Acknowledge	incorrect
+MC	What is the default lease duration of a new scope?	8 days	correct	1 day	incorrect	1 hour	incorrect	30 days	incorrect
+MC	Which option sets the DNS servers?	006	correct	003	incorrect	015	incorrect	051	incorrect
+TF	In a domain, an unauthorized Windows DHCP server leases nothing.	true
+MC	What ties a reservation to one client?	The client's MAC address	correct	The client's computer name only	incorrect	The scope name	incorrect	The DNS suffix	incorrect

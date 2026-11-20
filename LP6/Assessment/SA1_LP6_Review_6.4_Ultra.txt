@@ -1,0 +1,5 @@
+MC	What was App Control for Business called before?	Windows Defender Application Control (WDAC)	correct	AppLocker	incorrect	Software Restriction Policies	incorrect	Device Guard Credential Guard	incorrect
+MC	Which rule option is Enabled:Audit Mode?	Option 3	correct	Option 0	incorrect	Option 6	incorrect	Option 17	incorrect
+MC	Which built-in tool deploys a .cip policy on Windows 11?	CiTool	correct	gpresult	incorrect	auditpol	incorrect	Set-GPRegistryValue	incorrect
+MC	Which event ID means a file would have been blocked by an audit-mode policy?	3076	correct	3077	incorrect	4625	incorrect	4740	incorrect
+TF	In audit mode, App Control blocks unsigned programs.	false

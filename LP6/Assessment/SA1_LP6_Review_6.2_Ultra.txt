@@ -1,0 +1,5 @@
+MC	Every new GPO gives Read and Apply group policy to which group?	Authenticated Users	correct	Domain Admins	incorrect	Everyone	incorrect	GG-Students	incorrect
+TF	After you filter a user GPO to one group, you must keep Read for Authenticated Users or Domain Computers.	true
+MC	What does a WMI filter do?	Runs a query on each computer; the GPO applies only where it is true	correct	Filters users by group membership	incorrect	Blocks inheritance	incorrect	Maps drives	incorrect
+MC	Which preference action is the usual choice for a drive map?	Update	correct	Delete	incorrect	Create	incorrect	Replace	incorrect
+MC	What is a tattooed setting?	A setting that stays in the registry after the GPO that wrote it no longer applies	correct	A setting marked Enforced	incorrect	A setting that applies only once	incorrect	A setting in the Default Domain Policy	incorrect

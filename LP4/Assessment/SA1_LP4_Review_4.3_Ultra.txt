@@ -1,0 +1,5 @@
+MC	Which DNS server must SRV01 use before it joins sa1.lab?	192.168.50.10 (DC01)	correct	192.168.50.20	incorrect	8.8.8.8	incorrect	None	incorrect
+MC	Where does a joined computer's object land if you do not choose an OU or pre-stage it?	CN=Computers	correct	OU=Domain Controllers	incorrect	CN=Users	incorrect	OU=Servers	incorrect
+MC	Who should get a delegated task?	A group, such as GG-HelpDesk	correct	One user, such as bortiz	incorrect	Domain Admins	incorrect	Everyone	incorrect
+TF	Nobody types or knows the password of a gMSA.	true
+MC	What does Test-ADServiceAccount gmsa-web return when SRV01 can use the gMSA?	True	correct	Success	incorrect	Installed	incorrect	Allow	incorrect

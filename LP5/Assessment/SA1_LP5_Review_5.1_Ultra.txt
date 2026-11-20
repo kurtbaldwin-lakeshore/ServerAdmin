@@ -1,0 +1,5 @@
+MC	Which address is APIPA?	169.254.10.4	correct	192.168.50.20	incorrect	10.50.0.1	incorrect	172.16.0.1	incorrect
+MC	How many usable hosts does a /24 network have?	254	correct	256	incorrect	255	incorrect	24	incorrect
+MC	What is the short form of fd00:0050:0000:0000:0000:0000:0000:0020?	fd00:50::20	correct	fd:50::20	incorrect	fd00:50:0::2	incorrect	fd00::50::20	incorrect
+TF	Microsoft recommends clearing the TCP/IPv6 check box on servers that use only IPv4.	false
+MAT	Match each prefix to its address type.	fe80::/10	Link-local	fc00::/7	Unique local	ff00::/8	Multicast

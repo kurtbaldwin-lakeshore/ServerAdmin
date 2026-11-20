@@ -1,0 +1,5 @@
+MC	Which is the outer security boundary of AD DS?	The forest	correct	The OU	incorrect	The site	incorrect	The domain controller	incorrect
+MC	Which DNS record type tells a computer where a domain controller is?	SRV	correct	MX	incorrect	CNAME	incorrect	PTR	incorrect
+TF	Installing the AD DS role makes DC01 a domain controller at once.	false
+MC	Which deployment option creates DC01 as the first DC?	Add a new forest	correct	Add a domain controller to an existing domain	incorrect	Add a new domain to an existing forest	incorrect	Read only domain controller	incorrect
+MAT	Match each check to what it shows.	Get-ADDomain	DNSRoot, NetBIOSName and the per-domain FSMO roles	Get-ADForest	Schema master, domain naming master and global catalogs	dcdiag /q	Only the tests that fail

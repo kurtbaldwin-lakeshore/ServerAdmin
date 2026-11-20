@@ -1,0 +1,1013 @@
+WEBVTT
+
+NOTE SA1 Topic 5.3: DHCP Failover and Troubleshooting. Timings are estimates at 150 words a minute; re-sync after recording.
+
+1
+00:00:00.000 --> 00:00:01.600
+Welcome to Topic 5.
+
+2
+00:00:01.850 --> 00:00:03.850
+3, DHCP Failover and Troubleshooting.
+
+3
+00:00:04.100 --> 00:00:05.300
+In Lab 5.
+
+4
+00:00:05.550 --> 00:00:08.350
+2 you built one DHCP server, SRV01.
+
+5
+00:00:08.600 --> 00:00:10.600
+That works, until SRV01 stops.
+
+6
+00:00:10.850 --> 00:00:17.650
+In this topic you will see why one DHCP
+server is a single point of failure, and
+
+7
+00:00:17.900 --> 00:00:21.500
+how the old split scope compares with DHCP
+failover.
+
+8
+00:00:21.750 --> 00:00:26.950
+You will choose a failover mode and set
+the maximum client lead time.
+
+9
+00:00:27.200 --> 00:00:32.400
+You will configure failover in the wizard
+and in PowerShell, and replicate changes
+
+10
+00:00:32.650 --> 00:00:33.850
+to the partner.
+
+11
+00:00:34.100 --> 00:00:36.900
+Then you troubleshoot clients without an
+address.
+
+12
+00:00:37.150 --> 00:00:39.550
+A lease is borrowed, not owned.
+
+13
+00:00:39.800 --> 00:00:42.600
+With the 8-day lease from Lab 5.
+
+14
+00:00:42.850 --> 00:00:47.650
+2, CLIENT01 tries to renew with SRV01 at
+half time, day 4.
+
+15
+00:00:47.900 --> 00:00:50.700
+If SRV01 does not answer, at 87.
+
+16
+00:00:50.950 --> 00:00:54.550
+5 percent, day 7, it asks any DHCP server.
+
+17
+00:00:54.800 --> 00:01:01.600
+If SRV01 is down for an hour, clients with
+a lease hardly notice, but a new client
+
+18
+00:01:01.850 --> 00:01:03.050
+gets nothing.
+
+19
+00:01:03.300 --> 00:01:09.700
+If SRV01 is down for days, leases run out,
+and clients fall back to a 169.
+
+20
+00:01:09.950 --> 00:01:11.150
+254 address.
+
+21
+00:01:11.400 --> 00:01:16.600
+The fix is a second server that knows the
+same scope and leases.
+
+22
+00:01:16.850 --> 00:01:19.250
+The old fix was split scope.
+
+23
+00:01:19.500 --> 00:01:26.300
+Two servers each held part of the range,
+often 80 percent on one and 20 on the
+
+24
+00:01:26.550 --> 00:01:28.550
+other, with the rest excluded.
+
+25
+00:01:28.800 --> 00:01:35.200
+But the servers shared no lease data, the
+small part could run out, and you set
+
+26
+00:01:35.450 --> 00:01:37.050
+options and reservations twice.
+
+27
+00:01:37.300 --> 00:01:39.700
+The current way is DHCP failover.
+
+28
+00:01:39.950 --> 00:01:45.150
+Both partners hold the whole scope and
+copy every lease to each other.
+
+29
+00:01:45.400 --> 00:01:50.600
+It works for IPv4 scopes only, with
+exactly two servers in a relationship.
+
+30
+00:01:50.850 --> 00:01:54.050
+A relationship is the named link between
+them.
+
+31
+00:01:54.300 --> 00:01:55.900
+Failover has two modes.
+
+32
+00:01:56.150 --> 00:01:58.150
+Load balance is the default.
+
+33
+00:01:58.400 --> 00:02:04.400
+Both servers answer at the same time, and
+a hash of each client's MAC address
+
+34
+00:02:04.650 --> 00:02:06.250
+decides which one answers.
+
+35
+00:02:06.500 --> 00:02:11.700
+The split is 50 50 by default, and you can
+choose any percentage.
+
+36
+00:02:11.950 --> 00:02:16.750
+In hot standby, the active server serves
+everyone and the standby waits.
+
+37
+00:02:17.000 --> 00:02:23.000
+It keeps a reserve of addresses, 5 percent
+by default, for new clients during an
+
+38
+00:02:23.250 --> 00:02:24.450
+outage.
+
+39
+00:02:24.700 --> 00:02:27.900
+This fits a backup server at another site.
+
+40
+00:02:28.150 --> 00:02:29.350
+Lab 5.
+
+41
+00:02:29.600 --> 00:02:32.000
+3 uses load balance, 50 50.
+
+42
+00:02:32.250 --> 00:02:33.450
+Three more settings.
+
+43
+00:02:33.700 --> 00:02:40.100
+Maximum Client Lead Time, or MCLT, limits
+how far a server may go beyond what its
+
+44
+00:02:40.350 --> 00:02:41.550
+partner knows.
+
+45
+00:02:41.800 --> 00:02:45.800
+Without its partner, it gives only short
+leases, MCLT long.
+
+46
+00:02:46.050 --> 00:02:48.050
+The default is one hour.
+
+47
+00:02:48.300 --> 00:02:51.500
+The state switchover interval is off by
+default.
+
+48
+00:02:51.750 --> 00:02:58.150
+Turn it on, and a server that lost its
+partner declares it down by itself after
+
+49
+00:02:58.400 --> 00:02:59.600
+the interval.
+
+50
+00:02:59.850 --> 00:03:04.650
+The shared secret turns on message
+authentication, so a stranger cannot pose
+
+51
+00:03:04.900 --> 00:03:06.100
+as a partner.
+
+52
+00:03:06.350 --> 00:03:09.550
+Choose your own secret, never the pod
+password.
+
+53
+00:03:09.800 --> 00:03:11.800
+Each partner has a state.
+
+54
+00:03:12.050 --> 00:03:16.050
+In Normal, the partners talk, and each
+serves its share.
+
+55
+00:03:16.300 --> 00:03:20.300
+When contact is lost, a server goes to
+Communication Interrupted.
+
+56
+00:03:20.550 --> 00:03:26.550
+It cannot tell whether its partner crashed
+or only the network broke, In load balance
+
+57
+00:03:26.800 --> 00:03:30.000
+it then answers all clients, even its
+partner's.
+
+58
+00:03:30.250 --> 00:03:36.650
+It renews their leases for the MCLT only,
+and gives new leases from its own free
+
+59
+00:03:36.900 --> 00:03:38.100
+pool first.
+
+60
+00:03:38.350 --> 00:03:42.750
+Partner Down is set by you, or by the
+switchover timer.
+
+61
+00:03:43.000 --> 00:03:47.000
+After the MCLT, that server takes over the
+whole scope.
+
+62
+00:03:47.250 --> 00:03:53.250
+When contact returns, the partners compare
+leases and go back to Normal on their own.
+
+63
+00:03:53.500 --> 00:03:59.100
+In the DHCP console on SRV01, right-click
+IPv4, or the scope, and choose Configure
+
+64
+00:03:59.350 --> 00:04:00.550
+Failover.
+
+65
+00:04:00.800 --> 00:04:05.600
+On the first page, clear Select all and
+tick the scope 192.
+
+66
+00:04:05.850 --> 00:04:07.050
+168.
+
+67
+00:04:07.300 --> 00:04:08.500
+50.
+
+68
+00:04:08.750 --> 00:04:09.950
+0.
+
+69
+00:04:10.200 --> 00:04:13.400
+Then type the partner server, SRV-CORE at
+192.
+
+70
+00:04:13.650 --> 00:04:14.850
+168.
+
+71
+00:04:15.100 --> 00:04:16.300
+50.
+
+72
+00:04:16.550 --> 00:04:17.750
+21.
+
+73
+00:04:18.000 --> 00:04:22.800
+The partner must already run DHCP and be
+authorized in Active Directory.
+
+74
+00:04:23.050 --> 00:04:28.250
+Clear the box that says Reuse existing
+failover relationships, because you want a
+
+75
+00:04:28.500 --> 00:04:29.700
+new one.
+
+76
+00:04:29.950 --> 00:04:35.950
+Then select Next to reach the most
+important page of the wizard, the one that
+
+77
+00:04:36.200 --> 00:04:37.400
+creates the relationship.
+
+78
+00:04:37.650 --> 00:04:42.050
+On Create a new failover relationship,
+type the Relationship Name, SRV01-SRVCORE.
+
+79
+00:04:42.300 --> 00:04:45.100
+It must be unique on both partners.
+
+80
+00:04:45.350 --> 00:04:48.950
+Leave the Maximum Client Lead Time at 1
+hour.
+
+81
+00:04:49.200 --> 00:04:55.600
+Mode is Load balance, with 50 percent for
+the local server and 50 for the partner.
+
+82
+00:04:55.850 --> 00:05:01.050
+Leave State Switchover Interval cleared,
+so you decide when a partner is really
+
+83
+00:05:01.300 --> 00:05:02.500
+down.
+
+84
+00:05:02.750 --> 00:05:07.950
+Keep Enable Message Authentication on and
+type your shared secret; it shows as
+
+85
+00:05:08.200 --> 00:05:09.400
+stars.
+
+86
+00:05:09.650 --> 00:05:13.650
+Then Next, Finish, and check that every
+task says Successful.
+
+87
+00:05:13.900 --> 00:05:17.500
+Here is the same job in PowerShell on
+SRV01.
+
+88
+00:05:17.750 --> 00:05:22.150
+Read-Host with AsSecureString asks for the
+secret at a hidden prompt.
+
+89
+00:05:22.400 --> 00:05:27.600
+The SharedSecret parameter wants plain
+text, so the next line converts it in
+
+90
+00:05:27.850 --> 00:05:29.050
+memory only.
+
+91
+00:05:29.300 --> 00:05:33.700
+Then Add-DhcpServerv4Failover: the name,
+the partner, the scope, 50 percent, an
+
+92
+00:05:33.950 --> 00:05:36.750
+MCLT of one hour, and the secret.
+
+93
+00:05:37.000 --> 00:05:39.000
+Dash Force skips a prompt.
+
+94
+00:05:39.250 --> 00:05:41.250
+Remove-Variable clears the plain copy.
+
+95
+00:05:41.500 --> 00:05:45.100
+Get-DhcpServerv4Failover then shows the
+relationship, LoadBalance, 50, one hour,
+
+96
+00:05:45.350 --> 00:05:46.950
+and the state Normal.
+
+97
+00:05:47.200 --> 00:05:49.200
+Run it on SRV-CORE too.
+
+98
+00:05:49.450 --> 00:05:52.650
+Here is a rule that surprises many people.
+
+99
+00:05:52.900 --> 00:05:56.900
+Leases copy themselves between partners,
+but scope settings do not.
+
+100
+00:05:57.150 --> 00:06:03.150
+If you change an option, a reservation, an
+exclusion or the lease time on SRV01,
+
+101
+00:06:03.400 --> 00:06:06.600
+SRV-CORE keeps the old value until you
+replicate.
+
+102
+00:06:06.850 --> 00:06:11.650
+Right-click the scope and choose Replicate
+Scope, or Replicate Relationship for every
+
+103
+00:06:11.900 --> 00:06:13.100
+scope in it.
+
+104
+00:06:13.350 --> 00:06:14.950
+In PowerShell, use
+Invoke-DhcpServerv4FailoverReplication.
+
+105
+00:06:15.200 --> 00:06:17.200
+Careful: replication overwrites the
+partner.
+
+106
+00:06:17.450 --> 00:06:24.250
+Always start it on the server that has the
+settings you want to keep, and make your
+
+107
+00:06:24.500 --> 00:06:26.900
+changes on that one server only.
+
+108
+00:06:27.150 --> 00:06:28.350
+Now troubleshooting.
+
+109
+00:06:28.600 --> 00:06:31.800
+A good Server+ habit: start at the client.
+
+110
+00:06:32.050 --> 00:06:34.450
+On CLIENT01, ipconfig release and renew.
+
+111
+00:06:34.700 --> 00:06:40.300
+If renew says it is unable to contact your
+DHCP server, no server answered.
+
+112
+00:06:40.550 --> 00:06:42.150
+Look at ipconfig all.
+
+113
+00:06:42.400 --> 00:06:44.400
+An Autoconfiguration address in 169.
+
+114
+00:06:44.650 --> 00:06:46.250
+254, with mask 255.
+
+115
+00:06:46.500 --> 00:06:47.700
+255.
+
+116
+00:06:47.950 --> 00:06:49.150
+0.
+
+117
+00:06:49.400 --> 00:06:52.600
+0, is APIPA: Windows picked its own
+address.
+
+118
+00:06:52.850 --> 00:06:55.650
+It reaches no server and no DNS.
+
+119
+00:06:55.900 --> 00:06:59.100
+So APIPA is a clue, not a fix.
+
+120
+00:06:59.350 --> 00:07:05.750
+When the problem is solved, renew again,
+and you see a real address and the DHCP
+
+121
+00:07:06.000 --> 00:07:07.600
+server that gave it.
+
+122
+00:07:07.850 --> 00:07:09.850
+Then move toward the server.
+
+123
+00:07:10.100 --> 00:07:12.100
+If every client gets 169.
+
+124
+00:07:12.350 --> 00:07:15.950
+254, check whether the DHCP Server service
+is stopped.
+
+125
+00:07:16.200 --> 00:07:21.400
+If the service runs but never answers,
+check authorization: in a domain, a
+
+126
+00:07:21.650 --> 00:07:26.850
+Windows DHCP server must be listed in
+Active Directory before it serves anyone.
+
+127
+00:07:27.100 --> 00:07:28.700
+That stops rogue servers.
+
+128
+00:07:28.950 --> 00:07:34.550
+If old clients are fine and new ones fail,
+the scope may be full.
+
+129
+00:07:34.800 --> 00:07:40.000
+If the address is fine but names fail,
+check options 6 and 15.
+
+130
+00:07:40.250 --> 00:07:45.450
+And if only another subnet fails, the
+router may lack a relay agent.
+
+131
+00:07:45.700 --> 00:07:48.500
+Three cmdlets cover most of that table.
+
+132
+00:07:48.750 --> 00:07:53.150
+Get-Service DHCPServer shows whether the
+service is Running; if not, Start-Service.
+
+133
+00:07:53.400 --> 00:07:55.800
+Get-DhcpServerInDC lists the authorized
+DHCP servers.
+
+134
+00:07:56.050 --> 00:08:00.050
+In the lab you should see both SRV01 and
+SRV-CORE.
+
+135
+00:08:00.300 --> 00:08:03.500
+If one is missing, authorize it with
+Add-DhcpServerInDC.
+
+136
+00:08:03.750 --> 00:08:07.350
+Get-DhcpServerv4ScopeStatistics shows free
+and used addresses for each scope.
+
+137
+00:08:07.600 --> 00:08:11.600
+Watch the PercentageInUse column, and run
+it on both partners.
+
+138
+00:08:11.850 --> 00:08:17.850
+Near 100 means a full scope: widen the
+range or shorten the lease time so
+
+139
+00:08:18.100 --> 00:08:19.700
+addresses come back sooner.
+
+140
+00:08:19.950 --> 00:08:25.150
+A new client has no address, so it shouts:
+it sends a broadcast.
+
+141
+00:08:25.400 --> 00:08:27.400
+Routers do not forward broadcasts.
+
+142
+00:08:27.650 --> 00:08:29.650
+So a client on 192.
+
+143
+00:08:29.900 --> 00:08:31.100
+168.
+
+144
+00:08:31.350 --> 00:08:32.550
+60.
+
+145
+00:08:32.800 --> 00:08:36.000
+0 never reaches a DHCP server on 192.
+
+146
+00:08:36.250 --> 00:08:37.450
+168.
+
+147
+00:08:37.700 --> 00:08:38.900
+50.
+
+148
+00:08:39.150 --> 00:08:41.950
+0, even when the right scope exists.
+
+149
+00:08:42.200 --> 00:08:48.600
+The answer is a DHCP relay agent on that
+subnet, often called IP helper on routers.
+
+150
+00:08:48.850 --> 00:08:52.850
+It catches the broadcast and forwards it
+to the servers.
+
+151
+00:08:53.100 --> 00:08:57.900
+It adds its own address, so the server
+picks the matching scope.
+
+152
+00:08:58.150 --> 00:09:00.950
+With failover, point it at both partners.
+
+153
+00:09:01.200 --> 00:09:05.200
+Our pod has one subnet, so this is a
+concept.
+
+154
+00:09:05.450 --> 00:09:11.450
+Every DHCP server also keeps a plain text
+audit log in C colon backslash Windows,
+
+155
+00:09:11.700 --> 00:09:16.100
+System32, dhcp, one file for each weekday,
+like DhcpSrvLog-Mon dot log.
+
+156
+00:09:16.350 --> 00:09:19.550
+Read the end with Get-Content and dash
+Tail.
+
+157
+00:09:19.800 --> 00:09:25.800
+Each line starts with an event ID, then
+the date, time, a description, the IP
+
+158
+00:09:26.050 --> 00:09:28.450
+address, host name and MAC address.
+
+159
+00:09:28.700 --> 00:09:33.500
+ID 10 is a new lease, 11 a renewal, 12 a
+release.
+
+160
+00:09:33.750 --> 00:09:36.550
+ID 14 means the scope was full.
+
+161
+00:09:36.800 --> 00:09:40.800
+IDs 54 and 56 mean the server was not
+authorized.
+
+162
+00:09:41.050 --> 00:09:42.650
+Four mistakes to avoid.
+
+163
+00:09:42.900 --> 00:09:46.900
+One: changing an option or reservation on
+one partner only.
+
+164
+00:09:47.150 --> 00:09:50.350
+Replicate from the server with the right
+settings.
+
+165
+00:09:50.600 --> 00:09:54.200
+Two: expecting failover for DHCPv6 or for
+three servers.
+
+166
+00:09:54.450 --> 00:09:57.650
+Failover is IPv4 only, two servers per
+relationship.
+
+167
+00:09:57.900 --> 00:10:03.100
+Three: typing the shared secret into a
+script, or reusing the pod password.
+
+168
+00:10:03.350 --> 00:10:08.950
+Choose your own and type it at a hidden
+prompt or in the wizard.
+
+169
+00:10:09.200 --> 00:10:12.800
+Four: installing the second server but
+never authorizing it.
+
+170
+00:10:13.050 --> 00:10:15.050
+Check that Get-DhcpServerInDC lists both.
+
+171
+00:10:15.300 --> 00:10:16.900
+Time to check yourself.
+
+172
+00:10:17.150 --> 00:10:19.950
+SRV01 and SRV-CORE share the scope 192.
+
+173
+00:10:20.200 --> 00:10:21.400
+168.
+
+174
+00:10:21.650 --> 00:10:22.850
+50.
+
+175
+00:10:23.100 --> 00:10:24.300
+0.
+
+176
+00:10:24.550 --> 00:10:26.150
+First, CLIENT01 shows 169.
+
+177
+00:10:26.400 --> 00:10:27.600
+254.
+
+178
+00:10:27.850 --> 00:10:29.050
+23.
+
+179
+00:10:29.300 --> 00:10:30.500
+7.
+
+180
+00:10:30.750 --> 00:10:35.150
+What does that tell you, and where do you
+look first?
+
+181
+00:10:35.400 --> 00:10:38.200
+Second, you change option 6 on SRV01.
+
+182
+00:10:38.450 --> 00:10:42.050
+Why can a client still get the old value?
+
+183
+00:10:42.300 --> 00:10:45.500
+Third, SRV-CORE moves to a small backup
+site.
+
+184
+00:10:45.750 --> 00:10:47.750
+Which mode fits better now?
+
+185
+00:10:48.000 --> 00:10:49.600
+Fourth, clients on 192.
+
+186
+00:10:49.850 --> 00:10:51.050
+168.
+
+187
+00:10:51.300 --> 00:10:52.500
+60.
+
+188
+00:10:52.750 --> 00:10:57.150
+0 behind a router get no address, but the
+scope exists.
+
+189
+00:10:57.400 --> 00:10:58.600
+What is missing?
+
+190
+00:10:58.850 --> 00:11:02.050
+Pause the video and answer all four
+questions.
+
+191
+00:11:02.300 --> 00:11:03.900
+Here are the answers.
+
+192
+00:11:04.150 --> 00:11:05.350
+One: 169.
+
+193
+00:11:05.600 --> 00:11:08.800
+254 is APIPA, so no DHCP server answered.
+
+194
+00:11:09.050 --> 00:11:14.250
+Check the client's network, then the DHCP
+Server service on both partners, then
+
+195
+00:11:14.500 --> 00:11:15.700
+authorization.
+
+196
+00:11:15.950 --> 00:11:21.550
+Two: scope settings do not replicate by
+themselves, so SRV-CORE still has the old
+
+197
+00:11:21.800 --> 00:11:23.000
+option.
+
+198
+00:11:23.250 --> 00:11:25.250
+Replicate the scope from SRV01.
+
+199
+00:11:25.500 --> 00:11:26.700
+Three: hot standby.
+
+200
+00:11:26.950 --> 00:11:32.550
+The local server serves everyone, and the
+remote partner keeps its 5 percent reserve
+
+201
+00:11:32.800 --> 00:11:34.000
+for an outage.
+
+202
+00:11:34.250 --> 00:11:39.450
+Four: a relay agent on the router, because
+broadcasts stop at the router.
+
+203
+00:11:39.700 --> 00:11:42.100
+Let's watch it in the pod.
+
+204
+00:11:42.350 --> 00:11:48.350
+On SRV01 I open the DHCP console and run
+Configure Failover for our scope, with
+
+205
+00:11:48.600 --> 00:11:54.200
+SRV-CORE as partner, load balance 50 50,
+and a secret I type off camera.
+
+206
+00:11:54.450 --> 00:11:58.850
+On SRV-CORE the scope and the CLIENT01
+reservation are already there.
+
+207
+00:11:59.100 --> 00:12:02.300
+Now I change the lease time on SRV01.
+
+208
+00:12:02.550 --> 00:12:06.550
+SRV-CORE still shows 8 days, until I
+choose Replicate Scope.
+
+209
+00:12:06.800 --> 00:12:09.200
+Next I stop DHCP on SRV01.
+
+210
+00:12:09.450 --> 00:12:11.050
+CLIENT01 still gets 192.
+
+211
+00:12:11.300 --> 00:12:12.500
+168.
+
+212
+00:12:12.750 --> 00:12:13.950
+50.
+
+213
+00:12:14.200 --> 00:12:15.800
+150, now from SRV-CORE.
+
+214
+00:12:16.050 --> 00:12:20.450
+I stop SRV-CORE too, and CLIENT01 falls
+back to a 169.
+
+215
+00:12:20.700 --> 00:12:21.900
+254 address.
+
+216
+00:12:22.150 --> 00:12:23.350
+To wrap up.
+
+217
+00:12:23.600 --> 00:12:28.000
+Failover replaces split scope: two
+servers, one IPv4 scope, shared leases.
+
+218
+00:12:28.250 --> 00:12:33.450
+Load balance shares the clients; hot
+standby waits with a 5 percent reserve.
+
+219
+00:12:33.700 --> 00:12:38.900
+Keep MCLT at one hour, switchover off, and
+use your own shared secret.
+
+220
+00:12:39.150 --> 00:12:42.750
+Replicate scope changes by hand, from the
+right server.
+
+221
+00:12:43.000 --> 00:12:45.400
+And when a client shows 169.
+
+222
+00:12:45.650 --> 00:12:50.450
+254, work from the client to the server:
+service, authorization, scope, relay.
+
+223
+00:12:50.700 --> 00:12:51.900
+In Lab 5.
+
+224
+00:12:52.150 --> 00:12:56.550
+3, about 90 minutes and practice only, you
+rebuild Lab 5.
+
+225
+00:12:56.800 --> 00:13:00.400
+2, add SRV-CORE, create the relationship,
+and test it.

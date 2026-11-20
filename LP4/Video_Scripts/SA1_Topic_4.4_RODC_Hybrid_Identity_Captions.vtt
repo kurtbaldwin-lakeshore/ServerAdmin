@@ -1,0 +1,965 @@
+WEBVTT
+
+NOTE SA1 Topic 4.4: Read-Only DCs and Hybrid Identity. Timings are estimates at 150 words a minute; re-sync after recording.
+
+1
+00:00:00.000 --> 00:00:01.600
+Welcome to Topic 4.
+
+2
+00:00:01.850 --> 00:00:04.250
+4, Read-Only DCs and Hybrid Identity.
+
+3
+00:00:04.500 --> 00:00:05.700
+So far, sa1.
+
+4
+00:00:05.950 --> 00:00:08.350
+lab has one domain controller, DC01.
+
+5
+00:00:08.600 --> 00:00:13.800
+In this topic you will see why a domain
+needs at least two.
+
+6
+00:00:14.050 --> 00:00:19.250
+You will meet the read-only domain
+controller, or RODC, and learn what it
+
+7
+00:00:19.500 --> 00:00:22.300
+stores and why branch offices use one.
+
+8
+00:00:22.550 --> 00:00:27.750
+You will promote SRV-CORE to an RODC with
+PowerShell, and manage its Password
+
+9
+00:00:28.000 --> 00:00:30.400
+Replication Policy in ADUC and PowerShell.
+
+10
+00:00:30.650 --> 00:00:36.650
+Then we look at the cloud: Microsoft Entra
+ID, the two sync tools, the sign-in
+
+11
+00:00:36.900 --> 00:00:39.700
+options, and why the UPN suffix matters.
+
+12
+00:00:39.950 --> 00:00:43.550
+With one domain controller, everything
+depends on one server.
+
+13
+00:00:43.800 --> 00:00:49.800
+If DC01 fails, nobody can sign in, and the
+AD-integrated DNS zones are gone too.
+
+14
+00:00:50.050 --> 00:00:52.850
+That is a single point of failure.
+
+15
+00:00:53.100 --> 00:00:56.300
+Real domains run at least two writable
+DCs.
+
+16
+00:00:56.550 --> 00:01:02.550
+Each holds a full copy of AD DS, accepts
+changes, and replicates them to the
+
+17
+00:01:02.800 --> 00:01:04.000
+others.
+
+18
+00:01:04.250 --> 00:01:07.050
+If one fails, the other carries on.
+
+19
+00:01:07.300 --> 00:01:12.900
+On a second joined server, you would
+install the AD DS role, then run
+
+20
+00:01:13.150 --> 00:01:15.150
+Install-ADDSDomainController with the
+domain name.
+
+21
+00:01:15.400 --> 00:01:20.200
+Our pod has one writable DC, so this is
+shown, not done.
+
+22
+00:01:20.450 --> 00:01:22.450
+Now picture a branch office.
+
+23
+00:01:22.700 --> 00:01:29.500
+A few users, a slow link to the main
+campus, a server in a closet that anyone
+
+24
+00:01:29.750 --> 00:01:33.750
+could walk off with, and nobody from IT on
+site.
+
+25
+00:01:34.000 --> 00:01:36.400
+A writable DC there is risky.
+
+26
+00:01:36.650 --> 00:01:39.050
+A read-only domain controller fits better.
+
+27
+00:01:39.300 --> 00:01:42.900
+It holds every object and attribute,
+except account passwords.
+
+28
+00:01:43.150 --> 00:01:48.750
+By default it stores only its own computer
+account and its own krbtgt account.
+
+29
+00:01:49.000 --> 00:01:54.600
+Replication is one-way: nothing replicates
+out of an RODC, so a change made there
+
+30
+00:01:54.850 --> 00:01:56.050
+cannot spread.
+
+31
+00:01:56.300 --> 00:01:59.500
+Write requests are referred to a writable
+DC.
+
+32
+00:01:59.750 --> 00:02:03.350
+So how does anyone sign in at the branch?
+
+33
+00:02:03.600 --> 00:02:04.800
+Follow dpatel.
+
+34
+00:02:05.050 --> 00:02:10.250
+He signs in at SRV-CORE, but SRV-CORE has
+no copy of his password.
+
+35
+00:02:10.500 --> 00:02:15.700
+So it passes the request over the link to
+DC01, a writable DC.
+
+36
+00:02:15.950 --> 00:02:21.550
+DC01 signs him in and checks the Password
+Replication Policy, the PRP, for SRV-CORE.
+
+37
+00:02:21.800 --> 00:02:27.400
+If dpatel is allowed, SRV-CORE stores his
+password, and next time it checks him
+
+38
+00:02:27.650 --> 00:02:30.450
+itself, even if the link is down.
+
+39
+00:02:30.700 --> 00:02:35.900
+If he is not allowed, nothing is stored,
+and every sign-in needs DC01.
+
+40
+00:02:36.150 --> 00:02:38.950
+By default, no user passwords are cached.
+
+41
+00:02:39.200 --> 00:02:41.200
+The PRP has two layers.
+
+42
+00:02:41.450 --> 00:02:44.650
+Two domain-wide groups sit in the Users
+container.
+
+43
+00:02:44.900 --> 00:02:48.100
+The Allowed RODC Password Replication
+Group starts empty.
+
+44
+00:02:48.350 --> 00:02:53.150
+The Denied RODC Password Replication Group
+holds powerful groups like Domain Admins,
+
+45
+00:02:53.400 --> 00:02:55.400
+Enterprise Admins and Schema Admins.
+
+46
+00:02:55.650 --> 00:03:00.050
+Each RODC also has its own Allowed list
+and Denied list.
+
+47
+00:03:00.300 --> 00:03:05.900
+By default its Allowed list holds the
+allowed group, and its Denied list holds
+
+48
+00:03:06.150 --> 00:03:09.750
+the denied group plus Administrators and
+three operator groups.
+
+49
+00:03:10.000 --> 00:03:11.200
+Three rules.
+
+50
+00:03:11.450 --> 00:03:12.650
+Deny wins.
+
+51
+00:03:12.900 --> 00:03:16.500
+The group affects every RODC, the list
+just one.
+
+52
+00:03:16.750 --> 00:03:20.350
+And allowed means may be cached, not
+cached yet.
+
+53
+00:03:20.600 --> 00:03:22.200
+Two more RODC features.
+
+54
+00:03:22.450 --> 00:03:27.650
+Administrator role separation lets you
+make a branch user or group the local
+
+55
+00:03:27.900 --> 00:03:29.500
+administrator of one RODC.
+
+56
+00:03:29.750 --> 00:03:36.150
+They can update a driver or restart the
+server, but they get no rights in the
+
+57
+00:03:36.400 --> 00:03:38.400
+domain or on other DCs.
+
+58
+00:03:38.650 --> 00:03:41.050
+You set it with the
+DelegatedAdministratorAccountName
+
+59
+00:03:41.300 --> 00:03:43.700
+parameter or the Managed By tab.
+
+60
+00:03:43.950 --> 00:03:45.150
+Second, read-only DNS.
+
+61
+00:03:45.400 --> 00:03:50.600
+With dash InstallDns, the RODC holds a
+read-only copy of zones like sa1.
+
+62
+00:03:50.850 --> 00:03:53.650
+lab, so branch clients resolve names
+locally.
+
+63
+00:03:53.900 --> 00:03:58.300
+It does not accept client updates; it
+refers them to DC01.
+
+64
+00:03:58.550 --> 00:04:04.150
+And in real life, never sign in to an RODC
+as a Domain Admin.
+
+65
+00:04:04.400 --> 00:04:09.200
+SRV-CORE is Server Core, so this is
+PowerShell from SConfig option fifteen.
+
+66
+00:04:09.450 --> 00:04:11.450
+First, Install-WindowsFeature
+AD-Domain-Services with dash
+
+67
+00:04:11.700 --> 00:04:12.900
+IncludeManagementTools.
+
+68
+00:04:13.150 --> 00:04:14.350
+Then Install-ADDSDomainController.
+
+69
+00:04:14.600 --> 00:04:15.800
+Dash DomainName sa1.
+
+70
+00:04:16.050 --> 00:04:18.850
+lab, and the key switch, dash
+ReadOnlyReplica.
+
+71
+00:04:19.100 --> 00:04:23.100
+With it, dash SiteName is required, so we
+give Default-First-Site-Name.
+
+72
+00:04:23.350 --> 00:04:27.750
+Dash InstallDns adds the read-only DNS
+server, and dash Credential with
+
+73
+00:04:28.000 --> 00:04:32.000
+Get-Credential SA1 Administrator opens a
+sign-in box for that password.
+
+74
+00:04:32.250 --> 00:04:35.450
+Then you type the DSRM password twice,
+masked.
+
+75
+00:04:35.700 --> 00:04:40.500
+In the pod, both are the password shown in
+your NetLab pod.
+
+76
+00:04:40.750 --> 00:04:43.950
+Answer Y, and SRV-CORE restarts as an
+RODC.
+
+77
+00:04:44.200 --> 00:04:47.800
+Back on DC01, open Active Directory Users
+and Computers.
+
+78
+00:04:48.050 --> 00:04:51.250
+Select Domain Controllers, right-click
+SRV-CORE, and choose Properties.
+
+79
+00:04:51.500 --> 00:04:56.700
+The Password Replication Policy tab lists
+every group with its setting, Allow or
+
+80
+00:04:56.950 --> 00:04:58.150
+Deny.
+
+81
+00:04:58.400 --> 00:05:02.800
+You see the defaults: the allowed group,
+and five denied entries.
+
+82
+00:05:03.050 --> 00:05:04.250
+Select Add.
+
+83
+00:05:04.500 --> 00:05:08.100
+A small dialog asks whether to allow or
+deny.
+
+84
+00:05:08.350 --> 00:05:13.550
+Choose Allow passwords for the account to
+replicate to this RODC, then type
+
+85
+00:05:13.800 --> 00:05:15.800
+GG-Students, Check Names, and OK.
+
+86
+00:05:16.050 --> 00:05:22.050
+GG-Students now shows Allow, but only on
+SRV-CORE, not on every RODC in the domain.
+
+87
+00:05:22.300 --> 00:05:24.700
+On the same tab, select Advanced.
+
+88
+00:05:24.950 --> 00:05:27.750
+The Policy Usage tab has a drop-down.
+
+89
+00:05:28.000 --> 00:05:32.400
+Accounts whose passwords are stored on
+this Read-only Domain Controller shows
+
+90
+00:05:32.650 --> 00:05:34.250
+what is really cached.
+
+91
+00:05:34.500 --> 00:05:39.300
+At first, only the RODC's own krbtgt
+account and its computer account.
+
+92
+00:05:39.550 --> 00:05:44.350
+The other choice shows accounts that have
+been authenticated through the RODC.
+
+93
+00:05:44.600 --> 00:05:49.800
+Prepopulate Passwords lets you cache an
+allowed user before they ever sign in,
+
+94
+00:05:50.050 --> 00:05:52.850
+which is handy before a branch opens.
+
+95
+00:05:53.100 --> 00:05:58.700
+And the Resultant Policy tab answers one
+question for one account: allow or deny?
+
+96
+00:05:58.950 --> 00:06:02.550
+Everything you saw in ADUC has a
+PowerShell form.
+
+97
+00:06:02.800 --> 00:06:06.800
+Get-ADDomainController with dash Filter
+star shows both DCs; SRV-CORE has
+
+98
+00:06:07.050 --> 00:06:10.650
+IsReadOnly True, and it is a global
+catalog too.
+
+99
+00:06:10.900 --> 00:06:12.100
+
+Add-ADDomainControllerPasswordReplicationPolicy
+
+100
+00:06:12.350 --> 00:06:16.750
+with dash AllowedList GG-Students does the
+same as Add in ADUC.
+
+101
+00:06:17.000 --> 00:06:18.200
+
+Get-ADDomainControllerPasswordReplicationPolicy
+
+102
+00:06:18.450 --> 00:06:22.450
+with dash Allowed or dash Denied reads the
+two lists.
+
+103
+00:06:22.700 --> 00:06:23.900
+And
+Get-ADDomainControllerPasswordReplicationPolicyUsage
+
+104
+00:06:24.150 --> 00:06:28.150
+with dash RevealedAccounts lists the
+passwords that are actually stored.
+
+105
+00:06:28.400 --> 00:06:34.400
+The names are long, so type the first part
+and press Tab to complete them.
+
+106
+00:06:34.650 --> 00:06:38.650
+Run them on DC01, where the AD module is
+installed.
+
+107
+00:06:38.900 --> 00:06:40.500
+Now the cloud side.
+
+108
+00:06:40.750 --> 00:06:46.350
+AD DS runs on your own domain controllers
+and uses Kerberos, NTLM and LDAP.
+
+109
+00:06:46.600 --> 00:06:49.800
+Microsoft Entra ID is a Microsoft cloud
+service.
+
+110
+00:06:50.050 --> 00:06:54.050
+It speaks web protocols such as SAML and
+OAuth 2.
+
+111
+00:06:54.300 --> 00:06:55.500
+0.
+
+112
+00:06:55.750 --> 00:07:00.150
+It has no OUs or Group Policy;
+administration uses built-in roles.
+
+113
+00:07:00.400 --> 00:07:04.000
+Devices can be Entra joined and managed
+with Intune.
+
+114
+00:07:04.250 --> 00:07:08.650
+Entra ID is what Microsoft 365 and many
+cloud apps use.
+
+115
+00:07:08.900 --> 00:07:11.700
+Its old name was Azure Active Directory.
+
+116
+00:07:11.950 --> 00:07:17.950
+Hybrid identity means one account works in
+both, because a sync tool copies users and
+
+117
+00:07:18.200 --> 00:07:21.000
+groups from AD DS to Entra ID.
+
+118
+00:07:21.250 --> 00:07:23.250
+There are two sync tools.
+
+119
+00:07:23.500 --> 00:07:29.100
+Microsoft Entra Connect Sync is a full
+sync server you install on Windows Server,
+
+120
+00:07:29.350 --> 00:07:30.950
+with its own database.
+
+121
+00:07:31.200 --> 00:07:34.800
+It can also set up pass-through
+authentication and federation.
+
+122
+00:07:35.050 --> 00:07:39.050
+You must keep it current; Learn currently
+says version 2.
+
+123
+00:07:39.300 --> 00:07:40.500
+6.
+
+124
+00:07:40.750 --> 00:07:41.950
+84.
+
+125
+00:07:42.200 --> 00:07:46.200
+0 or later, with application-based
+authentication, by April 7, 2027.
+
+126
+00:07:46.450 --> 00:07:52.050
+Microsoft Entra Cloud Sync uses light
+agents, and its settings live in the Entra
+
+127
+00:07:52.300 --> 00:07:53.500
+admin center.
+
+128
+00:07:53.750 --> 00:07:58.150
+It handles disconnected forests, and
+Microsoft calls it the recommended path
+
+129
+00:07:58.400 --> 00:07:60.000
+forward for most organizations.
+
+130
+00:08:00.250 --> 00:08:05.850
+In SA1 you see this in my demo video;
+hands-on Azure comes in Server
+
+131
+00:08:06.100 --> 00:08:07.300
+Administration 2.
+
+132
+00:08:07.550 --> 00:08:10.350
+How does Entra ID check a password?
+
+133
+00:08:10.600 --> 00:08:11.800
+Three options.
+
+134
+00:08:12.050 --> 00:08:18.450
+Password hash sync, PHS, sends a hash of
+each password hash to Entra ID, and Entra
+
+135
+00:08:18.700 --> 00:08:20.300
+ID checks sign-ins itself.
+
+136
+00:08:20.550 --> 00:08:24.550
+If the head office goes offline, cloud
+sign-in still works.
+
+137
+00:08:24.800 --> 00:08:29.200
+Pass-through authentication, PTA, uses
+agents on your servers to check passwords
+
+138
+00:08:29.450 --> 00:08:32.650
+against AD DS, so the check stays
+on-premises.
+
+139
+00:08:32.900 --> 00:08:37.300
+Federation hands the whole sign-in to your
+own AD FS servers.
+
+140
+00:08:37.550 --> 00:08:42.350
+With PTA or federation, if the head office
+is offline, sign-in fails.
+
+141
+00:08:42.600 --> 00:08:48.200
+That is why Microsoft advises turning on
+PHS whatever you choose, as a backup.
+
+142
+00:08:48.450 --> 00:08:51.650
+Ann Lee signs in as alee at sa1.
+
+143
+00:08:51.900 --> 00:08:53.100
+lab.
+
+144
+00:08:53.350 --> 00:08:56.550
+That is her user principal name, or UPN.
+
+145
+00:08:56.800 --> 00:09:02.800
+Entra Connect only syncs users to domains
+verified in the tenant, and only a real
+
+146
+00:09:03.050 --> 00:09:05.050
+internet domain can be verified.
+
+147
+00:09:05.300 --> 00:09:06.500
+sa1.
+
+148
+00:09:06.750 --> 00:09:13.150
+lab is not one, so a synced user would
+land on an onmicrosoft dot com name.
+
+149
+00:09:13.400 --> 00:09:18.600
+A real organization first adds a routable
+domain it owns, for example example.
+
+150
+00:09:18.850 --> 00:09:23.650
+com, as an alternative UPN suffix in
+Active Directory Domains and Trusts.
+
+151
+00:09:23.900 --> 00:09:29.900
+Then it verifies the domain in Entra ID,
+changes each user's UPN, and only then
+
+152
+00:09:30.150 --> 00:09:31.350
+syncs.
+
+153
+00:09:31.600 --> 00:09:32.800
+Four mistakes.
+
+154
+00:09:33.050 --> 00:09:35.050
+One: leaving out dash ReadOnlyReplica.
+
+155
+00:09:35.300 --> 00:09:40.900
+You get a writable DC instead, so read the
+command before you press Enter.
+
+156
+00:09:41.150 --> 00:09:45.150
+Two: allowing Domain Admins so admins can
+sign in offline.
+
+157
+00:09:45.400 --> 00:09:50.600
+Deny wins anyway, and you would expose
+your most powerful passwords; delegate a
+
+158
+00:09:50.850 --> 00:09:52.450
+branch admin group instead.
+
+159
+00:09:52.700 --> 00:09:57.900
+Three: expecting a password on the RODC
+right after you allow the group.
+
+160
+00:09:58.150 --> 00:10:03.350
+Allowed means may be cached, so
+prepopulate or wait for a sign-in, then
+
+161
+00:10:03.600 --> 00:10:05.200
+check the stored list.
+
+162
+00:10:05.450 --> 00:10:08.250
+Four: syncing users with an at sa1.
+
+163
+00:10:08.500 --> 00:10:09.700
+lab UPN.
+
+164
+00:10:09.950 --> 00:10:12.750
+Add and verify a routable suffix first.
+
+165
+00:10:13.000 --> 00:10:14.600
+Time to check yourself.
+
+166
+00:10:14.850 --> 00:10:19.250
+SRV-CORE is an RODC, and GG-Students is on
+its Allowed list.
+
+167
+00:10:19.500 --> 00:10:24.700
+First, a branch has twelve users, an
+unlocked closet and a slow link.
+
+168
+00:10:24.950 --> 00:10:27.350
+Writable DC or RODC, and why?
+
+169
+00:10:27.600 --> 00:10:31.200
+Second, a Domain Admins member signs in at
+SRV-CORE.
+
+170
+00:10:31.450 --> 00:10:33.050
+Is the password cached?
+
+171
+00:10:33.300 --> 00:10:38.500
+Third, dpatel is in GG-Students, but the
+stored list does not show him.
+
+172
+00:10:38.750 --> 00:10:41.950
+Why, and how do you fix it now?
+
+173
+00:10:42.200 --> 00:10:47.400
+And fourth, cloud sign-in must keep
+working when the head office is offline.
+
+174
+00:10:47.650 --> 00:10:48.850
+Which sign-in option?
+
+175
+00:10:49.100 --> 00:10:50.700
+Pause the video now.
+
+176
+00:10:50.950 --> 00:10:52.550
+Here are the answers.
+
+177
+00:10:52.800 --> 00:10:54.000
+One: an RODC.
+
+178
+00:10:54.250 --> 00:10:59.850
+With weak physical security and a slow
+link, you want a DC that nothing
+
+179
+00:11:00.100 --> 00:11:04.900
+replicates out of, and that stores no
+passwords unless you allow them.
+
+180
+00:11:05.150 --> 00:11:06.350
+Two: no.
+
+181
+00:11:06.600 --> 00:11:11.800
+Domain Admins is in the Denied RODC
+Password Replication Group, and deny wins,
+
+182
+00:11:12.050 --> 00:11:15.250
+so DC01 checks every one of those
+sign-ins.
+
+183
+00:11:15.500 --> 00:11:18.300
+Three: allowed does not mean cached yet.
+
+184
+00:11:18.550 --> 00:11:22.950
+Use Prepopulate Passwords, or wait for his
+first sign-in through SRV-CORE.
+
+185
+00:11:23.200 --> 00:11:27.600
+Four: password hash sync, because Entra ID
+checks the password itself.
+
+186
+00:11:27.850 --> 00:11:33.050
+On SRV-CORE, I install the AD DS role and
+run Install-ADDSDomainController with dash
+
+187
+00:11:33.300 --> 00:11:34.900
+ReadOnlyReplica and dash SiteName.
+
+188
+00:11:35.150 --> 00:11:39.150
+I type the passwords at the prompts and
+answer Y.
+
+189
+00:11:39.400 --> 00:11:43.000
+After the restart, DC01 lists SRV-CORE
+with IsReadOnly True.
+
+190
+00:11:43.250 --> 00:11:47.250
+In ADUC, the Password Replication Policy
+tab shows the defaults.
+
+191
+00:11:47.500 --> 00:11:49.500
+I add GG-Students with Allow.
+
+192
+00:11:49.750 --> 00:11:53.350
+Under Advanced, only the RODC's own
+accounts are stored.
+
+193
+00:11:53.600 --> 00:11:56.800
+The Resultant Policy allows dpatel but not
+alee.
+
+194
+00:11:57.050 --> 00:12:01.850
+I prepopulate dpatel, and PowerShell
+confirms his password is now stored on
+
+195
+00:12:02.100 --> 00:12:03.300
+SRV-CORE.
+
+196
+00:12:03.550 --> 00:12:09.150
+Nobody else from GG-Students is cached
+yet, and that is exactly what the policy
+
+197
+00:12:09.400 --> 00:12:10.600
+promised.
+
+198
+00:12:10.850 --> 00:12:12.050
+To wrap up.
+
+199
+00:12:12.300 --> 00:12:15.900
+Two writable DCs remove the single point
+of failure.
+
+200
+00:12:16.150 --> 00:12:20.950
+An RODC holds every object but no
+passwords by default, and nothing
+
+201
+00:12:21.200 --> 00:12:22.800
+replicates out of it.
+
+202
+00:12:23.050 --> 00:12:26.250
+Install-ADDSDomainController with dash
+ReadOnlyReplica and dash SiteName builds
+
+203
+00:12:26.500 --> 00:12:27.700
+one.
+
+204
+00:12:27.950 --> 00:12:32.350
+In the PRP, deny wins, and allowed means
+may be cached.
+
+205
+00:12:32.600 --> 00:12:37.800
+Entra Connect Sync or Cloud Sync copies AD
+DS users to Entra ID.
+
+206
+00:12:38.050 --> 00:12:43.650
+Turn on password hash sync as a backup,
+and use a routable UPN suffix.
+
+207
+00:12:43.900 --> 00:12:45.100
+Lab 4.
+
+208
+00:12:45.350 --> 00:12:50.950
+4 practices the RODC part in about sixty
+minutes, plus a short hybrid identity
+
+209
+00:12:51.200 --> 00:12:52.400
+scenario.
