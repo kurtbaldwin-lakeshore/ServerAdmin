@@ -1,0 +1,5 @@
+MC	What does setup call a clean install on its Select setup option screen?	Install Windows Server	correct	Repair my PC	incorrect	Upgrade	incorrect	Migrate	incorrect
+TF	An image name with (Desktop Experience) at the end installs the full graphical desktop.	true
+MC	Which account does setup ask you to set a password for?	Administrator, the built-in local administrator	correct	Guest	incorrect	student	incorrect	A Microsoft account	incorrect
+MC	On SRV-CORE, which SConfig option takes you to a PowerShell prompt?	15	correct	1	incorrect	8	incorrect	13	incorrect
+MAT	Match each installation option to the WindowsInstallationType value Get-ComputerInfo shows.	Desktop Experience	Server	Server Core	Server Core

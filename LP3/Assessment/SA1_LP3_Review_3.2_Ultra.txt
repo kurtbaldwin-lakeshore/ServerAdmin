@@ -1,0 +1,5 @@
+MC	Which zone type is the writable copy?	Primary	correct	Secondary	incorrect	Stub	incorrect	Conditional forwarder	incorrect
+MC	Which reverse zone holds the PTR record for 192.168.50.20?	50.168.192.in-addr.arpa	correct	192.168.50.in-addr.arpa	incorrect	lakeshore.test	incorrect	20.in-addr.arpa	incorrect
+TF	You can add records to a secondary zone on SRV-CORE.	false
+MC	What does the CNAME www point to?	Another name, such as srv01.lakeshore.test	correct	An IP address	incorrect	A mail server preference	incorrect	A reverse zone	incorrect
+MC	Which zone transfer setting is the safest for one known secondary?	Only to the following servers	correct	To any server	incorrect	Allow both nonsecure and secure dynamic updates	incorrect	Do not allow dynamic updates	incorrect

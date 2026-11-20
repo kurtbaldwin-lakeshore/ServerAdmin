@@ -1,0 +1,5 @@
+MC	Which static IPv4 address does the plan give SRV-CORE?	192.168.50.21	correct	192.168.50.20	incorrect	192.168.50.10	incorrect	169.254.50.21	incorrect
+MC	In SConfig, which option opens the Date and Time dialog?	9	correct	8	incorrect	2	incorrect	5	incorrect
+TF	A new computer name is used only after the server restarts.	true
+MC	What does Test-Connection -ComputerName 192.168.50.21 -Count 2 -Quiet print when SRV-CORE answers?	True	correct	Reply from 192.168.50.21	incorrect	Success	incorrect	0	incorrect
+MC	In Server Manager, where do you find the Computer name, Remote Desktop and Time zone links?	Local Server, in the Properties tile	correct	Dashboard, in QUICK START	incorrect	All Servers	incorrect	The Tools menu	incorrect

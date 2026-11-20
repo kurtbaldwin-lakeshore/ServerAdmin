@@ -1,0 +1,1089 @@
+1
+00:00:00,000 --> 00:00:01,600
+Welcome to Topic 3.
+
+2
+00:00:01,850 --> 00:00:03,850
+3, Forwarding and Testing DNS.
+
+3
+00:00:04,100 --> 00:00:07,700
+First you quickly rebuild your zones from
+Labs 3.
+
+4
+00:00:07,950 --> 00:00:09,150
+1 and 3.
+
+5
+00:00:09,400 --> 00:00:13,400
+2, and then your DNS servers learn to work
+together.
+
+6
+00:00:13,650 --> 00:00:19,650
+You will see where a server sends a
+question it cannot answer, and you will
+
+7
+00:00:19,900 --> 00:00:22,300
+add a conditional forwarder for branch.
+
+8
+00:00:22,550 --> 00:00:23,750
+test.
+
+9
+00:00:24,000 --> 00:00:29,200
+You will also watch a forwarder fail,
+because our pod has no internet.
+
+10
+00:00:29,450 --> 00:00:33,450
+Then we build a testing toolkit and a
+troubleshooting flow.
+
+11
+00:00:33,700 --> 00:00:38,100
+Last, two short concepts from the exam:
+DNSSEC and DNS policies.
+
+12
+00:00:38,350 --> 00:00:40,750
+CLIENT01 asks SRV01 for a name.
+
+13
+00:00:41,000 --> 00:00:44,200
+First, SRV01 checks its own zones, like
+lakeshore.
+
+14
+00:00:44,450 --> 00:00:45,650
+test.
+
+15
+00:00:45,900 --> 00:00:48,300
+Next, its cache of recent answers.
+
+16
+00:00:48,550 --> 00:00:51,750
+If neither has it, SRV01 asks another
+server.
+
+17
+00:00:52,000 --> 00:00:57,200
+If the name ends in a domain with a
+conditional forwarder, like branch.
+
+18
+00:00:57,450 --> 00:01:00,650
+test, it asks the server you listed,
+SRV-CORE.
+
+19
+00:01:00,900 --> 00:01:04,100
+For any other name it uses its forwarders.
+
+20
+00:01:04,350 --> 00:01:07,950
+If those fail, it falls back to root
+hints.
+
+21
+00:01:08,200 --> 00:01:14,200
+In our pod only the SRV-CORE path can
+work, because the internet is out of
+
+22
+00:01:14,450 --> 00:01:15,650
+reach.
+
+23
+00:01:15,900 --> 00:01:20,700
+A conditional forwarder covers one named
+domain and lives in the Conditional
+
+24
+00:01:20,950 --> 00:01:22,150
+Forwarders node.
+
+25
+00:01:22,400 --> 00:01:28,400
+A forwarder covers every name the server
+cannot answer, and you set it on the
+
+26
+00:01:28,650 --> 00:01:31,050
+Forwarders tab in the server's properties.
+
+27
+00:01:31,300 --> 00:01:37,700
+Root hints are the fallback: a list of the
+root servers at the top of DNS.
+
+28
+00:01:37,950 --> 00:01:43,950
+Asking other servers for a client is
+called recursion, and you can turn it off
+
+29
+00:01:44,200 --> 00:01:45,800
+on the Advanced tab.
+
+30
+00:01:46,050 --> 00:01:51,650
+A stub zone is an alternative: it copies
+the other zone's name server records.
+
+31
+00:01:51,900 --> 00:01:55,900
+In DNS Manager, right-click Conditional
+Forwarders and choose New Conditional
+
+32
+00:01:56,150 --> 00:01:57,350
+Forwarder.
+
+33
+00:01:57,600 --> 00:01:59,600
+In DNS Domain, type branch.
+
+34
+00:01:59,850 --> 00:02:01,050
+test.
+
+35
+00:02:01,300 --> 00:02:07,300
+Under IP addresses of the master servers,
+click the line that says click here to
+
+36
+00:02:07,550 --> 00:02:09,950
+add, and type SRV-CORE's address, 192.
+
+37
+00:02:10,200 --> 00:02:11,400
+168.
+
+38
+00:02:11,650 --> 00:02:12,850
+50.
+
+39
+00:02:13,100 --> 00:02:14,300
+21.
+
+40
+00:02:14,550 --> 00:02:16,550
+DNS Manager checks the address.
+
+41
+00:02:16,800 --> 00:02:22,000
+Validated should say OK, which means
+SRV-CORE answered as the owner of the
+
+42
+00:02:22,250 --> 00:02:23,450
+zone.
+
+43
+00:02:23,700 --> 00:02:30,100
+The option to store it in Active Directory
+is greyed out, because SRV01 is not a
+
+44
+00:02:30,350 --> 00:02:31,550
+domain controller.
+
+45
+00:02:31,800 --> 00:02:35,000
+You will use it in Learning Plan 4.
+
+46
+00:02:35,250 --> 00:02:36,450
+Now in PowerShell.
+
+47
+00:02:36,700 --> 00:02:39,100
+Before the change, Resolve-DnsName for
+app1.
+
+48
+00:02:39,350 --> 00:02:40,550
+branch.
+
+49
+00:02:40,800 --> 00:02:42,000
+test fails.
+
+50
+00:02:42,250 --> 00:02:48,650
+SRV01 has no zone and no forwarder for it,
+and the root servers cannot be reached.
+
+51
+00:02:48,900 --> 00:02:50,500
+Then one command,
+Add-DnsServerConditionalForwarderZone,
+
+52
+00:02:50,750 --> 00:02:52,350
+with dash Name branch.
+
+53
+00:02:52,600 --> 00:02:54,600
+test and dash MasterServers 192.
+
+54
+00:02:54,850 --> 00:02:56,050
+168.
+
+55
+00:02:56,300 --> 00:02:57,500
+50.
+
+56
+00:02:57,750 --> 00:02:58,950
+21.
+
+57
+00:02:59,200 --> 00:03:02,400
+The output shows a zone of type Forwarder.
+
+58
+00:03:02,650 --> 00:03:06,250
+Without Active Directory, it is stored in
+the registry.
+
+59
+00:03:06,500 --> 00:03:12,900
+Clear the server cache so an old failure
+is not reused, and then resolve the name
+
+60
+00:03:13,150 --> 00:03:14,350
+again.
+
+61
+00:03:14,600 --> 00:03:18,200
+Now SRV01 asks SRV-CORE for you and
+returns 192.
+
+62
+00:03:18,450 --> 00:03:19,650
+168.
+
+63
+00:03:19,900 --> 00:03:21,100
+50.
+
+64
+00:03:21,350 --> 00:03:22,550
+21.
+
+65
+00:03:22,800 --> 00:03:24,400
+Now the general forwarders.
+
+66
+00:03:24,650 --> 00:03:28,250
+Right-click SRV01, choose Properties, and
+open the Forwarders tab.
+
+67
+00:03:28,500 --> 00:03:33,700
+The list holds the servers SRV01 asks for
+every name it cannot answer.
+
+68
+00:03:33,950 --> 00:03:36,750
+You add or remove them with Edit.
+
+69
+00:03:37,000 --> 00:03:39,400
+In our pod we add 8.
+
+70
+00:03:39,650 --> 00:03:40,850
+8.
+
+71
+00:03:41,100 --> 00:03:42,300
+8.
+
+72
+00:03:42,550 --> 00:03:47,750
+8, a public resolver, and the check fails,
+because there is no internet.
+
+73
+00:03:48,000 --> 00:03:54,000
+Below the list is a check box: Use root
+hints if no forwarders are available.
+
+74
+00:03:54,250 --> 00:03:57,050
+On means try the root servers too.
+
+75
+00:03:57,300 --> 00:04:00,900
+And notice the note: conditional
+forwarders win over server-level
+
+76
+00:04:01,150 --> 00:04:02,350
+forwarders.
+
+77
+00:04:02,600 --> 00:04:05,400
+In PowerShell, Set-DnsServerForwarder sets
+the forwarder list.
+
+78
+00:04:05,650 --> 00:04:07,250
+Set replaces the list.
+
+79
+00:04:07,500 --> 00:04:11,100
+Get-DnsServerForwarder shows the address
+and the root hint setting.
+
+80
+00:04:11,350 --> 00:04:12,950
+Now ask for www.
+
+81
+00:04:13,200 --> 00:04:14,400
+microsoft.
+
+82
+00:04:14,650 --> 00:04:15,850
+com, and wait.
+
+83
+00:04:16,100 --> 00:04:21,700
+You may get a timeout after several
+seconds, or a quick DNS server failure.
+
+84
+00:04:21,950 --> 00:04:24,350
+That is not a setup mistake.
+
+85
+00:04:24,600 --> 00:04:28,200
+The pod has no internet, so nobody can
+answer.
+
+86
+00:04:28,450 --> 00:04:29,650
+Meanwhile, app1.
+
+87
+00:04:29,900 --> 00:04:31,100
+branch.
+
+88
+00:04:31,350 --> 00:04:34,950
+test still works, because the conditional
+forwarder comes first.
+
+89
+00:04:35,200 --> 00:04:39,200
+When you are done, clean up with
+Remove-DnsServerForwarder, because a
+
+90
+00:04:39,450 --> 00:04:42,650
+forwarder that cannot work only slows
+things down.
+
+91
+00:04:42,900 --> 00:04:45,700
+nslookup is the classic DNS testing tool.
+
+92
+00:04:45,950 --> 00:04:49,150
+Type nslookup alone, and you enter
+interactive mode.
+
+93
+00:04:49,400 --> 00:04:53,400
+It first tells you which server it asks:
+here srv01.
+
+94
+00:04:53,650 --> 00:04:54,850
+lakeshore.
+
+95
+00:04:55,100 --> 00:04:56,300
+test.
+
+96
+00:04:56,550 --> 00:04:59,750
+Type a name, and you get the answer.
+
+97
+00:04:60,000 --> 00:05:04,800
+Non-authoritative answer means SRV01 got
+it second-hand, from SRV-CORE or from its
+
+98
+00:05:05,050 --> 00:05:06,250
+cache.
+
+99
+00:05:06,500 --> 00:05:10,900
+Set type equals mx asks for mail records
+instead of addresses.
+
+100
+00:05:11,150 --> 00:05:15,550
+The server command switches to another DNS
+server, only inside nslookup.
+
+101
+00:05:15,800 --> 00:05:19,000
+Set debug shows every detail of each
+reply.
+
+102
+00:05:19,250 --> 00:05:20,850
+Type exit to leave.
+
+103
+00:05:21,100 --> 00:05:26,700
+Resolve-DnsName is the PowerShell way to
+test names, and its results are easy to
+
+104
+00:05:26,950 --> 00:05:28,150
+filter and compare.
+
+105
+00:05:28,400 --> 00:05:32,000
+By default it asks for A and AAAA records.
+
+106
+00:05:32,250 --> 00:05:33,850
+Four switches matter most.
+
+107
+00:05:34,100 --> 00:05:37,300
+Dash Type picks the record type, like MX.
+
+108
+00:05:37,550 --> 00:05:41,950
+Dash Server skips your network setting and
+asks one server directly.
+
+109
+00:05:42,200 --> 00:05:47,400
+Dash NoHostsFile skips the hosts file, so
+you see what DNS really says.
+
+110
+00:05:47,650 --> 00:05:52,850
+Dash DnsOnly uses only the DNS protocol,
+with no LLMNR or NetBIOS fallback.
+
+111
+00:05:53,100 --> 00:05:55,500
+It still reads the hosts file.
+
+112
+00:05:55,750 --> 00:05:58,550
+First, make sure the server is reachable.
+
+113
+00:05:58,800 --> 00:06:04,000
+Test-NetConnection with dash Port 53 tries
+a TCP connection to the DNS port.
+
+114
+00:06:04,250 --> 00:06:09,050
+TcpTestSucceeded True means the server is
+up and the firewall is open.
+
+115
+00:06:09,300 --> 00:06:13,700
+Most queries use UDP 53, but DNS servers
+listen on both.
+
+116
+00:06:13,950 --> 00:06:15,150
+Next, caches.
+
+117
+00:06:15,400 --> 00:06:20,200
+ipconfig slash displaydns shows what the
+client remembers, even answers like Name
+
+118
+00:06:20,450 --> 00:06:21,650
+does not exist.
+
+119
+00:06:21,900 --> 00:06:25,500
+Clear-DnsClientCache empties it, the same
+as ipconfig slash flushdns.
+
+120
+00:06:25,750 --> 00:06:30,150
+On the server, Clear-DnsServerCache with
+dash Force clears the server's cache.
+
+121
+00:06:30,400 --> 00:06:36,400
+When a name does not resolve, follow this
+flow and stop at the first failure.
+
+122
+00:06:36,650 --> 00:06:38,650
+One: the client DNS setting.
+
+123
+00:06:38,900 --> 00:06:40,900
+Is CLIENT01 really using 192.
+
+124
+00:06:41,150 --> 00:06:42,350
+168.
+
+125
+00:06:42,600 --> 00:06:43,800
+50.
+
+126
+00:06:44,050 --> 00:06:45,250
+20?
+
+127
+00:06:45,500 --> 00:06:48,700
+Two: is the server reachable on port 53?
+
+128
+00:06:48,950 --> 00:06:52,950
+Three: do the zone and the record exist,
+spelled correctly?
+
+129
+00:06:53,200 --> 00:06:58,400
+Four: is a forwarder set for another
+domain, and does its target answer?
+
+130
+00:06:58,650 --> 00:07:02,650
+Five: caches, which can hold a saved does
+not exist.
+
+131
+00:07:02,900 --> 00:07:06,100
+Six: a hosts file line that overrides DNS.
+
+132
+00:07:06,350 --> 00:07:08,750
+Fix one thing, then test again.
+
+133
+00:07:09,000 --> 00:07:11,000
+Two things can mislead you.
+
+134
+00:07:11,250 --> 00:07:12,450
+First, negative caching.
+
+135
+00:07:12,700 --> 00:07:19,100
+If you ask for a name before it exists,
+the no travels back from SRV-CORE through
+
+136
+00:07:19,350 --> 00:07:22,550
+SRV01 to CLIENT01, and each one remembers
+it.
+
+137
+00:07:22,800 --> 00:07:28,400
+The DNS server keeps a negative answer for
+up to fifteen minutes by default.
+
+138
+00:07:28,650 --> 00:07:31,850
+So a new record can still look missing.
+
+139
+00:07:32,100 --> 00:07:36,100
+Clear the server cache, then the client
+cache, or wait.
+
+140
+00:07:36,350 --> 00:07:37,950
+Second, the hosts file.
+
+141
+00:07:38,200 --> 00:07:43,800
+A line there beats DNS for ping and most
+apps, but nslookup ignores it.
+
+142
+00:07:44,050 --> 00:07:46,850
+When tests are not enough, use logs.
+
+143
+00:07:47,100 --> 00:07:53,100
+The Audit log is on by default and records
+changes to zones, records and settings.
+
+144
+00:07:53,350 --> 00:07:56,150
+The Analytical log is off by default.
+
+145
+00:07:56,400 --> 00:08:02,800
+It records one event for each query and
+answer, and it is light enough for most
+
+146
+00:08:03,050 --> 00:08:04,250
+servers.
+
+147
+00:08:04,500 --> 00:08:10,100
+Find it in Event Viewer under DNS-Server,
+after you choose Show Analytic and Debug
+
+148
+00:08:10,350 --> 00:08:11,550
+Logs.
+
+149
+00:08:11,800 --> 00:08:14,200
+Debug logging is the older way.
+
+150
+00:08:14,450 --> 00:08:20,050
+It writes every packet to a text file, so
+only turn it on briefly.
+
+151
+00:08:20,300 --> 00:08:22,300
+DNSSEC protects answers from forgery.
+
+152
+00:08:22,550 --> 00:08:28,150
+Signing a zone makes the server add a
+digital signature, an RRSIG record, next
+
+153
+00:08:28,400 --> 00:08:30,400
+to each set of records.
+
+154
+00:08:30,650 --> 00:08:33,050
+The data is signed, not encrypted.
+
+155
+00:08:33,300 --> 00:08:34,900
+Two keys are used.
+
+156
+00:08:35,150 --> 00:08:41,150
+The zone signing key signs the records,
+and the key signing key signs the zone's
+
+157
+00:08:41,400 --> 00:08:42,600
+public keys.
+
+158
+00:08:42,850 --> 00:08:48,450
+A resolver that validates holds a trust
+anchor, a trusted public key, and rejects
+
+159
+00:08:48,700 --> 00:08:50,300
+answers with bad signatures.
+
+160
+00:08:50,550 --> 00:08:52,950
+In PowerShell, Invoke-DnsServerZoneSign
+signs a zone.
+
+161
+00:08:53,200 --> 00:08:56,400
+We do not sign zones in the pod.
+
+162
+00:08:56,650 --> 00:09:00,650
+DNS policies let one server give different
+answers by rule.
+
+163
+00:09:00,900 --> 00:09:05,700
+A zone scope is a second set of records
+inside one zone.
+
+164
+00:09:05,950 --> 00:09:11,550
+A policy uses criteria, like the client
+subnet, the server interface, the time of
+
+165
+00:09:11,800 --> 00:09:15,400
+day or the record type, to choose the
+scope.
+
+166
+00:09:15,650 --> 00:09:20,850
+A classic use is split-brain DNS: inside
+users get an internal address, outside
+
+167
+00:09:21,100 --> 00:09:23,100
+users get a public one.
+
+168
+00:09:23,350 --> 00:09:27,750
+The example adds an external scope, a
+record and a policy.
+
+169
+00:09:28,000 --> 00:09:30,800
+Like DNSSEC, this is a concept only.
+
+170
+00:09:31,050 --> 00:09:32,250
+Four common mistakes.
+
+171
+00:09:32,500 --> 00:09:36,500
+One: making SRV-CORE a normal forwarder
+just to reach branch.
+
+172
+00:09:36,750 --> 00:09:37,950
+test.
+
+173
+00:09:38,200 --> 00:09:40,600
+That sends every unknown name there.
+
+174
+00:09:40,850 --> 00:09:42,850
+Use a conditional forwarder instead.
+
+175
+00:09:43,100 --> 00:09:45,900
+Two: expecting forwarding to work both
+ways.
+
+176
+00:09:46,150 --> 00:09:47,350
+SRV01 finds branch.
+
+177
+00:09:47,600 --> 00:09:51,200
+test, but SRV-CORE needs its own forwarder
+for lakeshore.
+
+178
+00:09:51,450 --> 00:09:52,650
+test.
+
+179
+00:09:52,900 --> 00:09:55,300
+Three: trusting nslookup when ping
+disagrees.
+
+180
+00:09:55,550 --> 00:10:00,750
+nslookup ignores the hosts file, so check
+it, and use Resolve-DnsName with dash
+
+181
+00:10:01,000 --> 00:10:02,200
+NoHostsFile.
+
+182
+00:10:02,450 --> 00:10:05,650
+Four: fixing a record while the error
+stays.
+
+183
+00:10:05,900 --> 00:10:11,100
+The no is cached, so clear both the client
+and the server cache.
+
+184
+00:10:11,350 --> 00:10:12,950
+Time to check yourself.
+
+185
+00:10:13,200 --> 00:10:16,000
+CLIENT01 uses SRV01 as its DNS server.
+
+186
+00:10:16,250 --> 00:10:17,850
+First: SRV01 resolves srv01.
+
+187
+00:10:18,100 --> 00:10:19,300
+lakeshore.
+
+188
+00:10:19,550 --> 00:10:21,150
+test but not app1.
+
+189
+00:10:21,400 --> 00:10:22,600
+branch.
+
+190
+00:10:22,850 --> 00:10:24,050
+test.
+
+191
+00:10:24,300 --> 00:10:26,700
+What do you add on SRV01?
+
+192
+00:10:26,950 --> 00:10:29,350
+Second: you added the forwarder 8.
+
+193
+00:10:29,600 --> 00:10:30,800
+8.
+
+194
+00:10:31,050 --> 00:10:32,250
+8.
+
+195
+00:10:32,500 --> 00:10:33,700
+8, and www.
+
+196
+00:10:33,950 --> 00:10:35,150
+microsoft.
+
+197
+00:10:35,400 --> 00:10:36,600
+com fails.
+
+198
+00:10:36,850 --> 00:10:39,250
+Is the forwarder set up wrong?
+
+199
+00:10:39,500 --> 00:10:41,900
+Third: nslookup says nas01 is 192.
+
+200
+00:10:42,150 --> 00:10:43,350
+168.
+
+201
+00:10:43,600 --> 00:10:44,800
+50.
+
+202
+00:10:45,050 --> 00:10:47,850
+40, but ping goes to dot 99.
+
+203
+00:10:48,100 --> 00:10:49,300
+Why?
+
+204
+00:10:49,550 --> 00:10:55,550
+And fourth: you just added a missing
+record, but the client still says it does
+
+205
+00:10:55,800 --> 00:10:57,000
+not exist.
+
+206
+00:10:57,250 --> 00:10:59,250
+What do you do next?
+
+207
+00:10:59,500 --> 00:11:02,300
+Pause the video and think it through.
+
+208
+00:11:02,550 --> 00:11:04,150
+Here are the answers.
+
+209
+00:11:04,400 --> 00:11:06,800
+One: a conditional forwarder for branch.
+
+210
+00:11:07,050 --> 00:11:09,050
+test, with master server 192.
+
+211
+00:11:09,300 --> 00:11:10,500
+168.
+
+212
+00:11:10,750 --> 00:11:11,950
+50.
+
+213
+00:11:12,200 --> 00:11:15,000
+21, in DNS Manager or with
+Add-DnsServerConditionalForwarderZone.
+
+214
+00:11:15,250 --> 00:11:17,650
+Two: no, the forwarder is fine.
+
+215
+00:11:17,900 --> 00:11:23,900
+The pod has no internet, so neither the
+forwarder nor the root servers can reply,
+
+216
+00:11:24,150 --> 00:11:26,150
+and a failure is expected.
+
+217
+00:11:26,400 --> 00:11:30,000
+Three: there is a hosts file line on
+CLIENT01.
+
+218
+00:11:30,250 --> 00:11:32,650
+ping reads it, nslookup does not.
+
+219
+00:11:32,900 --> 00:11:35,300
+Four: a negative answer was cached.
+
+220
+00:11:35,550 --> 00:11:38,350
+Clear-DnsClientCache on CLIENT01, and
+Clear-DnsServerCache on SRV01.
+
+221
+00:11:38,600 --> 00:11:41,000
+Then test the name once again.
+
+222
+00:11:41,250 --> 00:11:42,450
+On SRV01, app1.
+
+223
+00:11:42,700 --> 00:11:43,900
+branch.
+
+224
+00:11:44,150 --> 00:11:45,750
+test fails at first.
+
+225
+00:11:46,000 --> 00:11:48,800
+I add a conditional forwarder for branch.
+
+226
+00:11:49,050 --> 00:11:52,250
+test pointing at SRV-CORE, and Validated
+says OK.
+
+227
+00:11:52,500 --> 00:11:55,300
+After clearing the cache, the name
+resolves.
+
+228
+00:11:55,550 --> 00:11:57,950
+Next, I add the forwarder 8.
+
+229
+00:11:58,200 --> 00:11:59,400
+8.
+
+230
+00:11:59,650 --> 00:12:00,850
+8.
+
+231
+00:12:01,100 --> 00:12:06,300
+8, and an internet name fails, just as
+expected, so I remove it.
+
+232
+00:12:06,550 --> 00:12:10,550
+On CLIENT01, nslookup shows the
+non-authoritative answer and the MX
+
+233
+00:12:10,800 --> 00:12:12,000
+record.
+
+234
+00:12:12,250 --> 00:12:18,650
+Then the negative cache: I ask for reports
+before it exists, add it on SRV-CORE, and
+
+235
+00:12:18,900 --> 00:12:22,100
+it still fails until I clear both caches.
+
+236
+00:12:22,350 --> 00:12:23,550
+To wrap up.
+
+237
+00:12:23,800 --> 00:12:29,400
+A server answers from its own zones and
+cache first, then a matching conditional
+
+238
+00:12:29,650 --> 00:12:32,050
+forwarder, then forwarders, then root
+hints.
+
+239
+00:12:32,300 --> 00:12:35,500
+With no internet, forwarders and root
+hints fail.
+
+240
+00:12:35,750 --> 00:12:39,750
+nslookup asks one server directly, and
+Resolve-DnsName adds useful switches.
+
+241
+00:12:40,000 --> 00:12:44,800
+When a name fails, follow the flow:
+setting, port 53, record, forwarding,
+
+242
+00:12:45,050 --> 00:12:46,250
+caches, hosts file.
+
+243
+00:12:46,500 --> 00:12:49,300
+DNSSEC signs answers, and policies choose
+answers.
+
+244
+00:12:49,550 --> 00:12:50,750
+Lab 3.
+
+245
+00:12:51,000 --> 00:12:54,600
+3 practices all of this in about fifty
+minutes.
+
+246
+00:12:54,850 --> 00:12:56,450
+It is practice only.
+
+247
+00:12:56,700 --> 00:12:58,700
+See you in the lab.

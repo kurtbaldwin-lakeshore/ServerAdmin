@@ -1,0 +1,5 @@
+MC	Where does Windows Admin Center run in the pod?	As a gateway on SRV01, opened in a browser	correct	As an app on SRV-CORE	incorrect	Only in the Azure portal	incorrect	On DC01	incorrect
+MC	Which port does Express setup use for a gateway on Windows Server?	443	correct	6600	incorrect	22	incorrect	3389	incorrect
+TF	Browsers warn about the installer's self-signed certificate because no certificate authority vouches for it.	true
+MC	Which account do you use for SRV-CORE in Manage as?	SRV-CORE\Administrator	correct	SRV01\Administrator	incorrect	CLIENT01\student	incorrect	Guest	incorrect
+MC	Which Windows Admin Center tool opens a remote PowerShell session in the browser?	PowerShell	correct	Overview	incorrect	Events	incorrect	Roles &amp; features	incorrect

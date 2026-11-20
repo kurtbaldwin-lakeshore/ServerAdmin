@@ -1,0 +1,5 @@
+MC	What is the minimum number of core licenses for any server?	16	correct	8	incorrect	2	incorrect	4	incorrect
+MC	How many Windows Server VMs does Standard allow per fully licensed server?	2	correct	Unlimited	incorrect	1	incorrect	10	incorrect
+TF	A User CAL covers one person on any number of devices.	true
+MC	Which installation option does Microsoft recommend unless you need the graphical tools?	Server Core	correct	Desktop Experience	incorrect	Evaluation	incorrect	Essentials	incorrect
+MC	In slmgr /dli output, which line tells you that Windows is activated?	License Status: Licensed	correct	Partial Product Key: XXXXX	incorrect	Description: RETAIL channel	incorrect	Name: ServerDatacenter edition	incorrect

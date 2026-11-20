@@ -1,0 +1,928 @@
+WEBVTT
+
+NOTE SA1 Topic 1.3: Installing Windows Server. Timings are estimates at 150 words a minute; re-sync after recording.
+
+1
+00:00:00.000 --> 00:00:01.600
+Welcome to Topic 1.
+
+2
+00:00:01.850 --> 00:00:03.450
+3, Installing Windows Server.
+
+3
+00:00:03.700 --> 00:00:04.900
+In Topic 1.
+
+4
+00:00:05.150 --> 00:00:08.750
+2 you chose an edition and an installation
+option.
+
+5
+00:00:09.000 --> 00:00:11.800
+Now you put those choices to work.
+
+6
+00:00:12.050 --> 00:00:18.050
+We walk through the Windows Server 2025
+setup program from the first boot to the
+
+7
+00:00:18.300 --> 00:00:19.500
+first sign-in.
+
+8
+00:00:19.750 --> 00:00:26.150
+You will see each important screen, learn
+what to pick and why, and learn how to
+
+9
+00:00:26.400 --> 00:00:28.400
+check that the install worked.
+
+10
+00:00:28.650 --> 00:00:35.850
+At the end, I show you a complete Server
+Core install in the lab pod, so you know
+
+11
+00:00:36.100 --> 00:00:37.300
+what to expect.
+
+12
+00:00:37.550 --> 00:00:43.150
+Here are the six things you will be able
+to do after this topic.
+
+13
+00:00:43.400 --> 00:00:48.200
+You will check the hardware, edition,
+option and media before you start.
+
+14
+00:00:48.450 --> 00:00:53.250
+You will tell a clean install from an
+upgrade and a migration.
+
+15
+00:00:53.500 --> 00:00:56.700
+You will follow the setup screens in
+order.
+
+16
+00:00:56.950 --> 00:01:02.150
+You will pick the right image and disk,
+and set a strong password.
+
+17
+00:01:02.400 --> 00:01:06.400
+You will recognize Server Manager and
+SConfig at first sign-in.
+
+18
+00:01:06.650 --> 00:01:11.450
+And you will verify the install with
+winver and one PowerShell command.
+
+19
+00:01:11.700 --> 00:01:15.300
+Before you start setup, run through a
+short checklist.
+
+20
+00:01:15.550 --> 00:01:18.750
+Windows Server 2025 needs at least a 1.
+
+21
+00:01:19.000 --> 00:01:24.600
+4 gigahertz 64-bit processor, 2 gigabytes
+of memory, 32 gigabytes of disk and a
+
+22
+00:01:24.850 --> 00:01:26.050
+gigabit network adapter.
+
+23
+00:01:26.300 --> 00:01:28.300
+Those are minimums, not targets.
+
+24
+00:01:28.550 --> 00:01:34.950
+On a virtual machine, give setup at least
+1,280 megabytes of memory, or it can fail.
+
+25
+00:01:35.200 --> 00:01:37.200
+Next, have your Topic 1.
+
+26
+00:01:37.450 --> 00:01:41.050
+2 decisions ready: the edition and the
+installation option.
+
+27
+00:01:41.300 --> 00:01:47.700
+Then you need media, an ISO file or a
+bootable USB drive, and the server must
+
+28
+00:01:47.950 --> 00:01:49.550
+boot from it first.
+
+29
+00:01:49.800 --> 00:01:55.000
+There are three common ways to get a new
+version of Windows Server.
+
+30
+00:01:55.250 --> 00:02:00.450
+A clean install puts a fresh copy on a new
+or wiped disk.
+
+31
+00:02:00.700 --> 00:02:05.900
+An in-place upgrade installs the new
+version over the old one and keeps
+
+32
+00:02:06.150 --> 00:02:07.750
+settings, roles and data.
+
+33
+00:02:08.000 --> 00:02:12.000
+Windows Server 2025 can upgrade from 2012
+R2 or later.
+
+34
+00:02:12.250 --> 00:02:17.850
+A migration moves roles and data from an
+old server to a new one.
+
+35
+00:02:18.100 --> 00:02:23.300
+Our lab VMs are blank, so there is nothing
+to upgrade or migrate.
+
+36
+00:02:23.550 --> 00:02:27.550
+A clean install also gives everyone the
+same starting point.
+
+37
+00:02:27.800 --> 00:02:29.800
+This slide is your map.
+
+38
+00:02:30.050 --> 00:02:36.450
+In the first row, you answer the screens:
+boot from the media, pick a language and
+
+39
+00:02:36.700 --> 00:02:41.900
+keyboard, choose Install, handle the
+product key if your media asks, and choose
+
+40
+00:02:42.150 --> 00:02:43.350
+the image.
+
+41
+00:02:43.600 --> 00:02:48.800
+In the second row, you accept the license
+terms and choose the disk.
+
+42
+00:02:49.050 --> 00:02:54.650
+Then setup copies files and restarts
+several times, which takes about 10 to 20
+
+43
+00:02:54.900 --> 00:02:56.100
+minutes.
+
+44
+00:02:56.350 --> 00:02:59.950
+Finally, you set the Administrator
+password and sign in.
+
+45
+00:03:00.200 --> 00:03:05.000
+Notice that only step 5, the image,
+differs between SRV01 and SRV-CORE.
+
+46
+00:03:05.250 --> 00:03:10.450
+Windows Server 2025 has a redesigned setup
+program, so these screens look different
+
+47
+00:03:10.700 --> 00:03:12.300
+from Windows Server 2022.
+
+48
+00:03:12.550 --> 00:03:16.150
+After language and keyboard, you reach
+Select setup option.
+
+49
+00:03:16.400 --> 00:03:22.000
+Choose Install Windows Server, and check
+the box that agrees everything on the disk
+
+50
+00:03:22.250 --> 00:03:23.450
+will be deleted.
+
+51
+00:03:23.700 --> 00:03:26.900
+On a blank lab VM, nothing is lost.
+
+52
+00:03:27.150 --> 00:03:32.350
+Some media then show Choose a licensing
+method or a product key screen.
+
+53
+00:03:32.600 --> 00:03:38.600
+If you see it, enter the key or choose the
+option your instructor gives you.
+
+54
+00:03:38.850 --> 00:03:43.250
+Volume license media skip that screen, so
+you just carry on.
+
+55
+00:03:43.500 --> 00:03:46.700
+This is the most important choice in
+setup.
+
+56
+00:03:46.950 --> 00:03:49.350
+Select image lists each edition twice.
+
+57
+00:03:49.600 --> 00:03:55.200
+A name that ends in Desktop Experience
+gives you the full desktop and Server
+
+58
+00:03:55.450 --> 00:03:56.650
+Manager.
+
+59
+00:03:56.900 --> 00:04:00.500
+The same edition without those words is
+Server Core.
+
+60
+00:04:00.750 --> 00:04:05.950
+So for SRV01 you pick Datacenter with
+Desktop Experience, and for SRV-CORE plain
+
+61
+00:04:06.200 --> 00:04:07.400
+Datacenter.
+
+62
+00:04:07.650 --> 00:04:10.850
+On evaluation media, every name also
+contains Evaluation.
+
+63
+00:04:11.100 --> 00:04:16.300
+Read the whole name before you select
+Next, because you cannot convert between
+
+64
+00:04:16.550 --> 00:04:18.150
+the two options later.
+
+65
+00:04:18.400 --> 00:04:21.200
+A wrong pick means a new install.
+
+66
+00:04:21.450 --> 00:04:25.050
+After the license terms, setup asks where
+to install.
+
+67
+00:04:25.300 --> 00:04:30.100
+On a blank disk you see one line: Disk 0
+Unallocated Space.
+
+68
+00:04:30.350 --> 00:04:33.550
+Unallocated means the disk has no
+partitions yet.
+
+69
+00:04:33.800 --> 00:04:35.800
+Select it and select Next.
+
+70
+00:04:36.050 --> 00:04:41.250
+You do not create or format anything,
+because setup does that for you.
+
+71
+00:04:41.500 --> 00:04:46.700
+Load driver is only for storage
+controllers that setup cannot see, and our
+
+72
+00:04:46.950 --> 00:04:48.950
+pods do not need it.
+
+73
+00:04:49.200 --> 00:04:51.600
+On Ready to install, select Install.
+
+74
+00:04:51.850 --> 00:04:55.850
+Setup copies files and asks nothing more
+until the password.
+
+75
+00:04:56.100 --> 00:04:59.300
+So what does setup create on that space?
+
+76
+00:04:59.550 --> 00:05:02.750
+On a UEFI computer, you get four
+partitions.
+
+77
+00:05:03.000 --> 00:05:08.600
+The EFI system partition is small and uses
+FAT32, and the firmware starts Windows
+
+78
+00:05:08.850 --> 00:05:10.050
+from it.
+
+79
+00:05:10.300 --> 00:05:15.500
+The Microsoft reserved partition, or MSR,
+is 16 megabytes and holds no data.
+
+80
+00:05:15.750 --> 00:05:19.350
+The Windows partition uses NTFS and
+becomes drive C.
+
+81
+00:05:19.600 --> 00:05:22.400
+The Recovery partition holds the recovery
+tools.
+
+82
+00:05:22.650 --> 00:05:25.450
+In PowerShell, Get-Partition shows the
+same list.
+
+83
+00:05:25.700 --> 00:05:30.900
+Only the Windows partition gets a drive
+letter, so leave the others alone.
+
+84
+00:05:31.150 --> 00:05:34.350
+After the restarts, Desktop Experience
+shows Customize settings.
+
+85
+00:05:34.600 --> 00:05:38.600
+The user name is already Administrator,
+the built-in admin account.
+
+86
+00:05:38.850 --> 00:05:41.650
+Type the password twice and select Finish.
+
+87
+00:05:41.900 --> 00:05:46.300
+Setup requires a complex password:
+characters from three of four groups,
+
+88
+00:05:46.550 --> 00:05:51.750
+which are capital letters, small letters,
+digits and symbols, and not the account
+
+89
+00:05:52.000 --> 00:05:53.200
+name.
+
+90
+00:05:53.450 --> 00:05:59.850
+In the lab, always use the password shown
+in your NetLab pod, so later labs work.
+
+91
+00:06:00.100 --> 00:06:05.700
+Server Core asks on a text screen instead:
+Enter, type, Tab, type again, Enter.
+
+92
+00:06:05.950 --> 00:06:07.550
+Now you sign in.
+
+93
+00:06:07.800 --> 00:06:10.600
+Windows asks for Control Alt Delete first.
+
+94
+00:06:10.850 --> 00:06:16.450
+In NetLab, use the Control Alt Delete
+button, because the keys on your own
+
+95
+00:06:16.700 --> 00:06:19.100
+keyboard go to your own computer.
+
+96
+00:06:19.350 --> 00:06:22.950
+Type the password and accept the
+diagnostic data screen.
+
+97
+00:06:23.200 --> 00:06:26.400
+On Desktop Experience, Server Manager
+opens by itself.
+
+98
+00:06:26.650 --> 00:06:30.250
+If a Windows Admin Center pop-up appears,
+close it.
+
+99
+00:06:30.500 --> 00:06:36.500
+The Quick Start box starts with Configure
+this local server, which you use in Topic
+
+100
+00:06:36.750 --> 00:06:37.950
+1.
+
+101
+00:06:38.200 --> 00:06:39.400
+4.
+
+102
+00:06:39.650 --> 00:06:43.250
+The Tools menu opens the consoles and
+Windows PowerShell.
+
+103
+00:06:43.500 --> 00:06:45.500
+Server Core looks very different.
+
+104
+00:06:45.750 --> 00:06:50.550
+There is no desktop and no Start menu,
+just one console window.
+
+105
+00:06:50.800 --> 00:06:56.000
+After you set the password, Windows asks
+about diagnostic data, and then SConfig
+
+106
+00:06:56.250 --> 00:06:57.450
+opens by itself.
+
+107
+00:06:57.700 --> 00:07:02.100
+It is a numbered text menu that runs in
+Windows PowerShell.
+
+108
+00:07:02.350 --> 00:07:05.550
+The banner shows the edition, a quick
+check.
+
+109
+00:07:05.800 --> 00:07:12.200
+Option 2 shows a random name that starts
+with WIN, which you change in Topic 1.
+
+110
+00:07:12.450 --> 00:07:13.650
+4.
+
+111
+00:07:13.900 --> 00:07:18.700
+Option 15 exits to PowerShell, and typing
+SConfig brings the menu back.
+
+112
+00:07:18.950 --> 00:07:22.950
+How do you prove the install is what you
+wanted?
+
+113
+00:07:23.200 --> 00:07:25.600
+The quick graphical check is winver.
+
+114
+00:07:25.850 --> 00:07:31.850
+On Desktop Experience, type winver in the
+Start menu, the Run box or PowerShell, and
+
+115
+00:07:32.100 --> 00:07:33.300
+press Enter.
+
+116
+00:07:33.550 --> 00:07:35.550
+The About Windows box opens.
+
+117
+00:07:35.800 --> 00:07:41.800
+Look for the OS Build number: Windows
+Server 2025 is build 26100, and the number
+
+118
+00:07:42.050 --> 00:07:44.450
+after the dot changes with updates.
+
+119
+00:07:44.700 --> 00:07:48.300
+The text below names the edition,
+Datacenter or Standard.
+
+120
+00:07:48.550 --> 00:07:54.550
+On Server Core, you work in a text
+console, so use the PowerShell check on
+
+121
+00:07:54.800 --> 00:07:56.000
+the next slide.
+
+122
+00:07:56.250 --> 00:07:59.450
+This PowerShell check works on both
+installation options.
+
+123
+00:07:59.700 --> 00:08:04.100
+Get-ComputerInfo with the Property
+parameter asks for the product name, the
+
+124
+00:08:04.350 --> 00:08:06.750
+installation type and the OS version.
+
+125
+00:08:07.000 --> 00:08:11.800
+The command is long, so end the first line
+with a comma.
+
+126
+00:08:12.050 --> 00:08:15.650
+PowerShell shows two arrows and waits for
+the rest.
+
+127
+00:08:15.900 --> 00:08:17.100
+Now compare.
+
+128
+00:08:17.350 --> 00:08:21.750
+On SRV01, the installation type says
+Server, which means Desktop Experience.
+
+129
+00:08:22.000 --> 00:08:24.400
+On SRV-CORE, it says Server Core.
+
+130
+00:08:24.650 --> 00:08:27.050
+The product name and version 10.
+
+131
+00:08:27.300 --> 00:08:28.500
+0.
+
+132
+00:08:28.750 --> 00:08:30.750
+26100 match on both servers.
+
+133
+00:08:31.000 --> 00:08:34.600
+So it is one product with two installation
+options.
+
+134
+00:08:34.850 --> 00:08:40.450
+You install two servers by hand, but a
+company with fifty servers automates the
+
+135
+00:08:40.700 --> 00:08:41.900
+job.
+
+136
+00:08:42.150 --> 00:08:44.550
+First, an answer file called unattend.
+
+137
+00:08:44.800 --> 00:08:50.400
+xml holds the answers to the setup
+screens, so nobody sits at the console.
+
+138
+00:08:50.650 --> 00:08:53.850
+You build it with Windows System Image
+Manager.
+
+139
+00:08:54.100 --> 00:08:59.700
+Second, you set up one reference server,
+run Sysprep with generalize to remove what
+
+140
+00:08:59.950 --> 00:09:03.550
+makes it unique, and capture it as an
+image.
+
+141
+00:09:03.800 --> 00:09:07.800
+Third, servers start from the network and
+get the image.
+
+142
+00:09:08.050 --> 00:09:12.450
+Windows Deployment Services is being
+partly deprecated, and it cannot run
+
+143
+00:09:12.700 --> 00:09:17.100
+Windows Server 2025 setup, so new
+deployments use Configuration Manager or
+
+144
+00:09:17.350 --> 00:09:18.550
+similar tools.
+
+145
+00:09:18.800 --> 00:09:20.800
+Here are four common mistakes.
+
+146
+00:09:21.050 --> 00:09:27.850
+First, pressing a key at Press any key to
+boot from CD or DVD after a restart.
+
+147
+00:09:28.100 --> 00:09:33.700
+That starts setup over, so press a key
+only at the very first boot.
+
+148
+00:09:33.950 --> 00:09:38.750
+Second, choosing the image without Desktop
+Experience when you wanted the desktop.
+
+149
+00:09:39.000 --> 00:09:40.600
+Read the whole name.
+
+150
+00:09:40.850 --> 00:09:43.650
+Third, a password that is too simple.
+
+151
+00:09:43.900 --> 00:09:48.300
+Use three of four character groups, or
+simply the pod password.
+
+152
+00:09:48.550 --> 00:09:50.150
+Fourth, creating partitions yourself.
+
+153
+00:09:50.400 --> 00:09:54.000
+Select Unallocated Space and let setup do
+the work.
+
+154
+00:09:54.250 --> 00:09:55.850
+Time to check yourself.
+
+155
+00:09:56.100 --> 00:10:00.100
+You are installing a new server for a
+branch office.
+
+156
+00:10:00.350 --> 00:10:05.150
+First, it will run only DNS and DHCP and
+be managed remotely.
+
+157
+00:10:05.400 --> 00:10:08.200
+Which kind of image do you pick?
+
+158
+00:10:08.450 --> 00:10:14.850
+Second, after the first restart you see
+Press any key to boot from CD or DVD.
+
+159
+00:10:15.100 --> 00:10:16.700
+What do you do?
+
+160
+00:10:16.950 --> 00:10:18.950
+Third, Get-ComputerInfo shows Server Core.
+
+161
+00:10:19.200 --> 00:10:21.200
+What opened at first sign-in?
+
+162
+00:10:21.450 --> 00:10:23.450
+Fourth, the VM is blank.
+
+163
+00:10:23.700 --> 00:10:26.900
+Why is an in-place upgrade not an option?
+
+164
+00:10:27.150 --> 00:10:29.950
+Pause the video and answer all four.
+
+165
+00:10:30.200 --> 00:10:31.400
+Let's check.
+
+166
+00:10:31.650 --> 00:10:36.850
+First, pick an image without Desktop
+Experience in the name, which is Server
+
+167
+00:10:37.100 --> 00:10:38.300
+Core.
+
+168
+00:10:38.550 --> 00:10:44.550
+It is smaller and has less to attack, and
+the edition still depends on your
+
+169
+00:10:44.800 --> 00:10:46.400
+licensing from Topic 1.
+
+170
+00:10:46.650 --> 00:10:47.850
+2.
+
+171
+00:10:48.100 --> 00:10:53.700
+Second, do nothing and let the message
+time out, because setup continues from the
+
+172
+00:10:53.950 --> 00:10:55.150
+disk.
+
+173
+00:10:55.400 --> 00:10:58.200
+Third, SConfig opened in a console window.
+
+174
+00:10:58.450 --> 00:11:01.250
+Desktop Experience would have opened
+Server Manager.
+
+175
+00:11:01.500 --> 00:11:05.500
+Fourth, an upgrade needs an older Windows
+on the disk.
+
+176
+00:11:05.750 --> 00:11:08.550
+A blank disk needs a clean install.
+
+177
+00:11:08.800 --> 00:11:11.200
+Let's install Server Core on SRV-CORE.
+
+178
+00:11:11.450 --> 00:11:17.050
+I power on the VM and press a key to boot
+from the ISO.
+
+179
+00:11:17.300 --> 00:11:20.100
+I keep the language and keyboard defaults.
+
+180
+00:11:20.350 --> 00:11:25.950
+On Select setup option, I choose Install
+Windows Server and check the agree box.
+
+181
+00:11:26.200 --> 00:11:30.600
+On Select image, I pick Datacenter, the
+one without Desktop Experience.
+
+182
+00:11:30.850 --> 00:11:35.650
+I accept the terms, select Disk 0
+Unallocated Space, and select Install.
+
+183
+00:11:35.900 --> 00:11:37.900
+Copying is sped up here.
+
+184
+00:11:38.150 --> 00:11:39.750
+See the boot message?
+
+185
+00:11:40.000 --> 00:11:42.000
+I let it time out.
+
+186
+00:11:42.250 --> 00:11:46.250
+Now I press Enter and type the pod
+password twice.
+
+187
+00:11:46.500 --> 00:11:51.300
+After the password, Windows asks about
+diagnostic data, so I type 1.
+
+188
+00:11:51.550 --> 00:11:52.750
+Then SConfig opens.
+
+189
+00:11:53.000 --> 00:11:55.400
+I choose 15 and run Get-ComputerInfo.
+
+190
+00:11:55.650 --> 00:11:57.250
+It says Server Core.
+
+191
+00:11:57.500 --> 00:11:58.700
+Done.
+
+192
+00:11:58.950 --> 00:12:00.150
+Let's sum up.
+
+193
+00:12:00.400 --> 00:12:03.200
+Check hardware, edition, option and media
+first.
+
+194
+00:12:03.450 --> 00:12:07.050
+Labs use a clean install on a blank disk.
+
+195
+00:12:07.300 --> 00:12:12.500
+The image name decides Desktop Experience
+or Server Core, and you cannot switch
+
+196
+00:12:12.750 --> 00:12:13.950
+later.
+
+197
+00:12:14.200 --> 00:12:17.800
+Select Unallocated Space and let setup
+make the partitions.
+
+198
+00:12:18.050 --> 00:12:22.450
+Set a complex password, then sign in with
+Control Alt Delete.
+
+199
+00:12:22.700 --> 00:12:26.700
+Server Manager or SConfig opens, and
+Get-ComputerInfo verifies the result.
+
+200
+00:12:26.950 --> 00:12:28.150
+In Lab 1.
+
+201
+00:12:28.400 --> 00:12:34.000
+3, about 50 minutes and practice only, you
+install both servers and compare them.
+
+202
+00:12:34.250 --> 00:12:37.850
+Run the installs side by side to save
+time.

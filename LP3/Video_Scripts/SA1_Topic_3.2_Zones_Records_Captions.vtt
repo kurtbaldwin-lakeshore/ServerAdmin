@@ -1,0 +1,1119 @@
+WEBVTT
+
+NOTE SA1 Topic 3.2: Zones and Records. Timings are estimates at 150 words a minute; re-sync after recording.
+
+1
+00:00:00.000 --> 00:00:01.600
+Welcome to Topic 3.
+
+2
+00:00:01.850 --> 00:00:03.450
+2, Zones and Records.
+
+3
+00:00:03.700 --> 00:00:07.300
+In this topic you build the practice
+namespace lakeshore.
+
+4
+00:00:07.550 --> 00:00:08.750
+test.
+
+5
+00:00:09.000 --> 00:00:14.600
+You will compare primary, secondary and
+stub zones, and meet the record types you
+
+6
+00:00:14.850 --> 00:00:16.050
+use every day.
+
+7
+00:00:16.300 --> 00:00:22.700
+You will create forward and reverse zones
+with the New Zone Wizard, and add A, PTR,
+
+8
+00:00:22.950 --> 00:00:26.950
+CNAME and MX records in DNS Manager and in
+PowerShell.
+
+9
+00:00:27.200 --> 00:00:33.600
+Then you will copy the zone to SRV-CORE,
+and then follow one change from SRV01 to
+
+10
+00:00:33.850 --> 00:00:35.850
+SRV-CORE through the serial number.
+
+11
+00:00:36.100 --> 00:00:42.900
+A zone is the part of the DNS namespace
+that one server answers for, with all its
+
+12
+00:00:43.150 --> 00:00:44.350
+records.
+
+13
+00:00:44.600 --> 00:00:47.800
+The primary zone is the writable copy:
+lakeshore.
+
+14
+00:00:48.050 --> 00:00:49.250
+test on SRV01.
+
+15
+00:00:49.500 --> 00:00:55.100
+A secondary zone is a read-only copy
+pulled by zone transfer, for a spare
+
+16
+00:00:55.350 --> 00:00:56.950
+server and shared load.
+
+17
+00:00:57.200 --> 00:01:01.200
+A stub zone only lists the servers for a
+zone.
+
+18
+00:01:01.450 --> 00:01:03.850
+Our zones are file-backed text files.
+
+19
+00:01:04.100 --> 00:01:08.500
+Active Directory-integrated zones need a
+domain controller, so they wait for
+
+20
+00:01:08.750 --> 00:01:09.950
+Learning Plan 4.
+
+21
+00:01:10.200 --> 00:01:15.800
+Every record has a name, a type, a time to
+live and its data.
+
+22
+00:01:16.050 --> 00:01:21.650
+The SOA record, start of authority, holds
+the primary server, the serial number and
+
+23
+00:01:21.900 --> 00:01:23.100
+the timers.
+
+24
+00:01:23.350 --> 00:01:26.950
+NS names a server that answers for the
+zone.
+
+25
+00:01:27.200 --> 00:01:29.200
+Both come with the zone.
+
+26
+00:01:29.450 --> 00:01:33.050
+A maps a name to IPv4; AAAA to IPv6.
+
+27
+00:01:33.300 --> 00:01:36.500
+A CNAME is an alias for another name.
+
+28
+00:01:36.750 --> 00:01:38.750
+MX names the mail server.
+
+29
+00:01:39.000 --> 00:01:42.200
+PTR maps an address back to a name.
+
+30
+00:01:42.450 --> 00:01:44.850
+SRV records arrive with Active Directory.
+
+31
+00:01:45.100 --> 00:01:46.700
+Each lab starts fresh.
+
+32
+00:01:46.950 --> 00:01:50.550
+On SRV01, run Install-WindowsFeature, dash
+Name DNS, dash IncludeManagementTools.
+
+33
+00:01:50.800 --> 00:01:56.400
+One command adds the DNS Server role, DNS
+Manager and the PowerShell module, and
+
+34
+00:01:56.650 --> 00:01:59.050
+opens port 53 in the firewall.
+
+35
+00:01:59.300 --> 00:02:00.900
+No restart is needed.
+
+36
+00:02:01.150 --> 00:02:06.750
+Get-Service DNS shows the DNS Server
+service running, but it has no zones of
+
+37
+00:02:07.000 --> 00:02:08.200
+its own yet.
+
+38
+00:02:08.450 --> 00:02:10.850
+Now open Server Manager, Tools, DNS.
+
+39
+00:02:11.100 --> 00:02:15.900
+Expand SRV01, and you see Forward Lookup
+Zones and Reverse Lookup Zones.
+
+40
+00:02:16.150 --> 00:02:18.950
+That is where your zones will go.
+
+41
+00:02:19.200 --> 00:02:22.400
+Right-click Forward Lookup Zones and
+choose New Zone.
+
+42
+00:02:22.650 --> 00:02:27.050
+After the welcome page, the wizard asks
+for the zone type.
+
+43
+00:02:27.300 --> 00:02:33.300
+Primary zone creates the copy you can
+update on this server, which is what we
+
+44
+00:02:33.550 --> 00:02:34.750
+want for lakeshore.
+
+45
+00:02:35.000 --> 00:02:36.200
+test.
+
+46
+00:02:36.450 --> 00:02:41.250
+Secondary zone copies a zone from another
+server; SRV-CORE uses that later.
+
+47
+00:02:41.500 --> 00:02:44.300
+Stub zone holds only name server records.
+
+48
+00:02:44.550 --> 00:02:50.550
+Store the zone in Active Directory is
+greyed out, because SRV01 is not a domain
+
+49
+00:02:50.800 --> 00:02:52.000
+controller.
+
+50
+00:02:52.250 --> 00:02:55.050
+So this zone lives in a file.
+
+51
+00:02:55.300 --> 00:02:57.700
+Next, type the zone name, lakeshore.
+
+52
+00:02:57.950 --> 00:02:59.150
+test.
+
+53
+00:02:59.400 --> 00:03:04.600
+The Zone File page suggests the zone name
+plus dot dns, so lakeshore.
+
+54
+00:03:04.850 --> 00:03:06.050
+test.
+
+55
+00:03:06.300 --> 00:03:09.100
+dns, in the Windows System32 dns folder.
+
+56
+00:03:09.350 --> 00:03:10.550
+Keep that default.
+
+57
+00:03:10.800 --> 00:03:12.800
+Then the Dynamic Update page.
+
+58
+00:03:13.050 --> 00:03:18.250
+Secure updates need an Active Directory
+zone, and nonsecure updates would let any
+
+59
+00:03:18.500 --> 00:03:19.700
+computer change records.
+
+60
+00:03:19.950 --> 00:03:22.750
+So select Do not allow dynamic updates.
+
+61
+00:03:23.000 --> 00:03:26.600
+Nothing registers itself; you create every
+record by hand.
+
+62
+00:03:26.850 --> 00:03:32.850
+Finish the wizard, and the zone appears
+with its SOA and NS records already in
+
+63
+00:03:33.100 --> 00:03:34.300
+place.
+
+64
+00:03:34.550 --> 00:03:38.550
+A reverse lookup turns an address back
+into a name.
+
+65
+00:03:38.800 --> 00:03:44.000
+DNS names read from specific to general,
+but addresses read from general to
+
+66
+00:03:44.250 --> 00:03:47.450
+specific, so the numbers are reversed
+under in-addr.
+
+67
+00:03:47.700 --> 00:03:48.900
+arpa.
+
+68
+00:03:49.150 --> 00:03:50.350
+The address 192.
+
+69
+00:03:50.600 --> 00:03:51.800
+168.
+
+70
+00:03:52.050 --> 00:03:53.250
+50.
+
+71
+00:03:53.500 --> 00:03:54.700
+20 becomes 20.
+
+72
+00:03:54.950 --> 00:03:56.150
+50.
+
+73
+00:03:56.400 --> 00:03:57.600
+168.
+
+74
+00:03:57.850 --> 00:03:59.050
+192.
+
+75
+00:03:59.300 --> 00:04:00.500
+in-addr.
+
+76
+00:04:00.750 --> 00:04:01.950
+arpa.
+
+77
+00:04:02.200 --> 00:04:03.800
+The zone is 50.
+
+78
+00:04:04.050 --> 00:04:05.250
+168.
+
+79
+00:04:05.500 --> 00:04:06.700
+192.
+
+80
+00:04:06.950 --> 00:04:08.150
+in-addr.
+
+81
+00:04:08.400 --> 00:04:12.800
+arpa, and inside it the PTR record is
+simply named 20.
+
+82
+00:04:13.050 --> 00:04:17.850
+In the wizard, right-click Reverse Lookup
+Zones, choose Primary zone and IPv4.
+
+83
+00:04:18.100 --> 00:04:21.700
+Then type the Network ID in normal order,
+192.
+
+84
+00:04:21.950 --> 00:04:23.150
+168.
+
+85
+00:04:23.400 --> 00:04:24.600
+50.
+
+86
+00:04:24.850 --> 00:04:28.850
+The wizard fills in the reversed zone name
+for you.
+
+87
+00:04:29.100 --> 00:04:32.300
+Here are the same two zones in PowerShell.
+
+88
+00:04:32.550 --> 00:04:34.550
+Add-DnsServerPrimaryZone with dash Name
+lakeshore.
+
+89
+00:04:34.800 --> 00:04:38.800
+test, dash ZoneFile, and dash
+DynamicUpdate None creates the forward
+
+90
+00:04:39.050 --> 00:04:40.250
+zone.
+
+91
+00:04:40.500 --> 00:04:43.700
+For the reverse zone, use dash NetworkId
+192.
+
+92
+00:04:43.950 --> 00:04:45.150
+168.
+
+93
+00:04:45.400 --> 00:04:46.600
+50.
+
+94
+00:04:46.850 --> 00:04:51.250
+0 slash 24, and the cmdlet works out the
+reversed name.
+
+95
+00:04:51.500 --> 00:04:56.300
+Get-DnsServerZone lists both; your list
+may also show a zone called TrustAnchors,
+
+96
+00:04:56.550 --> 00:04:57.750
+which is normal.
+
+97
+00:04:58.000 --> 00:05:03.200
+IsDsIntegrated says False, so they are
+file-backed, with one plain text file per
+
+98
+00:05:03.450 --> 00:05:04.650
+zone.
+
+99
+00:05:04.900 --> 00:05:07.300
+To add a host, right-click lakeshore.
+
+100
+00:05:07.550 --> 00:05:09.550
+test and choose New Host.
+
+101
+00:05:09.800 --> 00:05:15.000
+Type only the name, srv01, and the full
+name fills in by itself.
+
+102
+00:05:15.250 --> 00:05:17.250
+Type the IP address, 192.
+
+103
+00:05:17.500 --> 00:05:18.700
+168.
+
+104
+00:05:18.950 --> 00:05:20.150
+50.
+
+105
+00:05:20.400 --> 00:05:21.600
+20.
+
+106
+00:05:21.850 --> 00:05:25.850
+Now the important check box: Create
+associated pointer, PTR, record.
+
+107
+00:05:26.100 --> 00:05:32.100
+It also adds record 20 to the reverse
+zone, so one dialog makes two records.
+
+108
+00:05:32.350 --> 00:05:37.150
+That only works if the reverse zone
+exists, so create it first.
+
+109
+00:05:37.400 --> 00:05:38.600
+Select Add Host.
+
+110
+00:05:38.850 --> 00:05:43.650
+The dialog stays open for the next host,
+and Done closes it.
+
+111
+00:05:43.900 --> 00:05:45.500
+Two more record types.
+
+112
+00:05:45.750 --> 00:05:48.950
+Right-click the zone and choose New Alias,
+CNAME.
+
+113
+00:05:49.200 --> 00:05:53.200
+The alias is www, and the target host is
+srv01.
+
+114
+00:05:53.450 --> 00:05:54.650
+lakeshore.
+
+115
+00:05:54.900 --> 00:05:56.100
+test.
+
+116
+00:05:56.350 --> 00:05:59.950
+The target is a name, never an IP address.
+
+117
+00:06:00.200 --> 00:06:02.200
+Next, New Mail Exchanger, MX.
+
+118
+00:06:02.450 --> 00:06:07.250
+Leave Host or child domain blank, so the
+record is for lakeshore.
+
+119
+00:06:07.500 --> 00:06:08.700
+test itself.
+
+120
+00:06:08.950 --> 00:06:10.950
+The mail server is mail.
+
+121
+00:06:11.200 --> 00:06:12.400
+lakeshore.
+
+122
+00:06:12.650 --> 00:06:16.250
+test, with priority 10; lower numbers are
+tried first.
+
+123
+00:06:16.500 --> 00:06:19.700
+The mail server needs its own A record.
+
+124
+00:06:19.950 --> 00:06:22.350
+In the pod it is 192.
+
+125
+00:06:22.600 --> 00:06:23.800
+168.
+
+126
+00:06:24.050 --> 00:06:25.250
+50.
+
+127
+00:06:25.500 --> 00:06:27.100
+25, an unused address.
+
+128
+00:06:27.350 --> 00:06:28.950
+DNS does not check.
+
+129
+00:06:29.200 --> 00:06:33.600
+In PowerShell, first store the two zone
+names in short variables.
+
+130
+00:06:33.850 --> 00:06:38.250
+Add-DnsServerResourceRecordA with a name,
+an address and the dash CreatePtr switch
+
+131
+00:06:38.500 --> 00:06:43.700
+makes the A and PTR records in one step,
+like the check box.
+
+132
+00:06:43.950 --> 00:06:48.350
+Or use two steps: the A record, then
+Add-DnsServerResourceRecordPtr with the
+
+133
+00:06:48.600 --> 00:06:51.000
+name 30 in the reverse zone.
+
+134
+00:06:51.250 --> 00:06:54.850
+The CNAME cmdlet uses dash HostNameAlias
+for the target.
+
+135
+00:06:55.100 --> 00:07:01.500
+The MX cmdlet uses the name dot, meaning
+the zone itself, plus the mail server and
+
+136
+00:07:01.750 --> 00:07:02.950
+its preference number.
+
+137
+00:07:03.200 --> 00:07:07.200
+Before SRV-CORE can copy the zone, SRV01
+must allow it.
+
+138
+00:07:07.450 --> 00:07:09.450
+Open the properties of lakeshore.
+
+139
+00:07:09.700 --> 00:07:12.500
+test and select the Zone Transfers tab.
+
+140
+00:07:12.750 --> 00:07:19.150
+A zone transfer hands over every name and
+address in the zone, so be careful who
+
+141
+00:07:19.400 --> 00:07:20.600
+gets it.
+
+142
+00:07:20.850 --> 00:07:24.850
+Select Allow zone transfers, then Only to
+the following servers.
+
+143
+00:07:25.100 --> 00:07:27.100
+Use Edit to add 192.
+
+144
+00:07:27.350 --> 00:07:28.550
+168.
+
+145
+00:07:28.800 --> 00:07:30.000
+50.
+
+146
+00:07:30.250 --> 00:07:31.850
+21, which is SRV-CORE.
+
+147
+00:07:32.100 --> 00:07:36.900
+Then select Notify, choose The following
+servers, and add the same address.
+
+148
+00:07:37.150 --> 00:07:40.750
+In PowerShell, Set-DnsServerPrimaryZone
+does the same with dash SecureSecondaries
+
+149
+00:07:41.000 --> 00:07:43.000
+TransferToSecureServers and the Notify
+parameters.
+
+150
+00:07:43.250 --> 00:07:47.250
+SRV-CORE has no DNS Manager, so this is
+all PowerShell.
+
+151
+00:07:47.500 --> 00:07:49.100
+Use SConfig option fifteen.
+
+152
+00:07:49.350 --> 00:07:53.350
+Install the DNS role with the same command
+as before.
+
+153
+00:07:53.600 --> 00:07:56.400
+Then run Add-DnsServerSecondaryZone with
+the name lakeshore.
+
+154
+00:07:56.650 --> 00:08:00.250
+test, a zone file name, and dash
+MasterServers 192.
+
+155
+00:08:00.500 --> 00:08:01.700
+168.
+
+156
+00:08:01.950 --> 00:08:03.150
+50.
+
+157
+00:08:03.400 --> 00:08:04.600
+20.
+
+158
+00:08:04.850 --> 00:08:08.050
+The master is the server it copies from.
+
+159
+00:08:08.300 --> 00:08:10.300
+Get-DnsServerZone now shows ZoneType
+Secondary.
+
+160
+00:08:10.550 --> 00:08:13.750
+After a short wait,
+Get-DnsServerResourceRecord lists the SOA,
+
+161
+00:08:14.000 --> 00:08:17.200
+the A records, the CNAME and the rest.
+
+162
+00:08:17.450 --> 00:08:19.850
+The data arrived by zone transfer.
+
+163
+00:08:20.100 --> 00:08:21.700
+This copy is read-only.
+
+164
+00:08:21.950 --> 00:08:24.350
+How does a change reach SRV-CORE?
+
+165
+00:08:24.600 --> 00:08:27.400
+Look at the Start of Authority tab.
+
+166
+00:08:27.650 --> 00:08:34.450
+The serial number goes up by one with
+every change on SRV01, say from 10 to 11.
+
+167
+00:08:34.700 --> 00:08:37.100
+Because of Notify, SRV01 tells 192.
+
+168
+00:08:37.350 --> 00:08:38.550
+168.
+
+169
+00:08:38.800 --> 00:08:40.000
+50.
+
+170
+00:08:40.250 --> 00:08:42.250
+21 that the zone changed.
+
+171
+00:08:42.500 --> 00:08:48.900
+SRV-CORE asks for the SOA, sees 11 is
+higher than its 10, and pulls the changes.
+
+172
+00:08:49.150 --> 00:08:54.750
+If a notify gets lost, SRV-CORE checks
+anyway at the refresh interval, 15 minutes
+
+173
+00:08:55.000 --> 00:08:56.200
+by default.
+
+174
+00:08:56.450 --> 00:08:58.850
+Start-DnsServerZoneTransfer forces a check
+at once.
+
+175
+00:08:59.100 --> 00:09:00.300
+Now test.
+
+176
+00:09:00.550 --> 00:09:04.550
+Resolve-DnsName with dash Server picks
+which DNS server to ask.
+
+177
+00:09:04.800 --> 00:09:06.400
+Ask SRV-CORE, at 192.
+
+178
+00:09:06.650 --> 00:09:07.850
+168.
+
+179
+00:09:08.100 --> 00:09:09.300
+50.
+
+180
+00:09:09.550 --> 00:09:13.150
+21, for srv01, and you get the A record.
+
+181
+00:09:13.400 --> 00:09:20.200
+Ask for www, and you get two answers: the
+CNAME, then the A record it leads to.
+
+182
+00:09:20.450 --> 00:09:25.250
+With dash Type MX you see the mail server
+and preference 10.
+
+183
+00:09:25.500 --> 00:09:27.900
+For a PTR lookup of 192.
+
+184
+00:09:28.150 --> 00:09:29.350
+168.
+
+185
+00:09:29.600 --> 00:09:30.800
+50.
+
+186
+00:09:31.050 --> 00:09:32.250
+20, ask SRV01.
+
+187
+00:09:32.500 --> 00:09:38.900
+SRV-CORE has a copy of the forward zone
+only, so in our pod it simply cannot
+
+188
+00:09:39.150 --> 00:09:40.350
+answer that one.
+
+189
+00:09:40.600 --> 00:09:41.800
+Four mistakes.
+
+190
+00:09:42.050 --> 00:09:46.050
+One: checking the PTR box before the
+reverse zone exists.
+
+191
+00:09:46.300 --> 00:09:49.900
+The A record is made, but the PTR fails.
+
+192
+00:09:50.150 --> 00:09:52.150
+Create the reverse zone first.
+
+193
+00:09:52.400 --> 00:09:54.800
+Two: typing the Network ID backwards.
+
+194
+00:09:55.050 --> 00:09:56.250
+Type 192.
+
+195
+00:09:56.500 --> 00:09:57.700
+168.
+
+196
+00:09:57.950 --> 00:10:01.550
+50 in normal order, and the wizard
+reverses it.
+
+197
+00:10:01.800 --> 00:10:05.000
+Three: building the secondary before SRV01
+allows transfers.
+
+198
+00:10:05.250 --> 00:10:09.250
+Fix the Zone Transfers tab, then run
+Start-DnsServerZoneTransfer on SRV-CORE.
+
+199
+00:10:09.500 --> 00:10:11.500
+Four: adding records on SRV-CORE.
+
+200
+00:10:11.750 --> 00:10:13.350
+The secondary is read-only.
+
+201
+00:10:13.600 --> 00:10:18.800
+Make every change on SRV01, and let the
+serial number carry it across.
+
+202
+00:10:19.050 --> 00:10:20.650
+Time to check yourself.
+
+203
+00:10:20.900 --> 00:10:22.100
+SRV01 holds lakeshore.
+
+204
+00:10:22.350 --> 00:10:26.350
+test and the reverse zone, and SRV-CORE
+holds a secondary.
+
+205
+00:10:26.600 --> 00:10:31.800
+First, why is Store the zone in Active
+Directory greyed out on SRV01?
+
+206
+00:10:32.050 --> 00:10:33.650
+Second, NAS01 is 192.
+
+207
+00:10:33.900 --> 00:10:35.100
+168.
+
+208
+00:10:35.350 --> 00:10:36.550
+50.
+
+209
+00:10:36.800 --> 00:10:38.000
+40.
+
+210
+00:10:38.250 --> 00:10:43.450
+In which zone is its PTR record, and what
+is the record's name?
+
+211
+00:10:43.700 --> 00:10:45.700
+Third, what does Resolve-DnsName www.
+
+212
+00:10:45.950 --> 00:10:47.150
+lakeshore.
+
+213
+00:10:47.400 --> 00:10:49.800
+test return, and why two records?
+
+214
+00:10:50.050 --> 00:10:53.250
+And fourth, you add a record on SRV01.
+
+215
+00:10:53.500 --> 00:10:58.700
+How does SRV-CORE find out, and what
+happens if the notify is lost?
+
+216
+00:10:58.950 --> 00:11:00.550
+Pause the video now.
+
+217
+00:11:00.800 --> 00:11:02.400
+Here are the answers.
+
+218
+00:11:02.650 --> 00:11:05.450
+One: SRV01 is not a domain controller.
+
+219
+00:11:05.700 --> 00:11:10.100
+Active Directory-integrated zones need a
+writeable DC running DNS, so until
+
+220
+00:11:10.350 --> 00:11:13.150
+Learning Plan 4 our zones are file-backed.
+
+221
+00:11:13.400 --> 00:11:16.200
+Two: the PTR record is in 50.
+
+222
+00:11:16.450 --> 00:11:17.650
+168.
+
+223
+00:11:17.900 --> 00:11:19.100
+192.
+
+224
+00:11:19.350 --> 00:11:20.550
+in-addr.
+
+225
+00:11:20.800 --> 00:11:22.000
+arpa, named 40.
+
+226
+00:11:22.250 --> 00:11:28.650
+Three: you get the CNAME, then the A
+record, because www is an alias for srv01.
+
+227
+00:11:28.900 --> 00:11:32.900
+Four: the serial goes up and SRV01 sends a
+notify.
+
+228
+00:11:33.150 --> 00:11:38.750
+If the notify is lost, SRV-CORE still
+checks at the refresh interval, every 15
+
+229
+00:11:39.000 --> 00:11:40.200
+minutes by default.
+
+230
+00:11:40.450 --> 00:11:44.050
+On SRV01, I install DNS and open DNS
+Manager.
+
+231
+00:11:44.300 --> 00:11:45.900
+The wizard creates lakeshore.
+
+232
+00:11:46.150 --> 00:11:51.350
+test as a file-backed primary with no
+dynamic updates, then the reverse zone,
+
+233
+00:11:51.600 --> 00:11:52.800
+Network ID 192.
+
+234
+00:11:53.050 --> 00:11:54.250
+168.
+
+235
+00:11:54.500 --> 00:11:55.700
+50.
+
+236
+00:11:55.950 --> 00:12:02.350
+I add srv01 with the PTR box checked, dc01
+with dash CreatePtr, then mail without a
+
+237
+00:12:02.600 --> 00:12:05.800
+PTR, the CNAME www and the MX record.
+
+238
+00:12:06.050 --> 00:12:08.450
+I allow transfers only to 192.
+
+239
+00:12:08.700 --> 00:12:09.900
+168.
+
+240
+00:12:10.150 --> 00:12:11.350
+50.
+
+241
+00:12:11.600 --> 00:12:12.800
+21.
+
+242
+00:12:13.050 --> 00:12:15.850
+On SRV-CORE I add the secondary zone.
+
+243
+00:12:16.100 --> 00:12:19.300
+One new record on SRV01, and SRV-CORE
+follows.
+
+244
+00:12:19.550 --> 00:12:20.750
+To wrap up.
+
+245
+00:12:21.000 --> 00:12:27.400
+The primary zone is writable, a secondary
+is a read-only copy, and a stub only lists
+
+246
+00:12:27.650 --> 00:12:28.850
+name servers.
+
+247
+00:12:29.100 --> 00:12:30.700
+Our zones are file-backed.
+
+248
+00:12:30.950 --> 00:12:35.350
+For a reverse zone, type the Network ID in
+normal order.
+
+249
+00:12:35.600 --> 00:12:41.600
+The PTR check box, or dash CreatePtr,
+makes A and PTR records in one step.
+
+250
+00:12:41.850 --> 00:12:44.250
+Allow zone transfers only to 192.
+
+251
+00:12:44.500 --> 00:12:45.700
+168.
+
+252
+00:12:45.950 --> 00:12:47.150
+50.
+
+253
+00:12:47.400 --> 00:12:51.000
+21; the serial number and notify move each
+change.
+
+254
+00:12:51.250 --> 00:12:52.450
+Lab 3.
+
+255
+00:12:52.700 --> 00:12:56.300
+2 practices all of this in about
+fifty-five minutes.

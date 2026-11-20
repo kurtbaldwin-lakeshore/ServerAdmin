@@ -1,0 +1,5 @@
+MC	Which sends questions for one named domain to a chosen server?	A conditional forwarder	correct	A forwarder	incorrect	Root hints	incorrect	A secondary zone	incorrect
+MC	Which Resolve-DnsName switch skips the hosts file?	-NoHostsFile	correct	-DnsOnly	incorrect	-Type	incorrect	-Server	incorrect
+TF	In the pod, a forwarder to 8.8.8.8 fails because it was set up wrong.	false
+MC	What does Non-authoritative answer in nslookup mean?	The answering server does not hold the zone	correct	The name does not exist	incorrect	The server is down	incorrect	The record is a CNAME	incorrect
+MC	A new record still looks missing. Which commands clear the cached no?	Clear-DnsServerCache on the server and Clear-DnsClientCache on the client	correct	Start-DnsServerZoneTransfer	incorrect	Test-NetConnection -Port 53	incorrect	Get-DnsServerForwarder	incorrect

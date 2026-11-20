@@ -1,0 +1,5 @@
+MC	Which of these is a feature, not a role?	Windows Server Backup	correct	DNS Server	incorrect	DHCP Server	incorrect	File and Storage Services	incorrect
+MC	Which cmdlet lists the roles and features and their Install State?	Get-WindowsFeature	correct	Install-WindowsFeature	incorrect	Get-Service	incorrect	Get-Item	incorrect
+TF	Install-WindowsFeature adds a role's management tools only when you add -IncludeManagementTools.	true
+MC	Which path do you give for .NET Framework 3.5 in the pod?	D:\sources\sxs	correct	C:\Install	incorrect	C:\Windows\System32	incorrect	HKLM:\SOFTWARE\OpenSSH	incorrect
+MAT	Match each Install State to its meaning.	Installed	The feature is on and working	Available	Not installed; the files are on the server	Removed	Not installed; the files are not on the server

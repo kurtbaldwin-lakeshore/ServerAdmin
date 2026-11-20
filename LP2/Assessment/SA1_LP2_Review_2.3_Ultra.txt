@@ -1,0 +1,5 @@
+MC	In a workgroup, which computer needs SRV-CORE in its TrustedHosts list?	SRV01, the computer you manage from	correct	SRV-CORE	incorrect	DC01	incorrect	None: workgroups do not use it	incorrect
+MC	Which cmdlet starts an interactive session on another server?	Enter-PSSession	correct	Invoke-Command	incorrect	Get-Credential	incorrect	Test-Connection	incorrect
+MC	Which port does OpenSSH Server listen on?	TCP 22	correct	TCP 3389	incorrect	TCP 443	incorrect	TCP 5985	incorrect
+TF	Closing the Remote Desktop window signs you out and closes your programs.	false
+MAT	Match each task to the best tool.	Same command on many servers	PowerShell remoting	A graphical wizard on a server	Remote Desktop	A command line from a Mac or Linux computer	SSH

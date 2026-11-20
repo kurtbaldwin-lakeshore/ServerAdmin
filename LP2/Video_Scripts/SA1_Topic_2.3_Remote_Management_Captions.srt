@@ -1,0 +1,1015 @@
+1
+00:00:00,000 --> 00:00:01,600
+Welcome to Topic 2.
+
+2
+00:00:01,850 --> 00:00:03,050
+3, Remote Management.
+
+3
+00:00:03,300 --> 00:00:07,300
+So far you have worked at each server's
+own console.
+
+4
+00:00:07,550 --> 00:00:09,550
+Real admins rarely do that.
+
+5
+00:00:09,800 --> 00:00:15,000
+You will learn why we manage servers
+remotely, and how in a workgroup.
+
+6
+00:00:15,250 --> 00:00:20,850
+You will prepare SRV01 with a TrustedHosts
+list, add SRV-CORE to Server Manager, and
+
+7
+00:00:21,100 --> 00:00:23,900
+run commands on it with PowerShell
+remoting.
+
+8
+00:00:24,150 --> 00:00:28,550
+Then you will turn on OpenSSH Server and
+connect with ssh.
+
+9
+00:00:28,800 --> 00:00:35,200
+Finally, you will use Remote Desktop and
+learn to pick the right tool for each job.
+
+10
+00:00:35,450 --> 00:00:40,650
+Picture one seat, say SRV01 or CLIENT01,
+with arrows to every other server.
+
+11
+00:00:40,900 --> 00:00:44,900
+The servers stay in their racks or run as
+VMs.
+
+12
+00:00:45,150 --> 00:00:47,950
+There are three good reasons for this.
+
+13
+00:00:48,200 --> 00:00:51,000
+First, one console can manage many
+servers.
+
+14
+00:00:51,250 --> 00:00:55,650
+Server Manager, PowerShell and Windows
+Admin Center all work that way.
+
+15
+00:00:55,900 --> 00:01:02,300
+Second, Server Core has no desktop, so
+remote tools give it a GUI or a full
+
+16
+00:01:02,550 --> 00:01:03,750
+PowerShell.
+
+17
+00:01:04,000 --> 00:01:08,800
+Third, fewer visits to the console means
+better physical security and fewer
+
+18
+00:01:09,050 --> 00:01:11,050
+accidents in the server room.
+
+19
+00:01:11,300 --> 00:01:12,900
+Here is the catch.
+
+20
+00:01:13,150 --> 00:01:17,950
+All the computers are in a workgroup, so
+there is no Kerberos.
+
+21
+00:01:18,200 --> 00:01:23,800
+In a domain, Kerberos proves who both
+computers are, and you just use names.
+
+22
+00:01:24,050 --> 00:01:30,050
+Without it, Windows falls back to NTLM,
+and it will only send your credentials to
+
+23
+00:01:30,300 --> 00:01:31,500
+computers you trust.
+
+24
+00:01:31,750 --> 00:01:36,950
+So on SRV01, the computer you manage from,
+you list SRV-CORE in TrustedHosts.
+
+25
+00:01:37,200 --> 00:01:40,800
+You also pass SRV-CORE's own Administrator
+account each time.
+
+26
+00:01:41,050 --> 00:01:47,050
+The good news: remote management is on by
+default and answers the local subnet, so
+
+27
+00:01:47,300 --> 00:01:49,300
+the firewall needs no change.
+
+28
+00:01:49,550 --> 00:01:51,550
+Two quick jobs on SRV01.
+
+29
+00:01:51,800 --> 00:01:53,000
+First, name lookup.
+
+30
+00:01:53,250 --> 00:01:59,250
+Without DNS, name lookup is not reliable,
+and Server Manager works best with a name
+
+31
+00:01:59,500 --> 00:02:01,500
+rather than an IP address.
+
+32
+00:02:01,750 --> 00:02:07,750
+So you open the hosts file in Notepad and
+add one line: the address 192.
+
+33
+00:02:08,000 --> 00:02:09,200
+168.
+
+34
+00:02:09,450 --> 00:02:10,650
+50.
+
+35
+00:02:10,900 --> 00:02:13,700
+21, some spaces, and the name SRV-CORE.
+
+36
+00:02:13,950 --> 00:02:16,750
+Test-Connection by name should now say
+True.
+
+37
+00:02:17,000 --> 00:02:18,200
+Second, TrustedHosts.
+
+38
+00:02:18,450 --> 00:02:20,050
+Read the list first.
+
+39
+00:02:20,300 --> 00:02:25,100
+Then use Set-Item with the value SRV-CORE,
+dash Concatenate and dash Force.
+
+40
+00:02:25,350 --> 00:02:27,350
+Concatenate adds instead of replacing.
+
+41
+00:02:27,600 --> 00:02:30,400
+Read the value back to check it.
+
+42
+00:02:30,650 --> 00:02:32,250
+SRV-CORE itself needs nothing.
+
+43
+00:02:32,500 --> 00:02:33,700
+Now Server Manager.
+
+44
+00:02:33,950 --> 00:02:35,950
+Select Manage, then Add Servers.
+
+45
+00:02:36,200 --> 00:02:40,200
+The dialog has three tabs: Active
+Directory, DNS and Import.
+
+46
+00:02:40,450 --> 00:02:46,850
+Active Directory only helps in a domain,
+so in the pod you use the DNS tab.
+
+47
+00:02:47,100 --> 00:02:50,700
+Type SRV-CORE in the search box and select
+Search.
+
+48
+00:02:50,950 --> 00:02:54,150
+Our hosts file line lets it find 192.
+
+49
+00:02:54,400 --> 00:02:55,600
+168.
+
+50
+00:02:55,850 --> 00:02:57,050
+50.
+
+51
+00:02:57,300 --> 00:02:58,500
+21.
+
+52
+00:02:58,750 --> 00:03:04,750
+Select the server, then use the arrow
+button to move it to the Selected list.
+
+53
+00:03:05,000 --> 00:03:08,200
+Select OK, and SRV-CORE joins the server
+pool.
+
+54
+00:03:08,450 --> 00:03:12,050
+From now on, SRV01's Server Manager
+watches both servers.
+
+55
+00:03:12,300 --> 00:03:15,900
+Select All Servers, and look at the
+Manageability column.
+
+56
+00:03:16,150 --> 00:03:20,550
+If both Administrator accounts have the
+same password, SRV-CORE already says
+
+57
+00:03:20,800 --> 00:03:22,000
+Online.
+
+58
+00:03:22,250 --> 00:03:27,850
+If not, you see an access error, because
+Server Manager tried SRV01's own account.
+
+59
+00:03:28,100 --> 00:03:31,300
+Either way, right-click SRV-CORE and
+choose Manage As.
+
+60
+00:03:31,550 --> 00:03:35,950
+Type SRV-CORE backslash Administrator, and
+the password shown in your pod.
+
+61
+00:03:36,200 --> 00:03:40,200
+That name means the Administrator account
+that lives on SRV-CORE.
+
+62
+00:03:40,450 --> 00:03:42,450
+That makes the credentials explicit.
+
+63
+00:03:42,700 --> 00:03:45,500
+Select Refresh, and the status shows
+Online.
+
+64
+00:03:45,750 --> 00:03:48,150
+Server Manager keeps them on SRV01.
+
+65
+00:03:48,400 --> 00:03:53,200
+Server Manager talks to SRV-CORE over
+WinRM, and PowerShell remoting uses the
+
+66
+00:03:53,450 --> 00:03:54,650
+same connection.
+
+67
+00:03:54,900 --> 00:03:58,900
+First, run Get-Credential with SRV-CORE
+backslash Administrator, and store the
+
+68
+00:03:59,150 --> 00:04:01,550
+result in a variable called cred.
+
+69
+00:04:01,800 --> 00:04:05,000
+Then run Enter-PSSession, dash
+ComputerName SRV-CORE, dash Credential,
+
+70
+00:04:05,250 --> 00:04:06,450
+and the variable.
+
+71
+00:04:06,700 --> 00:04:07,900
+Watch the prompt.
+
+72
+00:04:08,150 --> 00:04:11,350
+It now starts with SRV-CORE in square
+brackets.
+
+73
+00:04:11,600 --> 00:04:14,000
+Everything you type runs on SRV-CORE.
+
+74
+00:04:14,250 --> 00:04:19,450
+Here, hostname proves it, and Get-Service
+shows that sshd is installed but stopped.
+
+75
+00:04:19,700 --> 00:04:23,700
+Exit-PSSession, or just exit, takes you
+home to SRV01 again.
+
+76
+00:04:23,950 --> 00:04:27,950
+Sometimes you need just one answer, not a
+whole session.
+
+77
+00:04:28,200 --> 00:04:29,400
+That is Invoke-Command.
+
+78
+00:04:29,650 --> 00:04:35,250
+You give it the computer name, the
+credential, and a script block in curly
+
+79
+00:04:35,500 --> 00:04:36,700
+braces.
+
+80
+00:04:36,950 --> 00:04:42,950
+The script block runs on SRV-CORE, and the
+result comes back to your own prompt.
+
+81
+00:04:43,200 --> 00:04:44,800
+You never leave SRV01.
+
+82
+00:04:45,050 --> 00:04:51,450
+Ask for hostname, or for the time zone Id,
+and you see the answer at once.
+
+83
+00:04:51,700 --> 00:04:55,300
+Add more names, and one command reaches
+many servers.
+
+84
+00:04:55,550 --> 00:04:58,750
+Many cmdlets, like Install-WindowsFeature,
+also take dash ComputerName.
+
+85
+00:04:59,000 --> 00:05:02,600
+That is what Server Manager does behind
+the scenes.
+
+86
+00:05:02,850 --> 00:05:04,050
+Next, SSH.
+
+87
+00:05:04,300 --> 00:05:08,700
+Starting with Windows Server 2025, OpenSSH
+Server is installed by default.
+
+88
+00:05:08,950 --> 00:05:10,950
+It is just not running.
+
+89
+00:05:11,200 --> 00:05:16,800
+On a Desktop Experience server, Server
+Manager's Local Server page has a new line
+
+90
+00:05:17,050 --> 00:05:18,650
+called Remote SSH Access.
+
+91
+00:05:18,900 --> 00:05:21,300
+Select it to enable the service.
+
+92
+00:05:21,550 --> 00:05:27,950
+The service name is sshd, it listens on
+TCP port 22, and its firewall rule is
+
+93
+00:05:28,200 --> 00:05:30,200
+called OpenSSH Server In TCP.
+
+94
+00:05:30,450 --> 00:05:34,450
+SRV-CORE has no Server Manager window, so
+we use PowerShell.
+
+95
+00:05:34,700 --> 00:05:37,900
+Older servers add it as an optional
+feature.
+
+96
+00:05:38,150 --> 00:05:42,150
+On SRV-CORE, use option fifteen in SConfig
+to reach PowerShell.
+
+97
+00:05:42,400 --> 00:05:44,400
+Set the startup type first.
+
+98
+00:05:44,650 --> 00:05:47,450
+Set-Service, dash Name sshd, dash
+StartupType Automatic.
+
+99
+00:05:47,700 --> 00:05:48,900
+Why first?
+
+100
+00:05:49,150 --> 00:05:54,750
+A service whose startup type is Disabled
+cannot start at all, so order matters
+
+101
+00:05:55,000 --> 00:05:56,200
+here.
+
+102
+00:05:56,450 --> 00:05:57,650
+Then Start-Service sshd.
+
+103
+00:05:57,900 --> 00:05:59,900
+No output means it worked.
+
+104
+00:06:00,150 --> 00:06:04,550
+Get-Service with Select-Object shows
+Running and Automatic, so it will come
+
+105
+00:06:04,800 --> 00:06:06,400
+back after a restart.
+
+106
+00:06:06,650 --> 00:06:09,450
+Last, check the firewall rule with
+Get-NetFirewallRule.
+
+107
+00:06:09,700 --> 00:06:13,700
+It should show Enabled True, so port 22 is
+open.
+
+108
+00:06:13,950 --> 00:06:18,350
+If the rule is missing, create it as the
+lab shows.
+
+109
+00:06:18,600 --> 00:06:21,400
+Now go to CLIENT01 and open PowerShell.
+
+110
+00:06:21,650 --> 00:06:23,650
+Type ssh administrator at 192.
+
+111
+00:06:23,900 --> 00:06:25,100
+168.
+
+112
+00:06:25,350 --> 00:06:26,550
+50.
+
+113
+00:06:26,800 --> 00:06:28,000
+21.
+
+114
+00:06:28,250 --> 00:06:33,450
+The first time, ssh says it cannot
+establish the authenticity of the host,
+
+115
+00:06:33,700 --> 00:06:35,700
+and shows a key fingerprint.
+
+116
+00:06:35,950 --> 00:06:38,750
+Type yes, and CLIENT01 saves that key.
+
+117
+00:06:39,000 --> 00:06:40,600
+Then type the password.
+
+118
+00:06:40,850 --> 00:06:44,850
+Nothing shows while you type, and that is
+on purpose.
+
+119
+00:06:45,100 --> 00:06:46,700
+Look at the prompt.
+
+120
+00:06:46,950 --> 00:06:51,750
+There is no PS in front, because the
+default shell is cmd.
+
+121
+00:06:52,000 --> 00:06:57,600
+You can type powershell, or set a registry
+value called DefaultShell on the server,
+
+122
+00:06:57,850 --> 00:07:00,650
+which you will do in the lab.
+
+123
+00:07:00,900 --> 00:07:04,100
+Remote Desktop has been on since Lab 1.
+
+124
+00:07:04,350 --> 00:07:05,550
+4.
+
+125
+00:07:05,800 --> 00:07:11,000
+On the Remote tab of System Properties,
+Allow remote connections is selected, and
+
+126
+00:07:11,250 --> 00:07:15,250
+that also opened the firewall rules for
+TCP port 3389.
+
+127
+00:07:15,500 --> 00:07:17,500
+Keep Network Level Authentication on.
+
+128
+00:07:17,750 --> 00:07:24,150
+With it, you sign in before a session
+starts, so attackers do not even get a
+
+129
+00:07:24,400 --> 00:07:25,600
+sign-in screen.
+
+130
+00:07:25,850 --> 00:07:27,050
+Who may connect?
+
+131
+00:07:27,300 --> 00:07:31,700
+Members of Administrators, plus members of
+the Remote Desktop Users group.
+
+132
+00:07:31,950 --> 00:07:34,750
+Select Users adds people to that group.
+
+133
+00:07:35,000 --> 00:07:37,800
+Right now Get-LocalGroupMember shows it is
+empty.
+
+134
+00:07:38,050 --> 00:07:41,650
+On CLIENT01, type mstsc to open Remote
+Desktop Connection.
+
+135
+00:07:41,900 --> 00:07:45,100
+In the Computer box, type SRV01's address,
+192.
+
+136
+00:07:45,350 --> 00:07:46,550
+168.
+
+137
+00:07:46,800 --> 00:07:48,000
+50.
+
+138
+00:07:48,250 --> 00:07:49,450
+20.
+
+139
+00:07:49,700 --> 00:07:52,900
+A name will work once we have DNS.
+
+140
+00:07:53,150 --> 00:07:54,350
+Select Connect.
+
+141
+00:07:54,600 --> 00:07:59,800
+In a workgroup, sign in as SRV01 backslash
+Administrator, not as CLIENT01 backslash
+
+142
+00:08:00,050 --> 00:08:01,250
+student.
+
+143
+00:08:01,500 --> 00:08:07,500
+You will see a warning that the identity
+of the remote computer cannot be verified.
+
+144
+00:08:07,750 --> 00:08:12,150
+SRV01 uses a self-signed certificate, so
+select Yes in the pod.
+
+145
+00:08:12,400 --> 00:08:18,800
+mstsc also takes options, like slash v for
+the computer, slash f for full screen, and
+
+146
+00:08:19,050 --> 00:08:20,250
+slash admin.
+
+147
+00:08:20,500 --> 00:08:23,300
+When you finish, how do you leave?
+
+148
+00:08:23,550 --> 00:08:27,950
+If you close the window with the X, you
+only disconnect.
+
+149
+00:08:28,200 --> 00:08:33,000
+Your session keeps running on the server,
+with every program still open.
+
+150
+00:08:33,250 --> 00:08:38,850
+If you select Start, your user icon, and
+Sign out, the session ends, programs
+
+151
+00:08:39,100 --> 00:08:41,500
+close, and the memory is freed.
+
+152
+00:08:41,750 --> 00:08:44,150
+Forgotten sessions can block a colleague.
+
+153
+00:08:44,400 --> 00:08:49,600
+Remote Desktop to Server Core shows the
+console window, and SConfig opens, unless
+
+154
+00:08:49,850 --> 00:08:53,450
+you take over a session that is already
+open.
+
+155
+00:08:53,700 --> 00:08:57,300
+Option twelve in SConfig, or logoff, signs
+you out.
+
+156
+00:08:57,550 --> 00:08:59,150
+So which tool when?
+
+157
+00:08:59,400 --> 00:09:05,400
+Server Manager uses WinRM on port 5985 and
+is great for watching many servers and
+
+158
+00:09:05,650 --> 00:09:06,850
+adding roles.
+
+159
+00:09:07,100 --> 00:09:13,100
+Windows Admin Center runs in a browser,
+talking HTTPS to the gateway on SRV01, and
+
+160
+00:09:13,350 --> 00:09:15,750
+gives Server Core a web GUI.
+
+161
+00:09:16,000 --> 00:09:21,600
+PowerShell remoting also uses WinRM, and
+is best for commands on one or many
+
+162
+00:09:21,850 --> 00:09:23,050
+servers.
+
+163
+00:09:23,300 --> 00:09:27,300
+SSH uses port 22 and works from any
+operating system.
+
+164
+00:09:27,550 --> 00:09:31,150
+Remote Desktop uses port 3389 for a full
+desktop.
+
+165
+00:09:31,400 --> 00:09:32,600
+Many servers?
+
+166
+00:09:32,850 --> 00:09:34,050
+PowerShell.
+
+167
+00:09:34,300 --> 00:09:35,500
+Only a desktop?
+
+168
+00:09:35,750 --> 00:09:36,950
+Remote Desktop.
+
+169
+00:09:37,200 --> 00:09:38,800
+Four mistakes to avoid.
+
+170
+00:09:39,050 --> 00:09:41,050
+One: setting TrustedHosts on SRV-CORE.
+
+171
+00:09:41,300 --> 00:09:45,300
+The list belongs on SRV01, the computer
+you manage from.
+
+172
+00:09:45,550 --> 00:09:50,750
+Two: using the wrong account with Manage
+As, like CLIENT01 backslash student or
+
+173
+00:09:51,000 --> 00:09:52,200
+SRV01 backslash Administrator.
+
+174
+00:09:52,450 --> 00:09:55,650
+Use the target's own account, SRV-CORE
+backslash Administrator.
+
+175
+00:09:55,900 --> 00:09:57,500
+Three: Start-Service sshd fails.
+
+176
+00:09:57,750 --> 00:10:02,550
+If the startup type is Disabled,
+Start-Service fails, so set it to
+
+177
+00:10:02,800 --> 00:10:04,000
+Automatic first.
+
+178
+00:10:04,250 --> 00:10:08,650
+Four: closing the Remote Desktop window
+and thinking you are done.
+
+179
+00:10:08,900 --> 00:10:10,500
+That only disconnects you.
+
+180
+00:10:10,750 --> 00:10:13,550
+Sign out so the session really ends.
+
+181
+00:10:13,800 --> 00:10:15,400
+Time to check yourself.
+
+182
+00:10:15,650 --> 00:10:18,850
+You manage the pod from SRV01 and
+CLIENT01.
+
+183
+00:10:19,100 --> 00:10:22,700
+First, Enter-PSSession to SRV-CORE fails
+with a TrustedHosts error.
+
+184
+00:10:22,950 --> 00:10:25,750
+Which computer do you fix, and how?
+
+185
+00:10:26,000 --> 00:10:29,200
+Second, your prompt shows SRV-CORE in
+square brackets.
+
+186
+00:10:29,450 --> 00:10:31,050
+Where does Get-Service run?
+
+187
+00:10:31,300 --> 00:10:35,700
+Third, ssh connects, but the prompt has no
+PS in front.
+
+188
+00:10:35,950 --> 00:10:38,750
+Why, and how do you get PowerShell?
+
+189
+00:10:39,000 --> 00:10:45,000
+And fourth, a help-desk user needs Remote
+Desktop to SRV01 but must not be an
+
+190
+00:10:45,250 --> 00:10:46,450
+administrator.
+
+191
+00:10:46,700 --> 00:10:48,300
+What do you do?
+
+192
+00:10:48,550 --> 00:10:51,350
+Pause the video and think it through.
+
+193
+00:10:51,600 --> 00:10:53,200
+Here are the answers.
+
+194
+00:10:53,450 --> 00:10:56,650
+One: fix SRV01, the computer you manage
+from.
+
+195
+00:10:56,900 --> 00:11:02,100
+Use Set-Item on the TrustedHosts path with
+the value SRV-CORE, then pass dash
+
+196
+00:11:02,350 --> 00:11:03,550
+Credential.
+
+197
+00:11:03,800 --> 00:11:05,800
+Two: it runs on SRV-CORE.
+
+198
+00:11:06,050 --> 00:11:11,250
+The prefix in square brackets means every
+command runs there until you type
+
+199
+00:11:11,500 --> 00:11:12,700
+Exit-PSSession.
+
+200
+00:11:12,950 --> 00:11:15,750
+Three: the default SSH shell is cmd.
+
+201
+00:11:16,000 --> 00:11:20,800
+Type powershell, or set the DefaultShell
+value in the OpenSSH registry key.
+
+202
+00:11:21,050 --> 00:11:26,650
+Four: add the user to Remote Desktop
+Users, with Select Users on the Remote
+
+203
+00:11:26,900 --> 00:11:28,100
+tab.
+
+204
+00:11:28,350 --> 00:11:31,550
+They do not need to be an administrator.
+
+205
+00:11:31,800 --> 00:11:38,600
+On SRV01, I add the SRV-CORE line to the
+hosts file, and the ping by name says
+
+206
+00:11:38,850 --> 00:11:40,050
+True.
+
+207
+00:11:40,300 --> 00:11:43,100
+I add SRV-CORE to TrustedHosts with
+Concatenate.
+
+208
+00:11:43,350 --> 00:11:47,350
+In Server Manager I add SRV-CORE from the
+DNS tab.
+
+209
+00:11:47,600 --> 00:11:53,600
+If it shows an access error, use Manage
+As; either way, setting Manage As to
+
+210
+00:11:53,850 --> 00:11:56,650
+SRV-CORE backslash Administrator makes the
+credentials explicit.
+
+211
+00:11:56,900 --> 00:11:59,300
+I refresh, and it is Online.
+
+212
+00:11:59,550 --> 00:12:04,750
+In a session on SRV-CORE, I set sshd to
+Automatic and start it.
+
+213
+00:12:05,000 --> 00:12:11,800
+On CLIENT01, ssh asks about the key, I say
+yes, type the password, and I am in.
+
+214
+00:12:12,050 --> 00:12:15,250
+Last, Remote Desktop to SRV01, then sign
+out.
+
+215
+00:12:15,500 --> 00:12:16,700
+To wrap up.
+
+216
+00:12:16,950 --> 00:12:21,750
+In a workgroup, remote management needs
+three things: name lookup, SRV-CORE in
+
+217
+00:12:22,000 --> 00:12:25,200
+TrustedHosts on SRV01, and the target's
+own credentials.
+
+218
+00:12:25,450 --> 00:12:29,450
+Server Manager adds servers with Add
+Servers and Manage As.
+
+219
+00:12:29,700 --> 00:12:33,700
+Enter-PSSession gives you a session, and
+Invoke-Command runs one command.
+
+220
+00:12:33,950 --> 00:12:38,350
+OpenSSH comes with Server 2025: start
+sshd, and use port 22.
+
+221
+00:12:38,600 --> 00:12:43,800
+For Remote Desktop, keep NLA on, use
+Remote Desktop Users, and sign out.
+
+222
+00:12:44,050 --> 00:12:45,250
+Lab 2.
+
+223
+00:12:45,500 --> 00:12:49,100
+3 practices all of this in about fifty
+minutes.
+
+224
+00:12:49,350 --> 00:12:50,950
+It is practice only.
+
+225
+00:12:51,200 --> 00:12:53,200
+See you in the lab.

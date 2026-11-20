@@ -1,0 +1,1088 @@
+WEBVTT
+
+NOTE SA1 Topic 1.4: Post-Installation Configuration. Timings are estimates at 150 words a minute; re-sync after recording.
+
+1
+00:00:00.000 --> 00:00:01.600
+Welcome to Topic 1.
+
+2
+00:00:01.850 --> 00:00:03.050
+4, Post-Installation Configuration.
+
+3
+00:00:03.300 --> 00:00:04.500
+In Topic 1.
+
+4
+00:00:04.750 --> 00:00:06.750
+3 you installed two servers.
+
+5
+00:00:07.000 --> 00:00:11.000
+They work, but they are not ready for real
+jobs.
+
+6
+00:00:11.250 --> 00:00:16.050
+They have random names, no fixed address,
+and the wrong time zone.
+
+7
+00:00:16.300 --> 00:00:22.300
+In this video you will plan names and
+addresses, and you will learn why the
+
+8
+00:00:22.550 --> 00:00:23.750
+clock matters.
+
+9
+00:00:24.000 --> 00:00:29.600
+You will set everything up on SRV01 with
+Server Manager, and on SRV-CORE with
+
+10
+00:00:29.850 --> 00:00:31.050
+SConfig.
+
+11
+00:00:31.300 --> 00:00:35.300
+You will also see the PowerShell command
+for each task.
+
+12
+00:00:35.550 --> 00:00:38.750
+Finally, you will check updates,
+activation and connectivity.
+
+13
+00:00:39.000 --> 00:00:42.200
+Here is the checklist for every new
+server.
+
+14
+00:00:42.450 --> 00:00:46.050
+First, give it a name that follows your
+plan.
+
+15
+00:00:46.300 --> 00:00:48.700
+Second, set a static IP address.
+
+16
+00:00:48.950 --> 00:00:52.550
+Third, set the time zone and check the
+clock.
+
+17
+00:00:52.800 --> 00:00:58.400
+Fourth, turn on Remote Desktop so admins
+can work on it from another computer.
+
+18
+00:00:58.650 --> 00:01:00.650
+Fifth, decide how updates arrive.
+
+19
+00:01:00.900 --> 00:01:03.300
+Sixth, check that Windows is activated.
+
+20
+00:01:03.550 --> 00:01:08.350
+And seventh, restart so every change is
+applied, then verify your work.
+
+21
+00:01:08.600 --> 00:01:14.200
+In the lab you follow it twice: in the GUI
+and on Server Core.
+
+22
+00:01:14.450 --> 00:01:16.450
+First, write down the plan.
+
+23
+00:01:16.700 --> 00:01:17.900
+SRV01 gets 192.
+
+24
+00:01:18.150 --> 00:01:19.350
+168.
+
+25
+00:01:19.600 --> 00:01:20.800
+50.
+
+26
+00:01:21.050 --> 00:01:23.050
+20, and SRV-CORE gets 192.
+
+27
+00:01:23.300 --> 00:01:24.500
+168.
+
+28
+00:01:24.750 --> 00:01:25.950
+50.
+
+29
+00:01:26.200 --> 00:01:27.400
+21.
+
+30
+00:01:27.650 --> 00:01:30.050
+Both use the subnet mask 255.
+
+31
+00:01:30.300 --> 00:01:31.500
+255.
+
+32
+00:01:31.750 --> 00:01:32.950
+255.
+
+33
+00:01:33.200 --> 00:01:36.400
+0, which is the same as slash 24.
+
+34
+00:01:36.650 --> 00:01:43.050
+The pod has no router, so there is no
+default gateway, and DNS stays empty until
+
+35
+00:01:43.300 --> 00:01:44.500
+Learning Plan 3.
+
+36
+00:01:44.750 --> 00:01:48.750
+Names use letters, numbers and hyphens,
+fifteen characters at most.
+
+37
+00:01:49.000 --> 00:01:51.800
+Right now each server shows a 169.
+
+38
+00:01:52.050 --> 00:01:53.250
+254 address.
+
+39
+00:01:53.500 --> 00:01:57.900
+That is APIPA: Windows picks it when no
+DHCP server answers.
+
+40
+00:01:58.150 --> 00:02:02.550
+Servers need a fixed address, so others
+can always find them.
+
+41
+00:02:02.800 --> 00:02:04.400
+Why fuss about time?
+
+42
+00:02:04.650 --> 00:02:09.450
+Windows stores time in UTC and shows it in
+your time zone.
+
+43
+00:02:09.700 --> 00:02:12.100
+Our pods use Central Standard Time.
+
+44
+00:02:12.350 --> 00:02:15.550
+The bigger reason comes in Learning Plan
+4.
+
+45
+00:02:15.800 --> 00:02:20.600
+When you sign in with a domain account,
+Kerberos checks the time.
+
+46
+00:02:20.850 --> 00:02:26.850
+By default, if a computer's clock is more
+than five minutes away from the domain
+
+47
+00:02:27.100 --> 00:02:28.300
+controller, sign-in fails.
+
+48
+00:02:28.550 --> 00:02:30.550
+Time also matters for logs.
+
+49
+00:02:30.800 --> 00:02:37.200
+When servers agree on the time, you can
+line up their events and see what happened
+
+50
+00:02:37.450 --> 00:02:38.650
+first.
+
+51
+00:02:38.900 --> 00:02:43.700
+On a Desktop Experience server, Server
+Manager opens when you sign in.
+
+52
+00:02:43.950 --> 00:02:46.350
+Select Local Server on the left.
+
+53
+00:02:46.600 --> 00:02:50.200
+The Properties tile lists the settings
+from our checklist.
+
+54
+00:02:50.450 --> 00:02:55.250
+The trick is that each value on the right
+is a link.
+
+55
+00:02:55.500 --> 00:02:59.900
+Select the value next to Computer name to
+rename the server.
+
+56
+00:03:00.150 --> 00:03:03.350
+The Remote Desktop value opens the Remote
+tab.
+
+57
+00:03:03.600 --> 00:03:05.200
+Ethernet opens Network Connections.
+
+58
+00:03:05.450 --> 00:03:07.850
+Windows Update opens the update settings.
+
+59
+00:03:08.100 --> 00:03:10.500
+Time zone opens Date and Time.
+
+60
+00:03:10.750 --> 00:03:13.950
+And Product ID shows whether Windows is
+activated.
+
+61
+00:03:14.200 --> 00:03:15.800
+One page, six tasks.
+
+62
+00:03:16.050 --> 00:03:19.650
+When you select the computer name, System
+Properties opens.
+
+63
+00:03:19.900 --> 00:03:24.700
+Select Change, and you get the Computer
+Name slash Domain Changes dialog.
+
+64
+00:03:24.950 --> 00:03:26.950
+Type the new name, SRV01.
+
+65
+00:03:27.200 --> 00:03:33.200
+Leave the Workgroup setting as it is,
+because we join a domain later in the
+
+66
+00:03:33.450 --> 00:03:34.650
+course.
+
+67
+00:03:34.900 --> 00:03:36.100
+Select OK.
+
+68
+00:03:36.350 --> 00:03:39.150
+Windows tells you that you must restart.
+
+69
+00:03:39.400 --> 00:03:42.200
+Select OK, then Close, then Restart Now.
+
+70
+00:03:42.450 --> 00:03:43.650
+Why restart?
+
+71
+00:03:43.900 --> 00:03:49.900
+The name is saved right away, but Windows
+starts using it only after a restart.
+
+72
+00:03:50.150 --> 00:03:54.150
+Until then, Server Manager still shows the
+old WIN name.
+
+73
+00:03:54.400 --> 00:03:55.600
+Next, the address.
+
+74
+00:03:55.850 --> 00:04:00.250
+Select the Ethernet link, right-click the
+Ethernet adapter, and choose Properties.
+
+75
+00:04:00.500 --> 00:04:03.300
+Select Internet Protocol Version 4, then
+Properties.
+
+76
+00:04:03.550 --> 00:04:06.350
+Now choose Use the following IP address.
+
+77
+00:04:06.600 --> 00:04:07.800
+Type 192.
+
+78
+00:04:08.050 --> 00:04:09.250
+168.
+
+79
+00:04:09.500 --> 00:04:10.700
+50.
+
+80
+00:04:10.950 --> 00:04:12.150
+20 for SRV01.
+
+81
+00:04:12.400 --> 00:04:16.800
+When you select the Subnet mask box,
+Windows fills in 255.
+
+82
+00:04:17.050 --> 00:04:18.250
+255.
+
+83
+00:04:18.500 --> 00:04:19.700
+255.
+
+84
+00:04:19.950 --> 00:04:21.150
+0 for you.
+
+85
+00:04:21.400 --> 00:04:25.400
+Leave Default gateway empty, because the
+pod has no router.
+
+86
+00:04:25.650 --> 00:04:30.050
+Windows also switches DNS to Use the
+following DNS server addresses.
+
+87
+00:04:30.300 --> 00:04:33.900
+Leave both of the DNS boxes empty for now.
+
+88
+00:04:34.150 --> 00:04:36.550
+Then select OK, and then Close.
+
+89
+00:04:36.800 --> 00:04:38.000
+Two more dialogs.
+
+90
+00:04:38.250 --> 00:04:41.450
+The Time zone link opens Date and Time.
+
+91
+00:04:41.700 --> 00:04:47.700
+Select Change time zone, and pick Central
+Time, US and Canada, the one marked UTC
+
+92
+00:04:47.950 --> 00:04:49.150
+minus six.
+
+93
+00:04:49.400 --> 00:04:51.000
+Keep daylight saving checked.
+
+94
+00:04:51.250 --> 00:04:56.050
+For Remote Desktop, the link opens the
+Remote tab of System Properties.
+
+95
+00:04:56.300 --> 00:04:59.100
+Select Allow remote connections to this
+computer.
+
+96
+00:04:59.350 --> 00:05:02.150
+Keep the Network Level Authentication box
+checked.
+
+97
+00:05:02.400 --> 00:05:08.000
+With it, people must sign in before a
+session even starts, which is safer.
+
+98
+00:05:08.250 --> 00:05:12.250
+Turning Remote Desktop on here also opens
+its firewall rule.
+
+99
+00:05:12.500 --> 00:05:15.300
+Server Core has no Server Manager window.
+
+100
+00:05:15.550 --> 00:05:18.350
+Instead, when you sign in, SConfig opens.
+
+101
+00:05:18.600 --> 00:05:20.600
+It is a text menu.
+
+102
+00:05:20.850 --> 00:05:23.650
+You type a number and press Enter.
+
+103
+00:05:23.900 --> 00:05:27.100
+The numbers you need are on the right.
+
+104
+00:05:27.350 --> 00:05:29.350
+Two is the computer name.
+
+105
+00:05:29.600 --> 00:05:31.200
+Eight is network settings.
+
+106
+00:05:31.450 --> 00:05:33.450
+Nine is date and time.
+
+107
+00:05:33.700 --> 00:05:35.300
+Seven is Remote Desktop.
+
+108
+00:05:35.550 --> 00:05:39.150
+Five is the update setting, and six
+installs updates.
+
+109
+00:05:39.400 --> 00:05:40.600
+Eleven shows activation.
+
+110
+00:05:40.850 --> 00:05:44.450
+Thirteen restarts the server, and fifteen
+exits to PowerShell.
+
+111
+00:05:44.700 --> 00:05:49.500
+If you leave SConfig, type SConfig and
+press Enter to come back.
+
+112
+00:05:49.750 --> 00:05:51.350
+On SRV-CORE, type eight.
+
+113
+00:05:51.600 --> 00:05:53.600
+SConfig lists your network adapters.
+
+114
+00:05:53.850 --> 00:05:55.050
+Pick index one.
+
+115
+00:05:55.300 --> 00:05:58.100
+Then choose one, Set network adapter
+address.
+
+116
+00:05:58.350 --> 00:05:59.950
+Type S for static.
+
+117
+00:06:00.200 --> 00:06:01.400
+Type 192.
+
+118
+00:06:01.650 --> 00:06:02.850
+168.
+
+119
+00:06:03.100 --> 00:06:04.300
+50.
+
+120
+00:06:04.550 --> 00:06:06.950
+21, then the subnet mask, 255.
+
+121
+00:06:07.200 --> 00:06:08.400
+255.
+
+122
+00:06:08.650 --> 00:06:09.850
+255.
+
+123
+00:06:10.100 --> 00:06:11.300
+0.
+
+124
+00:06:11.550 --> 00:06:16.750
+When it asks for a default gateway, leave
+it blank and press Enter.
+
+125
+00:06:17.000 --> 00:06:18.600
+Skip DNS for now.
+
+126
+00:06:18.850 --> 00:06:24.850
+One warning: on a server with an APIPA
+address, SConfig can fail with error 83,
+
+127
+00:06:25.100 --> 00:06:27.900
+because it cannot release a DHCP lease.
+
+128
+00:06:28.150 --> 00:06:30.550
+If that happens, go to PowerShell.
+
+129
+00:06:30.800 --> 00:06:34.000
+Turn DHCP off with Set-NetIPInterface,
+remove the 169.
+
+130
+00:06:34.250 --> 00:06:36.250
+254 address, then run New-NetIPAddress.
+
+131
+00:06:36.500 --> 00:06:40.500
+Every task you just saw also has a
+PowerShell command.
+
+132
+00:06:40.750 --> 00:06:42.750
+Get-TimeZone shows the current zone.
+
+133
+00:06:43.000 --> 00:06:45.000
+Setup often leaves Pacific Time.
+
+134
+00:06:45.250 --> 00:06:50.850
+To change it, type Set-TimeZone, dash Id,
+and the Id in quotes: Central Standard
+
+135
+00:06:51.100 --> 00:06:52.300
+Time.
+
+136
+00:06:52.550 --> 00:06:56.150
+The quotes are needed because the Id has
+spaces.
+
+137
+00:06:56.400 --> 00:07:00.400
+To check, put Get-TimeZone in brackets and
+add dot Id.
+
+138
+00:07:00.650 --> 00:07:03.450
+Last, Rename-Computer, dash NewName
+SRV-CORE, dash Restart.
+
+139
+00:07:03.700 --> 00:07:05.300
+Do the rename last.
+
+140
+00:07:05.550 --> 00:07:10.750
+The dash Restart switch restarts the
+server right away, so anything after it
+
+141
+00:07:11.000 --> 00:07:12.600
+would have to wait.
+
+142
+00:07:12.850 --> 00:07:16.850
+For the address, first find the adapter
+name with Get-NetAdapter.
+
+143
+00:07:17.100 --> 00:07:21.900
+Here it is Ethernet, but use the name your
+own pod shows.
+
+144
+00:07:22.150 --> 00:07:25.750
+Next, turn DHCP off with
+Set-NetIPInterface, dash Dhcp Disabled.
+
+145
+00:07:26.000 --> 00:07:30.800
+Then run New-NetIPAddress with the
+interface alias, the IP address, and dash
+
+146
+00:07:31.050 --> 00:07:32.250
+PrefixLength 24.
+
+147
+00:07:32.500 --> 00:07:34.500
+Prefix length 24 means 255.
+
+148
+00:07:34.750 --> 00:07:35.950
+255.
+
+149
+00:07:36.200 --> 00:07:37.400
+255.
+
+150
+00:07:37.650 --> 00:07:38.850
+0.
+
+151
+00:07:39.100 --> 00:07:43.100
+There is no gateway, because our pod has
+no router.
+
+152
+00:07:43.350 --> 00:07:45.750
+Get-NetIPConfiguration then shows the
+final result.
+
+153
+00:07:46.000 --> 00:07:51.600
+The IPv4 address is set, and the default
+gateway is empty, just as planned.
+
+154
+00:07:51.850 --> 00:07:54.650
+Remote Desktop in PowerShell takes two
+steps.
+
+155
+00:07:54.900 --> 00:07:58.500
+First, set a registry value called
+fDenyTSConnections to zero.
+
+156
+00:07:58.750 --> 00:08:01.150
+That means deny connections is off.
+
+157
+00:08:01.400 --> 00:08:05.400
+Second, enable the firewall rules in the
+Remote Desktop group.
+
+158
+00:08:05.650 --> 00:08:09.250
+The GUI and SConfig do both steps for you.
+
+159
+00:08:09.500 --> 00:08:10.700
+Now ping.
+
+160
+00:08:10.950 --> 00:08:13.350
+Windows Server blocks it by default.
+
+161
+00:08:13.600 --> 00:08:19.200
+To allow it, enable the rule named File
+and Printer Sharing, Echo Request, ICMPv4
+
+162
+00:08:19.450 --> 00:08:20.650
+In.
+
+163
+00:08:20.900 --> 00:08:24.500
+We store the long name in a variable
+first.
+
+164
+00:08:24.750 --> 00:08:29.150
+On Server Core, SConfig option four, then
+three, does the same.
+
+165
+00:08:29.400 --> 00:08:35.400
+Our pods have no internet, so you check
+updates and activation, but you do not
+
+166
+00:08:35.650 --> 00:08:36.850
+change them.
+
+167
+00:08:37.100 --> 00:08:41.500
+In Server Manager, use the Windows Update
+and Product ID links.
+
+168
+00:08:41.750 --> 00:08:47.350
+In SConfig, option five shows the update
+setting: A for automatic, D for download
+
+169
+00:08:47.600 --> 00:08:49.600
+only, and M for manual.
+
+170
+00:08:49.850 --> 00:08:52.250
+Option eleven, then one, shows activation.
+
+171
+00:08:52.500 --> 00:08:57.300
+Companies with servers off the internet
+use WSUS, Windows Server Update Services.
+
+172
+00:08:57.550 --> 00:09:02.350
+One server downloads updates, admins
+approve them, and the others install them.
+
+173
+00:09:02.600 --> 00:09:05.400
+For activation, they use KMS or AVMA.
+
+174
+00:09:05.650 --> 00:09:07.250
+Now prove it works.
+
+175
+00:09:07.500 --> 00:09:13.100
+On SRV01, ipconfig slash all shows the
+host name, DHCP Enabled No, the new
+
+176
+00:09:13.350 --> 00:09:16.950
+address and the mask, and an empty default
+gateway.
+
+177
+00:09:17.200 --> 00:09:22.400
+Then run Test-Connection to SRV-CORE with
+dash Quiet, which prints just True or
+
+178
+00:09:22.650 --> 00:09:23.850
+False.
+
+179
+00:09:24.100 --> 00:09:26.500
+The first time you get False.
+
+180
+00:09:26.750 --> 00:09:27.950
+Don't panic.
+
+181
+00:09:28.200 --> 00:09:29.800
+The network is fine.
+
+182
+00:09:30.050 --> 00:09:36.450
+Windows Server turns off the echo request
+rule by default, and our pod counts as a
+
+183
+00:09:36.700 --> 00:09:37.900
+public network.
+
+184
+00:09:38.150 --> 00:09:43.350
+Turn on response to ping on SRV-CORE, test
+again, and you get True.
+
+185
+00:09:43.600 --> 00:09:44.800
+Four common mistakes.
+
+186
+00:09:45.050 --> 00:09:48.250
+One: renaming the server and skipping the
+restart.
+
+187
+00:09:48.500 --> 00:09:52.100
+The new name only takes effect after a
+restart.
+
+188
+00:09:52.350 --> 00:09:57.150
+Two: typing a gateway or DNS server just
+to fill the box.
+
+189
+00:09:57.400 --> 00:10:02.600
+Leave them empty, because a wrong address
+causes slow lookups and strange errors
+
+190
+00:10:02.850 --> 00:10:04.050
+later.
+
+191
+00:10:04.300 --> 00:10:07.900
+Three: deciding the network is broken
+because ping fails.
+
+192
+00:10:08.150 --> 00:10:10.550
+Remember, ping is blocked by default.
+
+193
+00:10:10.800 --> 00:10:13.600
+Four: giving two servers the same address.
+
+194
+00:10:13.850 --> 00:10:19.850
+Follow the plan, SRV01 is dot twenty and
+SRV-CORE is dot twenty-one, and check with
+
+195
+00:10:20.100 --> 00:10:21.300
+ipconfig.
+
+196
+00:10:21.550 --> 00:10:23.150
+Time to check yourself.
+
+197
+00:10:23.400 --> 00:10:25.800
+A classmate is setting up SRV-CORE.
+
+198
+00:10:26.050 --> 00:10:30.850
+First, they renamed it in SConfig and said
+no to the restart.
+
+199
+00:10:31.100 --> 00:10:33.900
+What name is it using right now?
+
+200
+00:10:34.150 --> 00:10:38.950
+Second, which SConfig options set the
+static address and the time zone?
+
+201
+00:10:39.200 --> 00:10:43.600
+Third, ipconfig on SRV-CORE shows the
+right address, but Test-Connection from
+
+202
+00:10:43.850 --> 00:10:45.050
+SRV01 says False.
+
+203
+00:10:45.300 --> 00:10:47.700
+What is the most likely cause?
+
+204
+00:10:47.950 --> 00:10:53.550
+And fourth, why will a wrong clock matter
+more once we have a domain?
+
+205
+00:10:53.800 --> 00:10:57.400
+Pause the video, think about your answers,
+then continue.
+
+206
+00:10:57.650 --> 00:10:59.250
+Here are the answers.
+
+207
+00:10:59.500 --> 00:11:02.700
+One: it still uses the old WIN name.
+
+208
+00:11:02.950 --> 00:11:08.550
+The new name takes effect only after a
+restart, which is option thirteen in
+
+209
+00:11:08.800 --> 00:11:10.000
+SConfig.
+
+210
+00:11:10.250 --> 00:11:15.450
+Two: option eight sets the network
+address, and option nine opens the Date
+
+211
+00:11:15.700 --> 00:11:18.500
+and Time dialog for the time zone.
+
+212
+00:11:18.750 --> 00:11:21.150
+Three: SRV-CORE blocks ping by default.
+
+213
+00:11:21.400 --> 00:11:25.800
+Use option four, then three, to allow it,
+and test again.
+
+214
+00:11:26.050 --> 00:11:31.650
+Four: domain sign-in uses Kerberos, and
+Kerberos rejects a clock that is more than
+
+215
+00:11:31.900 --> 00:11:33.100
+five minutes off.
+
+216
+00:11:33.350 --> 00:11:35.350
+SConfig is open on SRV-CORE.
+
+217
+00:11:35.600 --> 00:11:38.400
+I type eight and pick adapter one.
+
+218
+00:11:38.650 --> 00:11:39.850
+See the 169.
+
+219
+00:11:40.100 --> 00:11:41.300
+254 address?
+
+220
+00:11:41.550 --> 00:11:45.550
+I choose one, then S for static, and type
+192.
+
+221
+00:11:45.800 --> 00:11:47.000
+168.
+
+222
+00:11:47.250 --> 00:11:48.450
+50.
+
+223
+00:11:48.700 --> 00:11:50.300
+21 and the mask.
+
+224
+00:11:50.550 --> 00:11:52.950
+For the gateway I press Enter.
+
+225
+00:11:53.200 --> 00:11:54.400
+Now nine.
+
+226
+00:11:54.650 --> 00:11:58.650
+The Date and Time dialog opens, even on
+Server Core.
+
+227
+00:11:58.900 --> 00:12:01.700
+I pick Central and select OK twice.
+
+228
+00:12:01.950 --> 00:12:05.950
+Seven, E and one turn on Remote Desktop
+with NLA.
+
+229
+00:12:06.200 --> 00:12:08.200
+Four and three allow ping.
+
+230
+00:12:08.450 --> 00:12:09.650
+Fifteen opens PowerShell.
+
+231
+00:12:09.900 --> 00:12:14.300
+Get-TimeZone dot Id says Central Standard
+Time, and Get-NetIPConfiguration shows the
+
+232
+00:12:14.550 --> 00:12:15.750
+address.
+
+233
+00:12:16.000 --> 00:12:18.400
+I type SConfig to go back.
+
+234
+00:12:18.650 --> 00:12:22.650
+Last, option two, the name SRV-CORE, and Y
+to restart.
+
+235
+00:12:22.900 --> 00:12:25.700
+After the restart, the menu shows
+SRV-CORE.
+
+236
+00:12:25.950 --> 00:12:27.950
+To wrap up: plan first.
+
+237
+00:12:28.200 --> 00:12:33.400
+A name, a static address, a mask, and no
+gateway in our pod.
+
+238
+00:12:33.650 --> 00:12:38.450
+On Desktop Experience, Server Manager's
+Local Server page is your starting point.
+
+239
+00:12:38.700 --> 00:12:44.300
+On Server Core, SConfig does the same with
+numbers: two, eight, nine and seven.
+
+240
+00:12:44.550 --> 00:12:47.350
+PowerShell can do all of it too.
+
+241
+00:12:47.600 --> 00:12:48.800
+In Lab 1.
+
+242
+00:12:49.050 --> 00:12:54.650
+4 you set up both servers, check updates
+and activation, test the connection, and
+
+243
+00:12:54.900 --> 00:12:56.100
+record your settings.
+
+244
+00:12:56.350 --> 00:12:59.150
+It takes about fifty minutes, practice
+only.
+
+245
+00:12:59.400 --> 00:13:01.400
+See you in the lab.

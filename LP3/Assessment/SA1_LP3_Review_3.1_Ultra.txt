@@ -1,0 +1,5 @@
+MC	Which tool asks the DNS server directly and skips the hosts file and cache?	nslookup	correct	ping	incorrect	ipconfig /displaydns	incorrect	Test-Connection	incorrect
+TF	ipconfig /flushdns removes names that come from the hosts file.	false
+MC	What do you call a DNS server that holds no zones?	Caching-only	correct	Primary	incorrect	Secondary	incorrect	Stub	incorrect
+MAT	Match each DNS Manager node to its job.	Forward Lookup Zones	Turn names into addresses	Reverse Lookup Zones	Turn addresses into names	Conditional Forwarders	Send one domain to a chosen server
+MC	Where are Active Directory-integrated zones stored?	In the Active Directory database on domain controllers	correct	In a .dns file on a workgroup server	incorrect	In the hosts file	incorrect	In the root hints	incorrect

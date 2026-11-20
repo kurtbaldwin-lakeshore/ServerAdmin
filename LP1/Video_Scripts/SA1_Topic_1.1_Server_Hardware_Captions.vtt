@@ -1,0 +1,948 @@
+WEBVTT
+
+NOTE SA1 Topic 1.1: Server Hardware. Timings are estimates at 150 words a minute; re-sync after recording.
+
+1
+00:00:00.000 --> 00:00:02.000
+Welcome to Server Administration 1.
+
+2
+00:00:02.250 --> 00:00:03.850
+This is Topic 1.
+
+3
+00:00:04.100 --> 00:00:05.700
+1, called Server Hardware.
+
+4
+00:00:05.950 --> 00:00:11.150
+Before you install Windows Server, it
+helps to know what it runs on.
+
+5
+00:00:11.400 --> 00:00:18.200
+In this video you will look at how servers
+are built, how they are mounted in racks,
+
+6
+00:00:18.450 --> 00:00:24.050
+how they get power and cooling, and how
+admins manage them from far away.
+
+7
+00:00:24.300 --> 00:00:29.100
+You will also check what Windows Server
+2025 needs from the hardware.
+
+8
+00:00:29.350 --> 00:00:34.150
+It all applies to any brand of server you
+meet at work.
+
+9
+00:00:34.400 --> 00:00:40.000
+Here are the six things you will be able
+to do by the end.
+
+10
+00:00:40.250 --> 00:00:44.650
+First, explain what makes a server
+different from a desktop PC.
+
+11
+00:00:44.900 --> 00:00:48.500
+Second, read a rack diagram and count rack
+units.
+
+12
+00:00:48.750 --> 00:00:51.950
+Third, name the main parts inside a
+server.
+
+13
+00:00:52.200 --> 00:00:56.200
+Fourth, plan power and cooling, including
+a simple UPS estimate.
+
+14
+00:00:56.450 --> 00:01:00.850
+Fifth, tell in-band from out-of-band
+management, and explain UEFI, Secure Boot
+
+15
+00:01:01.100 --> 00:01:02.300
+and the TPM.
+
+16
+00:01:02.550 --> 00:01:07.750
+And sixth, choose hardware for a workload
+and check the Windows Server 2025
+
+17
+00:01:08.000 --> 00:01:09.200
+minimums.
+
+18
+00:01:09.450 --> 00:01:12.650
+A server is not just a fast PC.
+
+19
+00:01:12.900 --> 00:01:16.500
+A desktop runs during work hours for one
+person.
+
+20
+00:01:16.750 --> 00:01:22.750
+A server runs all day, every day, for
+years, and many users depend on it.
+
+21
+00:01:23.000 --> 00:01:24.600
+That changes the parts.
+
+22
+00:01:24.850 --> 00:01:30.450
+Servers use ECC memory, which finds and
+fixes memory errors before they crash a
+
+23
+00:01:30.700 --> 00:01:31.900
+service.
+
+24
+00:01:32.150 --> 00:01:37.750
+They have spares built in: two power
+supplies, drives you can swap while the
+
+25
+00:01:38.000 --> 00:01:39.600
+server runs, and RAID.
+
+26
+00:01:39.850 --> 00:01:44.250
+And you can manage them remotely, even
+when Windows is down.
+
+27
+00:01:44.500 --> 00:01:47.700
+Remember three words: reliability,
+redundancy and remote management.
+
+28
+00:01:47.950 --> 00:01:51.550
+Servers come in three main shapes, called
+form factors.
+
+29
+00:01:51.800 --> 00:01:55.800
+A tower stands on the floor like a large
+PC.
+
+30
+00:01:56.050 --> 00:01:58.050
+It suits a small office.
+
+31
+00:01:58.300 --> 00:02:02.300
+A rack server bolts into a 19-inch rack on
+rails.
+
+32
+00:02:02.550 --> 00:02:08.550
+Its height is measured in rack units, and
+many servers share one rack, its cables
+
+33
+00:02:08.800 --> 00:02:10.000
+and its power.
+
+34
+00:02:10.250 --> 00:02:14.650
+A blade is a thin server that slides into
+a chassis.
+
+35
+00:02:14.900 --> 00:02:20.100
+The chassis shares power, cooling and
+network links with every blade, so blades
+
+36
+00:02:20.350 --> 00:02:21.550
+are very dense.
+
+37
+00:02:21.800 --> 00:02:24.200
+You find them at large sites.
+
+38
+00:02:24.450 --> 00:02:26.450
+Let's read a rack diagram.
+
+39
+00:02:26.700 --> 00:02:31.500
+Each numbered space is one rack unit, or
+1U, which is 1.
+
+40
+00:02:31.750 --> 00:02:32.950
+75 inches high.
+
+41
+00:02:33.200 --> 00:02:37.600
+You count from the bottom, so U1 is the
+lowest space.
+
+42
+00:02:37.850 --> 00:02:42.250
+A 2U server takes two spaces, a 4U server
+takes four.
+
+43
+00:02:42.500 --> 00:02:44.500
+Full-height racks are often 42U.
+
+44
+00:02:44.750 --> 00:02:52.350
+Now count this rack with me: 1, plus 1,
+plus 2, plus 1, plus 4, plus 2 is 11U
+
+45
+00:02:52.600 --> 00:02:53.800
+used.
+
+46
+00:02:54.050 --> 00:03:00.450
+Only U10 is free, so a new 2U server will
+not fit anywhere in this rack.
+
+47
+00:03:00.700 --> 00:03:05.900
+A socket holds one CPU, and servers often
+have one or two sockets.
+
+48
+00:03:06.150 --> 00:03:12.150
+Each CPU has several cores, and each core
+can usually run two threads at once.
+
+49
+00:03:12.400 --> 00:03:17.600
+Multiply them: two sockets times eight
+cores times two threads gives 32 logical
+
+50
+00:03:17.850 --> 00:03:19.050
+processors.
+
+51
+00:03:19.300 --> 00:03:24.500
+Memory in a server is ECC, usually
+registered DIMMs of the current generation
+
+52
+00:03:24.750 --> 00:03:25.950
+such as DDR5.
+
+53
+00:03:26.200 --> 00:03:31.000
+Network adapters, or NICs, run at 1, 10 or
+25 gigabit Ethernet.
+
+54
+00:03:31.250 --> 00:03:36.450
+Teaming joins ports, so traffic keeps
+flowing if one cable or switch fails.
+
+55
+00:03:36.700 --> 00:03:39.500
+Drives connect through one of three
+interfaces.
+
+56
+00:03:39.750 --> 00:03:45.750
+SATA is the low-cost choice for big
+drives, at up to 6 gigabits per second.
+
+57
+00:03:46.000 --> 00:03:48.000
+SAS is the enterprise choice.
+
+58
+00:03:48.250 --> 00:03:54.650
+It runs at 12 gigabits and has two ports,
+for a spare path to each drive.
+
+59
+00:03:54.900 --> 00:04:00.100
+NVMe drives are solid-state and connect
+straight to PCI Express lanes, for the
+
+60
+00:04:00.350 --> 00:04:01.550
+lowest delay.
+
+61
+00:04:01.800 --> 00:04:06.200
+Hot-swap bays let you replace a drive
+while the server runs.
+
+62
+00:04:06.450 --> 00:04:10.850
+A RAID controller joins drives so one
+failure loses no data.
+
+63
+00:04:11.100 --> 00:04:13.500
+RAID levels come in Topic 8.
+
+64
+00:04:13.750 --> 00:04:14.950
+1.
+
+65
+00:04:15.200 --> 00:04:20.800
+Each server has two hot-swappable power
+supplies, or PSUs, and either one can run
+
+66
+00:04:21.050 --> 00:04:22.250
+the whole server.
+
+67
+00:04:22.500 --> 00:04:28.900
+Follow the diagram: PSU 1 is fed by
+circuit A through UPS A and PDU A.
+
+68
+00:04:29.150 --> 00:04:31.550
+PSU 2 uses the B path.
+
+69
+00:04:31.800 --> 00:04:36.200
+If one circuit, UPS or PDU fails, the
+server keeps running.
+
+70
+00:04:36.450 --> 00:04:41.250
+The UPS is a battery that takes over in a
+power cut.
+
+71
+00:04:41.500 --> 00:04:43.900
+It gives you minutes, not hours.
+
+72
+00:04:44.150 --> 00:04:49.750
+The PDU is the rack's power strip, and
+some PDUs can measure the load.
+
+73
+00:04:50.000 --> 00:04:52.800
+How big a UPS do you need?
+
+74
+00:04:53.050 --> 00:04:54.250
+Follow four steps.
+
+75
+00:04:54.500 --> 00:04:58.100
+One, add the watts of everything you plug
+in.
+
+76
+00:04:58.350 --> 00:05:00.350
+Here that is 600 watts.
+
+77
+00:05:00.600 --> 00:05:04.200
+Two, add 25 percent headroom, which gives
+750 watts.
+
+78
+00:05:04.450 --> 00:05:08.450
+Three, convert to VA by dividing by the
+power factor.
+
+79
+00:05:08.700 --> 00:05:10.300
+This course uses 0.
+
+80
+00:05:10.550 --> 00:05:13.350
+9, so you get about 834 VA.
+
+81
+00:05:13.600 --> 00:05:19.600
+Four, pick a UPS where both ratings are
+higher, like 1000 VA and 900 watts.
+
+82
+00:05:19.850 --> 00:05:21.050
+Why both?
+
+83
+00:05:21.300 --> 00:05:27.300
+Watts are the real work, and many units
+have a lower watt rating than VA.
+
+84
+00:05:27.550 --> 00:05:29.550
+Then check the runtime chart.
+
+85
+00:05:29.800 --> 00:05:32.600
+Servers breathe air from front to back.
+
+86
+00:05:32.850 --> 00:05:38.850
+Fans pull cool air in at the front and
+push hot air out the back.
+
+87
+00:05:39.100 --> 00:05:45.900
+In a server room, rows of racks face each
+other across a cold aisle, and stand back
+
+88
+00:05:46.150 --> 00:05:48.550
+to back across a hot aisle.
+
+89
+00:05:48.800 --> 00:05:52.000
+That way no server breathes another
+server's exhaust.
+
+90
+00:05:52.250 --> 00:05:55.450
+Remember the blanking panels from the rack
+slide?
+
+91
+00:05:55.700 --> 00:06:01.700
+Without them, hot air loops through the
+empty spaces back to the front, and the
+
+92
+00:06:01.950 --> 00:06:03.550
+servers slowly heat up.
+
+93
+00:06:03.800 --> 00:06:07.000
+Windows has crashed and you are at home.
+
+94
+00:06:07.250 --> 00:06:08.850
+You need out-of-band management.
+
+95
+00:06:09.100 --> 00:06:12.700
+Most servers have a BMC, a baseboard
+management controller.
+
+96
+00:06:12.950 --> 00:06:18.150
+It is a small computer with its own
+network port, on standby power.
+
+97
+00:06:18.400 --> 00:06:24.800
+It works even when the server is off, as
+long as the power cord is in.
+
+98
+00:06:25.050 --> 00:06:32.250
+Through it you can power the server on or
+off, see its screen, mount an ISO file as
+
+99
+00:06:32.500 --> 00:06:33.700
+a virtual DVD.
+
+100
+00:06:33.950 --> 00:06:36.750
+Vendors call it iDRAC, iLO or XClarity.
+
+101
+00:06:37.000 --> 00:06:40.200
+The standards are IPMI and the newer
+Redfish.
+
+102
+00:06:40.450 --> 00:06:44.050
+Modern servers use UEFI, which replaced
+the legacy BIOS.
+
+103
+00:06:44.300 --> 00:06:49.900
+UEFI boots from GPT disks, which can be
+larger than 2 terabytes, and supports
+
+104
+00:06:50.150 --> 00:06:51.350
+Secure Boot.
+
+105
+00:06:51.600 --> 00:06:57.200
+Secure Boot only runs boot loaders signed
+by a trusted key, which blocks boot-time
+
+106
+00:06:57.450 --> 00:06:58.650
+malware.
+
+107
+00:06:58.900 --> 00:07:04.900
+The TPM is a security chip that stores
+keys and records each step of startup.
+
+108
+00:07:05.150 --> 00:07:10.750
+For Windows Server 2025, Microsoft lists
+UEFI with Secure Boot and a TPM as
+
+109
+00:07:11.000 --> 00:07:14.200
+required only for certain features, such
+as BitLocker.
+
+110
+00:07:14.450 --> 00:07:18.850
+If there is a hardware TPM, it must be
+version 2.
+
+111
+00:07:19.100 --> 00:07:20.300
+0.
+
+112
+00:07:20.550 --> 00:07:23.350
+Here are the minimums from Microsoft
+Learn.
+
+113
+00:07:23.600 --> 00:07:26.000
+The CPU must be a 1.
+
+114
+00:07:26.250 --> 00:07:29.850
+4 gigahertz 64-bit processor with a few
+required features.
+
+115
+00:07:30.100 --> 00:07:35.700
+Memory is 2 gigabytes for Server Core and
+2 for Desktop Experience, with 4
+
+116
+00:07:35.950 --> 00:07:37.150
+recommended.
+
+117
+00:07:37.400 --> 00:07:40.200
+Disk is 32 gigabytes, an absolute minimum.
+
+118
+00:07:40.450 --> 00:07:44.850
+The network adapter must reach at least
+one gigabit per second.
+
+119
+00:07:45.100 --> 00:07:46.300
+Two tips.
+
+120
+00:07:46.550 --> 00:07:50.550
+A minimum is not a recommendation: size
+for your roles.
+
+121
+00:07:50.800 --> 00:07:57.600
+And setup can fail in a VM with 1,024
+megabytes, so give it 1,280 or more during
+
+122
+00:07:57.850 --> 00:07:59.050
+setup.
+
+123
+00:07:59.300 --> 00:08:02.100
+Start with the workload, not the catalog.
+
+124
+00:08:02.350 --> 00:08:08.750
+A small office file server can be a tower
+with one socket, moderate memory, and big
+
+125
+00:08:09.000 --> 00:08:10.200
+drives in RAID.
+
+126
+00:08:10.450 --> 00:08:16.450
+A virtualization host carries many virtual
+machines, so it gets two sockets, a lot of
+
+127
+00:08:16.700 --> 00:08:22.700
+memory, fast SSDs, teamed 10 or 25 gigabit
+ports, and two power supplies on separate
+
+128
+00:08:22.950 --> 00:08:24.150
+feeds.
+
+129
+00:08:24.400 --> 00:08:31.200
+A branch domain controller is small, but
+nobody at the branch can fix it, so a UPS
+
+130
+00:08:31.450 --> 00:08:33.450
+and a BMC matter most.
+
+131
+00:08:33.700 --> 00:08:36.900
+Always ask: what happens if this server
+stops?
+
+132
+00:08:37.150 --> 00:08:40.350
+Windows can show you the hardware it sees.
+
+133
+00:08:40.600 --> 00:08:45.000
+Run msinfo32 to open System Information,
+and stay on System Summary.
+
+134
+00:08:45.250 --> 00:08:46.850
+Look for four rows.
+
+135
+00:08:47.100 --> 00:08:52.700
+Processor shows the CPU name and how many
+cores and logical processors Windows sees.
+
+136
+00:08:52.950 --> 00:08:55.350
+BIOS Mode says UEFI or Legacy.
+
+137
+00:08:55.600 --> 00:08:58.800
+Secure Boot State says On, Off or
+Unsupported.
+
+138
+00:08:59.050 --> 00:09:01.850
+And Installed Physical Memory shows the
+RAM.
+
+139
+00:09:02.100 --> 00:09:08.100
+In the pod your servers are virtual
+machines, so these values come from the VM
+
+140
+00:09:08.350 --> 00:09:10.750
+settings, not from a physical box.
+
+141
+00:09:11.000 --> 00:09:13.400
+Your values will differ from mine.
+
+142
+00:09:13.650 --> 00:09:16.850
+You can read the same facts with
+PowerShell.
+
+143
+00:09:17.100 --> 00:09:21.500
+Get-ComputerInfo with the Property
+parameter picks just the values you want,
+
+144
+00:09:21.750 --> 00:09:24.150
+and Format-List shows one per line.
+
+145
+00:09:24.400 --> 00:09:30.000
+Total physical memory is in bytes: about 4
+gigabytes here, and Windows shows slightly
+
+146
+00:09:30.250 --> 00:09:31.450
+less.
+
+147
+00:09:31.700 --> 00:09:36.900
+Confirm-SecureBootUEFI returns True when
+Secure Boot is on, False when it is off,
+
+148
+00:09:37.150 --> 00:09:40.350
+and an error on a legacy BIOS system.
+
+149
+00:09:40.600 --> 00:09:44.600
+Get-Tpm tells you whether a TPM is present
+and ready.
+
+150
+00:09:44.850 --> 00:09:47.250
+Run the last two as administrator.
+
+151
+00:09:47.500 --> 00:09:49.500
+Again, your values will differ.
+
+152
+00:09:49.750 --> 00:09:53.350
+Here are four mistakes people make with
+server hardware.
+
+153
+00:09:53.600 --> 00:09:57.200
+First, plugging both power supplies into
+the same PDU.
+
+154
+00:09:57.450 --> 00:09:59.850
+Use the A and B feeds.
+
+155
+00:10:00.100 --> 00:10:03.700
+Second, sizing a UPS by its VA number
+only.
+
+156
+00:10:03.950 --> 00:10:07.150
+Check the watt rating too, and leave
+headroom.
+
+157
+00:10:07.400 --> 00:10:12.200
+Third, leaving the BMC on the user network
+with its default password.
+
+158
+00:10:12.450 --> 00:10:18.850
+Anyone who reaches it controls the server,
+so give it its own network and a strong
+
+159
+00:10:19.100 --> 00:10:20.300
+password.
+
+160
+00:10:20.550 --> 00:10:22.950
+Fourth, leaving empty rack spaces open.
+
+161
+00:10:23.200 --> 00:10:27.200
+Fit blanking panels to keep hot air behind
+the rack.
+
+162
+00:10:27.450 --> 00:10:29.050
+Time to check yourself.
+
+163
+00:10:29.300 --> 00:10:33.700
+They buy a 2U file server and a 4U storage
+shelf.
+
+164
+00:10:33.950 --> 00:10:38.350
+How much rack space is that, in U and in
+inches?
+
+165
+00:10:38.600 --> 00:10:44.200
+A server froze at 2 in the morning and
+does not answer Remote Desktop.
+
+166
+00:10:44.450 --> 00:10:47.250
+How can you restart it from home?
+
+167
+00:10:47.500 --> 00:10:53.500
+The load is 600 watts, and a UPS is rated
+1000 VA and 600 watts.
+
+168
+00:10:53.750 --> 00:10:55.750
+Is it a good choice?
+
+169
+00:10:56.000 --> 00:10:58.800
+And they want BitLocker with a TPM.
+
+170
+00:10:59.050 --> 00:11:01.050
+What does the hardware need?
+
+171
+00:11:01.300 --> 00:11:02.500
+Pause and answer.
+
+172
+00:11:02.750 --> 00:11:03.950
+Let's check.
+
+173
+00:11:04.200 --> 00:11:08.200
+One: 2U plus 4U is 6U, and 6 times 1.
+
+174
+00:11:08.450 --> 00:11:10.050
+75 inches is 10.
+
+175
+00:11:10.300 --> 00:11:12.300
+5 inches, in one block.
+
+176
+00:11:12.550 --> 00:11:14.150
+Two: use the BMC.
+
+177
+00:11:14.400 --> 00:11:19.200
+Its remote console and power controls work
+even when Windows has stopped.
+
+178
+00:11:19.450 --> 00:11:20.650
+Three: no.
+
+179
+00:11:20.900 --> 00:11:25.700
+600 watts is the full watt rating, so
+there is no headroom.
+
+180
+00:11:25.950 --> 00:11:29.550
+Pick a UPS rated at 750 watts or more.
+
+181
+00:11:29.800 --> 00:11:32.600
+Four: the server needs a TPM 2.
+
+182
+00:11:32.850 --> 00:11:34.050
+0 chip.
+
+183
+00:11:34.300 --> 00:11:40.300
+Microsoft lists a TPM as required only for
+certain features, and BitLocker is one of
+
+184
+00:11:40.550 --> 00:11:41.750
+them.
+
+185
+00:11:42.000 --> 00:11:45.200
+Let me show you SRV01 in the pod.
+
+186
+00:11:45.450 --> 00:11:47.850
+I am signed in as Administrator.
+
+187
+00:11:48.100 --> 00:11:52.100
+I press Windows and R, type msinfo32, and
+press Enter.
+
+188
+00:11:52.350 --> 00:11:54.750
+System Information opens on System
+Summary.
+
+189
+00:11:55.000 --> 00:11:56.600
+Here is the processor.
+
+190
+00:11:56.850 --> 00:12:02.050
+This is a virtual machine, so these values
+come from the VM settings.
+
+191
+00:12:02.300 --> 00:12:06.300
+Here is BIOS Mode, and below it Secure
+Boot State.
+
+192
+00:12:06.550 --> 00:12:08.950
+And here is Installed Physical Memory.
+
+193
+00:12:09.200 --> 00:12:10.800
+Now PowerShell, as administrator.
+
+194
+00:12:11.050 --> 00:12:15.050
+Get-ComputerInfo piped to Format-List
+shows the logical processors, the memory
+
+195
+00:12:15.300 --> 00:12:17.700
+in bytes and the firmware type.
+
+196
+00:12:17.950 --> 00:12:20.350
+Confirm-SecureBootUEFI and Get-Tpm finish
+the picture.
+
+197
+00:12:20.600 --> 00:12:21.800
+Let's sum up.
+
+198
+00:12:22.050 --> 00:12:24.850
+Servers add reliability, redundancy and
+remote management.
+
+199
+00:12:25.100 --> 00:12:27.900
+They come as towers, racks or blades.
+
+200
+00:12:28.150 --> 00:12:33.350
+Inside you find ECC memory, SATA, SAS or
+NVMe drives, and hot-swap bays.
+
+201
+00:12:33.600 --> 00:12:40.400
+Two power supplies go on two feeds, and
+you size a UPS in both watts and VA.
+
+202
+00:12:40.650 --> 00:12:43.450
+The BMC works when Windows does not.
+
+203
+00:12:43.700 --> 00:12:46.100
+UEFI, Secure Boot and TPM 2.
+
+204
+00:12:46.350 --> 00:12:47.950
+0 protect the startup.
+
+205
+00:12:48.200 --> 00:12:49.400
+Lab 1.
+
+206
+00:12:49.650 --> 00:12:52.850
+1 is a scenario lab with no pod.
+
+207
+00:12:53.100 --> 00:12:56.700
+It takes about 35 minutes and is practice
+only.
+
+208
+00:12:56.950 --> 00:12:58.950
+See you in the lab.

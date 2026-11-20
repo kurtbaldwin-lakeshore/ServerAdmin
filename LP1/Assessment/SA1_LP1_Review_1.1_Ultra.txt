@@ -1,0 +1,5 @@
+MC	Which form factor bolts into a 19-inch rack and is measured in rack units (U)?	Rack server	correct	Tower server	incorrect	Desktop PC	incorrect	Laptop	incorrect
+TF	A UPS keeps servers running for minutes, not hours: enough to shut down cleanly or for a generator to start.	true
+MC	What does a BMC let you do?	Manage the server out-of-band: power, remote console and sensors, even when Windows is down	correct	Join the server to a domain	incorrect	Back up the server to the cloud	incorrect	Speed up the processor	incorrect
+MAT	Match each part to its job.	RAID controller	Joins several drives into one volume	PDU	The power strip of the rack	TPM 2.0	Stores keys and boot measurements	Hot-swap bay	Lets you replace a drive while the server runs
+MC	Server fans move air in which direction?	In at the front from the cold aisle, out at the back into the hot aisle	correct	In at the back, out at the front	incorrect	In at the top, out at the bottom	incorrect	In and out at the front	incorrect

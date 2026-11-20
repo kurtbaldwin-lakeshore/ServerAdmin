@@ -1,0 +1,948 @@
+1
+00:00:00,000 --> 00:00:01,600
+Welcome to Topic 2.
+
+2
+00:00:01,850 --> 00:00:03,450
+2, Windows Admin Center.
+
+3
+00:00:03,700 --> 00:00:09,700
+So far you have managed each server at its
+own console, with Server Manager or
+
+4
+00:00:09,950 --> 00:00:11,150
+SConfig.
+
+5
+00:00:11,400 --> 00:00:16,200
+Now you get one web page that manages many
+servers at once.
+
+6
+00:00:16,450 --> 00:00:22,450
+In this video you will learn how the
+gateway works and where you can install
+
+7
+00:00:22,700 --> 00:00:23,900
+it.
+
+8
+00:00:24,150 --> 00:00:28,150
+You will walk through the installer and
+its certificate choice.
+
+9
+00:00:28,400 --> 00:00:34,000
+You will sign in, add servers, and handle
+the extra steps a workgroup needs.
+
+10
+00:00:34,250 --> 00:00:40,650
+Then you will tour the tools for a server,
+and finish with how to protect the
+
+11
+00:00:40,900 --> 00:00:42,100
+gateway.
+
+12
+00:00:42,350 --> 00:00:47,550
+Windows Admin Center is a free tool set
+that runs in your browser.
+
+13
+00:00:47,800 --> 00:00:51,800
+Your browser, Edge or Chrome, talks HTTPS
+to a gateway.
+
+14
+00:00:52,050 --> 00:00:54,850
+In our pod the gateway is SRV01.
+
+15
+00:00:55,100 --> 00:00:59,900
+The gateway then talks to each managed
+server over WinRM, Windows Remote
+
+16
+00:01:00,150 --> 00:01:03,350
+Management, and runs PowerShell and WMI
+commands there.
+
+17
+00:01:03,600 --> 00:01:06,000
+That gives you three big wins.
+
+18
+00:01:06,250 --> 00:01:09,050
+You install nothing on your own PC.
+
+19
+00:01:09,300 --> 00:01:14,100
+The managed servers need nothing extra,
+because Windows Server already has WinRM.
+
+20
+00:01:14,350 --> 00:01:19,950
+And Server Core, which has no desktop
+tools, finally gets a graphical tool from
+
+21
+00:01:20,200 --> 00:01:21,400
+afar.
+
+22
+00:01:21,650 --> 00:01:25,250
+You can install Windows Admin Center in
+four ways.
+
+23
+00:01:25,500 --> 00:01:32,300
+On a Windows 11 PC, it is a local client:
+just for you, at localhost port 6600.
+
+24
+00:01:32,550 --> 00:01:38,150
+On Windows Server it becomes a gateway
+that many admins share, on port 443.
+
+25
+00:01:38,400 --> 00:01:45,200
+It can also go on a managed server, or on
+a failover cluster that keeps it running.
+
+26
+00:01:45,450 --> 00:01:52,250
+In our pod we use a gateway on SRV01, so
+the address is https colon slash slash
+
+27
+00:01:52,500 --> 00:01:53,700
+SRV01.
+
+28
+00:01:53,950 --> 00:01:59,950
+Two rules from Microsoft: never install it
+on a domain controller, and use Edge or
+
+29
+00:02:00,200 --> 00:02:01,400
+Chrome.
+
+30
+00:02:01,650 --> 00:02:04,050
+The installer is a short wizard.
+
+31
+00:02:04,300 --> 00:02:09,900
+After the welcome page you accept the
+license terms, and then you pick an
+
+32
+00:02:10,150 --> 00:02:11,350
+installation mode.
+
+33
+00:02:11,600 --> 00:02:16,400
+Express setup chooses the network access
+and port for your operating system.
+
+34
+00:02:16,650 --> 00:02:20,650
+On Windows Server, that means remote
+access on port 443.
+
+35
+00:02:20,900 --> 00:02:24,100
+That is what you use in the lab.
+
+36
+00:02:24,350 --> 00:02:29,950
+Custom setup lets you choose every setting
+yourself: local or remote access, the port
+
+37
+00:02:30,200 --> 00:02:34,600
+numbers, the certificate and its
+thumbprint, the full domain name, trusted
+
+38
+00:02:34,850 --> 00:02:37,250
+hosts mode, and WinRM over HTTPS.
+
+39
+00:02:37,500 --> 00:02:42,300
+After that come the certificate, updates,
+diagnostic data, and Ready to install.
+
+40
+00:02:42,550 --> 00:02:45,750
+Next the wizard asks for a TLS
+certificate.
+
+41
+00:02:46,000 --> 00:02:49,200
+TLS is what puts the S in HTTPS.
+
+42
+00:02:49,450 --> 00:02:53,050
+It encrypts the traffic and proves the
+server's identity.
+
+43
+00:02:53,300 --> 00:02:54,900
+You have two choices.
+
+44
+00:02:55,150 --> 00:03:00,350
+In production, you use a certificate you
+already installed, issued by a trusted
+
+45
+00:03:00,600 --> 00:03:02,600
+certificate authority for server
+authentication.
+
+46
+00:03:02,850 --> 00:03:07,250
+In a lab, you let the installer generate a
+self-signed certificate.
+
+47
+00:03:07,500 --> 00:03:13,500
+It works, but it expires after sixty days,
+and browsers warn about it because no
+
+48
+00:03:13,750 --> 00:03:15,350
+authority vouches for it.
+
+49
+00:03:15,600 --> 00:03:20,400
+Then you choose update and diagnostic
+settings, select Install, and finish with
+
+50
+00:03:20,650 --> 00:03:22,650
+Start Windows Admin Center selected.
+
+51
+00:03:22,900 --> 00:03:28,100
+Server Core has no wizard, so Microsoft
+shows a silent install with PowerShell.
+
+52
+00:03:28,350 --> 00:03:32,350
+First list C colon Install to find the
+installer's name.
+
+53
+00:03:32,600 --> 00:03:37,000
+Then run Start-Process with the argument
+slash VERYSILENT and dash Wait.
+
+54
+00:03:37,250 --> 00:03:41,250
+It installs with the default settings and
+shows no pages.
+
+55
+00:03:41,500 --> 00:03:43,900
+Next, Get-Service WindowsAdminCenter
+should say Running.
+
+56
+00:03:44,150 --> 00:03:46,550
+If it says Stopped, use Start-Service.
+
+57
+00:03:46,800 --> 00:03:49,600
+Last, Test-NetConnection to SRV01 on port
+443.
+
+58
+00:03:49,850 --> 00:03:53,450
+TcpTestSucceeded True means the gateway is
+listening for browsers.
+
+59
+00:03:53,700 --> 00:03:56,900
+You run both checks in the lab too.
+
+60
+00:03:57,150 --> 00:04:01,550
+Now open Edge and go to https colon slash
+slash SRV01.
+
+61
+00:04:01,800 --> 00:04:06,200
+Because the certificate is self-signed,
+Edge says Your connection isn't private.
+
+62
+00:04:06,450 --> 00:04:12,450
+In this lab that warning is expected, and
+you trust the server on purpose, because
+
+63
+00:04:12,700 --> 00:04:13,900
+you built it.
+
+64
+00:04:14,150 --> 00:04:16,550
+Select Advanced, then Continue to srv01.
+
+65
+00:04:16,800 --> 00:04:20,800
+Never do that on a site you do not own.
+
+66
+00:04:21,050 --> 00:04:24,250
+Next comes the Windows Admin Center
+sign-in page.
+
+67
+00:04:24,500 --> 00:04:30,500
+In the pod you sign in as SRV01 backslash
+Administrator with the password shown in
+
+68
+00:04:30,750 --> 00:04:31,950
+your NetLab pod.
+
+69
+00:04:32,200 --> 00:04:36,200
+If Edge asks you to select a certificate,
+select OK.
+
+70
+00:04:36,450 --> 00:04:40,050
+After you sign in, you land on All
+connections.
+
+71
+00:04:40,300 --> 00:04:43,900
+This is your list of everything the
+gateway manages.
+
+72
+00:04:44,150 --> 00:04:50,550
+The plus Add button adds a server, a
+Windows PC, a cluster or an Azure VM.
+
+73
+00:04:50,800 --> 00:04:55,600
+Manage as sets which account the gateway
+uses for a selected connection.
+
+74
+00:04:55,850 --> 00:05:00,250
+And the Managing As column shows that
+account for each row.
+
+75
+00:05:00,500 --> 00:05:05,700
+By default Windows Admin Center uses
+single sign-on: it tries the account you
+
+76
+00:05:05,950 --> 00:05:07,150
+signed in with.
+
+77
+00:05:07,400 --> 00:05:13,000
+In a workgroup, that account only exists
+on SRV01, so SRV-CORE needs its own
+
+78
+00:05:13,250 --> 00:05:14,450
+credentials.
+
+79
+00:05:14,700 --> 00:05:19,100
+To add a server, select plus Add, then Add
+under Servers.
+
+80
+00:05:19,350 --> 00:05:22,950
+On the Add one tab, type the server name.
+
+81
+00:05:23,200 --> 00:05:29,600
+Our pod has no DNS server until Learning
+Plan 3, so type the IP address, 192.
+
+82
+00:05:29,850 --> 00:05:31,050
+168.
+
+83
+00:05:31,300 --> 00:05:32,500
+50.
+
+84
+00:05:32,750 --> 00:05:33,950
+21.
+
+85
+00:05:34,200 --> 00:05:35,400
+It always works.
+
+86
+00:05:35,650 --> 00:05:36,850
+Select Add.
+
+87
+00:05:37,100 --> 00:05:38,300
+Now the credentials.
+
+88
+00:05:38,550 --> 00:05:41,350
+Select the connection and choose Manage
+as.
+
+89
+00:05:41,600 --> 00:05:45,600
+Type the account as SRV-CORE backslash
+Administrator and its password.
+
+90
+00:05:45,850 --> 00:05:50,250
+The computer name in front tells Windows
+whose account it is.
+
+91
+00:05:50,500 --> 00:05:55,700
+Both servers have an Administrator, but in
+a workgroup they are two different
+
+92
+00:05:55,950 --> 00:05:57,150
+accounts.
+
+93
+00:05:57,400 --> 00:05:59,800
+There is one more workgroup rule.
+
+94
+00:06:00,050 --> 00:06:05,250
+Without a domain there is no Kerberos to
+prove who a server is.
+
+95
+00:06:05,500 --> 00:06:10,700
+So WinRM only sends your credentials to
+computers on a list called TrustedHosts.
+
+96
+00:06:10,950 --> 00:06:16,550
+The gateway is the one connecting, so the
+list that matters is on SRV01.
+
+97
+00:06:16,800 --> 00:06:19,200
+First look at it with Get-Item.
+
+98
+00:06:19,450 --> 00:06:25,450
+Express setup lets Windows Admin Center
+manage this list, so you may see a star.
+
+99
+00:06:25,700 --> 00:06:30,500
+If it is empty, use Set-Item with the name
+and the address.
+
+100
+00:06:30,750 --> 00:06:35,550
+Careful: Set-Item replaces the whole list,
+so save the old value first.
+
+101
+00:06:35,800 --> 00:06:39,800
+Select a server and it opens on the
+Overview tool.
+
+102
+00:06:40,050 --> 00:06:45,650
+On the left is the Tools pane, with a
+search box at the top.
+
+103
+00:06:45,900 --> 00:06:49,500
+Type a few letters to jump to a tool.
+
+104
+00:06:49,750 --> 00:06:54,950
+Overview shows the computer name, the
+operating system, memory, up time and live
+
+105
+00:06:55,200 --> 00:06:57,600
+charts for CPU, memory and network.
+
+106
+00:06:57,850 --> 00:07:01,450
+Its toolbar has Restart and Shutdown, so
+be careful.
+
+107
+00:07:01,700 --> 00:07:06,900
+Further down the pane you find PowerShell,
+which gives you a remote PowerShell
+
+108
+00:07:07,150 --> 00:07:09,150
+session right inside the browser.
+
+109
+00:07:09,400 --> 00:07:13,400
+The pane scrolls, and there are many more
+tools below.
+
+110
+00:07:13,650 --> 00:07:18,050
+Here are the main tools Microsoft lists
+for a server connection.
+
+111
+00:07:18,300 --> 00:07:23,100
+You will recognize many of them from the
+Windows desktop: Certificates, Devices,
+
+112
+00:07:23,350 --> 00:07:27,750
+Events, Firewall, Local users and groups,
+Registry, Services, Storage, Updates and
+
+113
+00:07:28,000 --> 00:07:29,200
+more.
+
+114
+00:07:29,450 --> 00:07:35,450
+The highlighted ones are the five you use
+in the lab: Overview, Roles and features,
+
+115
+00:07:35,700 --> 00:07:37,300
+Services, Events and PowerShell.
+
+116
+00:07:37,550 --> 00:07:43,950
+Some tools only show up when the server
+has that role, such as DNS, DHCP or
+
+117
+00:07:44,200 --> 00:07:45,400
+Virtual machines.
+
+118
+00:07:45,650 --> 00:07:50,850
+And the gear in the top corner opens the
+gateway settings, including Extensions.
+
+119
+00:07:51,100 --> 00:07:55,900
+Everything the gateway does, you can also
+do with PowerShell over WinRM.
+
+120
+00:07:56,150 --> 00:08:00,150
+First, Get-Credential asks once for
+SRV-CORE backslash Administrator, and you
+
+121
+00:08:00,400 --> 00:08:03,200
+keep it in a variable called cred.
+
+122
+00:08:03,450 --> 00:08:06,650
+Install-WindowsFeature with dash
+ComputerName and dash Credential installs
+
+123
+00:08:06,900 --> 00:08:11,700
+Windows Server Backup on SRV-CORE, just
+like the Roles and features tool.
+
+124
+00:08:11,950 --> 00:08:17,150
+Then Invoke-Command runs any command on
+the remote server, such as Get-Service for
+
+125
+00:08:17,400 --> 00:08:20,600
+the services or Get-WinEvent for the event
+logs.
+
+126
+00:08:20,850 --> 00:08:26,050
+That is really what the gateway does for
+you, quietly, behind the scenes.
+
+127
+00:08:26,300 --> 00:08:29,100
+Windows Admin Center is built from
+extensions.
+
+128
+00:08:29,350 --> 00:08:33,350
+In fact every tool and every connection
+type is one.
+
+129
+00:08:33,600 --> 00:08:37,600
+Under Settings, then Extensions, you see
+available extensions, installed extensions
+
+130
+00:08:37,850 --> 00:08:39,050
+and feeds.
+
+131
+00:08:39,300 --> 00:08:42,900
+Select one and choose Install, and the
+page reloads.
+
+132
+00:08:43,150 --> 00:08:49,950
+The default feed lives on the internet, so
+in a closed network an admin adds a file
+
+133
+00:08:50,200 --> 00:08:52,600
+share or folder as a feed.
+
+134
+00:08:52,850 --> 00:08:58,450
+Windows Admin Center can also run inside
+the Azure portal, in preview, for Azure
+
+135
+00:08:58,700 --> 00:09:00,300
+VMs and Arc-enabled servers.
+
+136
+00:09:00,550 --> 00:09:02,550
+It needs no inbound port.
+
+137
+00:09:02,800 --> 00:09:06,000
+You meet Azure Arc in Server
+Administration 2.
+
+138
+00:09:06,250 --> 00:09:11,850
+A gateway is a high-value system, because
+it can reach every server it manages.
+
+139
+00:09:12,100 --> 00:09:15,300
+Keep it patched and limit who signs in.
+
+140
+00:09:15,550 --> 00:09:19,950
+Use a trusted certificate in production,
+never the sixty-day self-signed one.
+
+141
+00:09:20,200 --> 00:09:24,200
+Windows Admin Center has two roles for its
+own access.
+
+142
+00:09:24,450 --> 00:09:27,250
+Gateway users can manage servers through
+it.
+
+143
+00:09:27,500 --> 00:09:32,700
+Gateway administrators can also decide who
+gets in and how they sign in.
+
+144
+00:09:32,950 --> 00:09:35,350
+But remember the two separate doors.
+
+145
+00:09:35,600 --> 00:09:39,200
+Getting into the gateway does not open the
+servers.
+
+146
+00:09:39,450 --> 00:09:42,650
+You still need administrator credentials
+on each server.
+
+147
+00:09:42,900 --> 00:09:44,100
+Four common mistakes.
+
+148
+00:09:44,350 --> 00:09:47,550
+One: installing the gateway on a domain
+controller.
+
+149
+00:09:47,800 --> 00:09:53,400
+That is not supported, so use a member
+server or a Windows 11 PC.
+
+150
+00:09:53,650 --> 00:09:58,050
+Two: using the SRV01 Administrator account
+for SRV-CORE in a workgroup.
+
+151
+00:09:58,300 --> 00:10:01,500
+Use the target's own account, SRV-CORE
+backslash Administrator.
+
+152
+00:10:01,750 --> 00:10:05,350
+Three: setting TrustedHosts and wiping out
+the old list.
+
+153
+00:10:05,600 --> 00:10:09,600
+Read it first and save it, because
+Set-Item replaces everything.
+
+154
+00:10:09,850 --> 00:10:13,050
+And four: keeping the self-signed
+certificate in production.
+
+155
+00:10:13,300 --> 00:10:17,700
+It expires after sixty days and trains
+people to ignore warnings.
+
+156
+00:10:17,950 --> 00:10:19,550
+Time to check yourself.
+
+157
+00:10:19,800 --> 00:10:22,600
+Imagine you run the gateway on SRV01.
+
+158
+00:10:22,850 --> 00:10:28,450
+First, which protocol does the gateway use
+to manage SRV-CORE, and what must you
+
+159
+00:10:28,700 --> 00:10:30,300
+install on SRV-CORE first?
+
+160
+00:10:30,550 --> 00:10:34,150
+Second, Edge shows a certificate warning
+at https SRV01.
+
+161
+00:10:34,400 --> 00:10:37,200
+Why, and what fixes it for good?
+
+162
+00:10:37,450 --> 00:10:40,650
+Third, adding SRV-CORE fails with your
+SRV01 account.
+
+163
+00:10:40,900 --> 00:10:42,500
+What do you change?
+
+164
+00:10:42,750 --> 00:10:47,550
+And fourth, a help desk worker can sign in
+to the gateway.
+
+165
+00:10:47,800 --> 00:10:49,800
+Can they manage every server?
+
+166
+00:10:50,050 --> 00:10:54,450
+Pause the video now, think about your
+answers, and then continue.
+
+167
+00:10:54,700 --> 00:10:56,300
+Here are the answers.
+
+168
+00:10:56,550 --> 00:10:58,950
+One: WinRM, running PowerShell and WMI.
+
+169
+00:10:59,200 --> 00:11:04,000
+You install nothing extra, because Windows
+Server already has WinRM turned on.
+
+170
+00:11:04,250 --> 00:11:08,650
+Two: the certificate is self-signed, so no
+authority vouches for it.
+
+171
+00:11:08,900 --> 00:11:12,900
+A certificate from a trusted authority
+fixes it for good.
+
+172
+00:11:13,150 --> 00:11:16,750
+Three: use SRV-CORE backslash
+Administrator, the target's own account,
+
+173
+00:11:17,000 --> 00:11:19,400
+and check TrustedHosts on the gateway.
+
+174
+00:11:19,650 --> 00:11:20,850
+Four: no.
+
+175
+00:11:21,100 --> 00:11:25,100
+Access to the gateway is not access to the
+servers.
+
+176
+00:11:25,350 --> 00:11:30,150
+The worker still needs administrator
+credentials on each server they want to
+
+177
+00:11:30,400 --> 00:11:34,800
+manage, and those come from each server,
+not from the gateway.
+
+178
+00:11:35,050 --> 00:11:37,450
+I am at the SRV01 console.
+
+179
+00:11:37,700 --> 00:11:40,900
+I run the installer from C colon Install.
+
+180
+00:11:41,150 --> 00:11:45,550
+I accept the terms, pick Express setup,
+and a self-signed certificate.
+
+181
+00:11:45,800 --> 00:11:47,800
+Install, Finish, and Edge opens.
+
+182
+00:11:48,050 --> 00:11:53,250
+I type https SRV01, select Advanced and
+Continue, and sign in as SRV01
+
+183
+00:11:53,500 --> 00:11:54,700
+Administrator.
+
+184
+00:11:54,950 --> 00:11:56,950
+In PowerShell I read TrustedHosts.
+
+185
+00:11:57,200 --> 00:12:00,400
+A star means the gateway trusts all hosts.
+
+186
+00:12:00,650 --> 00:12:05,050
+Back in the browser: plus Add, Servers,
+and the address 192.
+
+187
+00:12:05,300 --> 00:12:06,500
+168.
+
+188
+00:12:06,750 --> 00:12:07,950
+50.
+
+189
+00:12:08,200 --> 00:12:09,400
+21.
+
+190
+00:12:09,650 --> 00:12:12,450
+Then Manage as, with SRV-CORE backslash
+Administrator.
+
+191
+00:12:12,700 --> 00:12:14,300
+Here is the Overview.
+
+192
+00:12:14,550 --> 00:12:18,150
+In Roles and features I install Windows
+Server Backup.
+
+193
+00:12:18,400 --> 00:12:20,000
+Services shows WinRM running.
+
+194
+00:12:20,250 --> 00:12:23,050
+In the PowerShell tool, hostname answers
+SRV-CORE.
+
+195
+00:12:23,300 --> 00:12:29,300
+To wrap up: your browser talks HTTPS to
+the gateway, and the gateway talks WinRM
+
+196
+00:12:29,550 --> 00:12:30,750
+to the servers.
+
+197
+00:12:31,000 --> 00:12:34,200
+On Windows Server the gateway uses port
+443.
+
+198
+00:12:34,450 --> 00:12:38,850
+A self-signed certificate is for labs only
+and lasts sixty days.
+
+199
+00:12:39,100 --> 00:12:43,500
+In a workgroup, use the target's own
+account and check TrustedHosts.
+
+200
+00:12:43,750 --> 00:12:48,550
+Protect the gateway, and remember that
+gateway access is not server access.
+
+201
+00:12:48,800 --> 00:12:50,000
+In Lab 2.
+
+202
+00:12:50,250 --> 00:12:55,850
+2 you install the gateway, add SRV01 and
+SRV-CORE, and manage SRV-CORE with five
+
+203
+00:12:56,100 --> 00:12:57,300
+tools.
+
+204
+00:12:57,550 --> 00:13:00,350
+It takes about forty-five minutes,
+practice only.
+
+205
+00:13:00,600 --> 00:13:02,600
+See you in the lab.
