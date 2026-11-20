@@ -1,0 +1,5 @@
+MC	What is step 1 of the CompTIA troubleshooting method?	Identify the problem and determine the scope	correct	Establish a theory of probable cause (question the obvious)	incorrect	Implement the solution or escalate	incorrect	Verify full system functionality and, if applicable, implement preventive measures	incorrect
+MC	Which step says to question the obvious?	Establish a theory of probable cause	correct	Test the theory to determine the cause	incorrect	Implement the solution or escalate	incorrect	Identify the problem and determine the scope	incorrect
+MC	What does the method ask for after step 6?	Perform a root cause analysis	correct	Clear the event logs	incorrect	Restart the server	incorrect	Close the ticket without notes	incorrect
+TF	You document findings, actions and outcomes only at the end, after the fix works.	false
+MC	A client shows 169.254.x.x with mask 255.255.0.0. What does it mean?	No DHCP server answered (APIPA)	correct	The DNS server is wrong	incorrect	The account is locked out	incorrect	The client has a static address	incorrect

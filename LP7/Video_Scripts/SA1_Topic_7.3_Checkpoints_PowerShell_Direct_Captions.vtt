@@ -1,0 +1,967 @@
+WEBVTT
+
+NOTE SA1 Topic 7.3: Checkpoints and PowerShell Direct. Timings are estimates at 150 words a minute; re-sync after recording.
+
+1
+00:00:00.000 --> 00:00:01.600
+Welcome to Topic 7.
+
+2
+00:00:01.850 --> 00:00:03.850
+3, Checkpoints and PowerShell Direct.
+
+3
+00:00:04.100 --> 00:00:08.500
+In this topic you manage virtual machines
+from the Hyper-V host.
+
+4
+00:00:08.750 --> 00:00:14.750
+You will see how a checkpoint works with
+AVHDX files, and how to choose between
+
+5
+00:00:15.000 --> 00:00:16.600
+production and standard checkpoints.
+
+6
+00:00:16.850 --> 00:00:22.450
+You will create, apply, rename and delete
+checkpoints, and learn why a checkpoint is
+
+7
+00:00:22.700 --> 00:00:23.900
+not a backup.
+
+8
+00:00:24.150 --> 00:00:29.350
+Then you run commands inside a VM with
+PowerShell Direct, copy files with
+
+9
+00:00:29.600 --> 00:00:33.600
+Copy-VMFile, turn on nested
+virtualization, and compare two ways to
+
+10
+00:00:33.850 --> 00:00:35.050
+team network adapters.
+
+11
+00:00:35.300 --> 00:00:42.500
+A checkpoint saves the state of a VM at
+one moment, so you can go back to it
+
+12
+00:00:42.750 --> 00:00:43.950
+later.
+
+13
+00:00:44.200 --> 00:00:45.400
+Here is how.
+
+14
+00:00:45.650 --> 00:00:50.050
+VM1 already uses a differencing disk on
+the read-only base disk.
+
+15
+00:00:50.300 --> 00:00:55.900
+When you take a checkpoint, Hyper-V
+freezes VM1 dot vhdx and creates a new
+
+16
+00:00:56.150 --> 00:00:58.550
+differencing file with the extension
+avhdx.
+
+17
+00:00:58.800 --> 00:01:00.800
+Every new write goes there.
+
+18
+00:01:01.050 --> 00:01:05.050
+The AVHDX sits in the same folder as the
+VHDX.
+
+19
+00:01:05.300 --> 00:01:11.300
+Each new checkpoint adds a link to the
+chain, and every link needs its parent.
+
+20
+00:01:11.550 --> 00:01:15.150
+So never delete one of these files by
+hand.
+
+21
+00:01:15.400 --> 00:01:17.400
+Hyper-V has two checkpoint types.
+
+22
+00:01:17.650 --> 00:01:20.050
+A production checkpoint is the default.
+
+23
+00:01:20.300 --> 00:01:25.500
+It uses backup technology inside the
+guest, the Volume Shadow Copy Service in
+
+24
+00:01:25.750 --> 00:01:28.950
+Windows, so the data on disk is
+consistent.
+
+25
+00:01:29.200 --> 00:01:35.600
+It does not save memory, so after you
+apply it, the VM is off and boots
+
+26
+00:01:35.850 --> 00:01:37.050
+normally.
+
+27
+00:01:37.300 --> 00:01:42.900
+A standard checkpoint also saves the
+memory and device state, so the VM comes
+
+28
+00:01:43.150 --> 00:01:45.550
+back running, open programs and all.
+
+29
+00:01:45.800 --> 00:01:50.600
+Microsoft warns that standard checkpoints
+can cause data problems for servers that
+
+30
+00:01:50.850 --> 00:01:54.450
+copy data to each other, such as domain
+controllers.
+
+31
+00:01:54.700 --> 00:01:57.900
+You set the checkpoint type for each VM.
+
+32
+00:01:58.150 --> 00:02:02.550
+In Hyper-V Manager, right-click the VM,
+select Settings, and under Management
+
+33
+00:02:02.800 --> 00:02:04.000
+select Checkpoints.
+
+34
+00:02:04.250 --> 00:02:06.650
+Enable checkpoints is on by default.
+
+35
+00:02:06.900 --> 00:02:12.500
+Production checkpoints is selected, and
+under it a check box lets Hyper-V make a
+
+36
+00:02:12.750 --> 00:02:16.350
+standard checkpoint when a production
+checkpoint is not possible.
+
+37
+00:02:16.600 --> 00:02:19.000
+You can also choose standard checkpoints.
+
+38
+00:02:19.250 --> 00:02:22.850
+Checkpoint File Location says where the
+checkpoint files go.
+
+39
+00:02:23.100 --> 00:02:27.500
+And Use automatic checkpoints makes one
+each time the VM starts.
+
+40
+00:02:27.750 --> 00:02:31.350
+On Windows Server that option is off by
+default.
+
+41
+00:02:31.600 --> 00:02:34.000
+The same settings live in PowerShell.
+
+42
+00:02:34.250 --> 00:02:38.650
+Get-VM, piped to Select-Object, shows the
+checkpoint type and whether automatic
+
+43
+00:02:38.900 --> 00:02:40.100
+checkpoints are on.
+
+44
+00:02:40.350 --> 00:02:43.150
+For VM1 you see Production and False.
+
+45
+00:02:43.400 --> 00:02:46.200
+Set-VM with dash CheckpointType changes
+the type.
+
+46
+00:02:46.450 --> 00:02:48.050
+Standard saves memory too.
+
+47
+00:02:48.300 --> 00:02:51.900
+Production falls back to standard when it
+has to.
+
+48
+00:02:52.150 --> 00:02:56.150
+ProductionOnly fails instead of falling
+back, and Disabled blocks checkpoints
+
+49
+00:02:56.400 --> 00:02:57.600
+completely.
+
+50
+00:02:57.850 --> 00:03:00.250
+Set-VM with dash
+AutomaticCheckpointsEnabled dollar false
+
+51
+00:03:00.500 --> 00:03:03.300
+turns off automatic checkpoints for that
+VM.
+
+52
+00:03:03.550 --> 00:03:08.750
+In the lab you only read these settings
+and keep VM1 on Production.
+
+53
+00:03:09.000 --> 00:03:14.600
+In Hyper-V Manager, select a VM and the
+Checkpoints pane shows its checkpoints as
+
+54
+00:03:14.850 --> 00:03:16.050
+a tree.
+
+55
+00:03:16.300 --> 00:03:18.700
+Each one sits under its parent.
+
+56
+00:03:18.950 --> 00:03:22.950
+The item called Now shows where the VM
+runs today.
+
+57
+00:03:23.200 --> 00:03:27.200
+To take a checkpoint, select Checkpoint in
+the Actions pane.
+
+58
+00:03:27.450 --> 00:03:32.250
+When you select a checkpoint, the Actions
+pane offers Apply, Rename, Delete
+
+59
+00:03:32.500 --> 00:03:34.500
+Checkpoint and Delete Checkpoint Subtree.
+
+60
+00:03:34.750 --> 00:03:39.950
+A new checkpoint is named after the VM,
+with the date and time.
+
+61
+00:03:40.200 --> 00:03:45.000
+Rename it to something useful, like
+Before-Change, so everyone knows why it
+
+62
+00:03:45.250 --> 00:03:46.450
+exists.
+
+63
+00:03:46.700 --> 00:03:51.900
+When you apply a checkpoint, the Apply
+Checkpoint dialog asks what to do.
+
+64
+00:03:52.150 --> 00:03:56.950
+Create Checkpoint and Apply first saves
+the current state, then goes back.
+
+65
+00:03:57.200 --> 00:03:59.200
+That is the safe choice.
+
+66
+00:03:59.450 --> 00:04:05.050
+Apply just goes back, and the changes
+since then are lost with no undo.
+
+67
+00:04:05.300 --> 00:04:09.300
+Revert is a VM action that applies the
+last checkpoint.
+
+68
+00:04:09.550 --> 00:04:14.350
+Delete Checkpoint does not lose your
+current data: Hyper-V merges the AVHDX
+
+69
+00:04:14.600 --> 00:04:19.800
+into its parent and then removes the file,
+while the VM keeps running.
+
+70
+00:04:20.050 --> 00:04:24.050
+Delete Checkpoint Subtree removes a
+checkpoint and everything after it.
+
+71
+00:04:24.300 --> 00:04:28.700
+In PowerShell, Checkpoint-VM takes a
+checkpoint, and dash SnapshotName gives it
+
+72
+00:04:28.950 --> 00:04:30.150
+a name.
+
+73
+00:04:30.400 --> 00:04:32.000
+Notice the old word.
+
+74
+00:04:32.250 --> 00:04:37.450
+Checkpoints used to be called snapshots,
+and most cmdlet names still say snapshot.
+
+75
+00:04:37.700 --> 00:04:40.500
+Get-VMSnapshot lists the checkpoints with
+their parents.
+
+76
+00:04:40.750 --> 00:04:43.950
+Restore-VMSnapshot applies one, like Apply
+in Hyper-V Manager.
+
+77
+00:04:44.200 --> 00:04:47.400
+Rename-VMSnapshot renames one, and
+Remove-VMSnapshot deletes one, which
+
+78
+00:04:47.650 --> 00:04:48.850
+starts the merge.
+
+79
+00:04:49.100 --> 00:04:54.700
+Aliases with the newer word also work,
+such as Get-VMCheckpoint, so you may see
+
+80
+00:04:54.950 --> 00:04:56.150
+both in documentation.
+
+81
+00:04:56.400 --> 00:05:00.800
+In the lab you use both Hyper-V Manager
+and these cmdlets.
+
+82
+00:05:01.050 --> 00:05:05.850
+Here is a rule worth remembering: a
+checkpoint is not a backup.
+
+83
+00:05:06.100 --> 00:05:13.300
+The AVHDX files sit on the same host and
+the same disk as the VM, so one failed
+
+84
+00:05:13.550 --> 00:05:14.750
+disk takes everything.
+
+85
+00:05:15.000 --> 00:05:21.000
+A checkpoint holds only the changes since
+its parent, so it is useless without the
+
+86
+00:05:21.250 --> 00:05:22.450
+chain.
+
+87
+00:05:22.700 --> 00:05:28.700
+The files keep growing, long chains slow
+the disk, and old checkpoints can fill a
+
+88
+00:05:28.950 --> 00:05:30.150
+volume.
+
+89
+00:05:30.400 --> 00:05:34.400
+And going back in time confuses servers
+that replicate data.
+
+90
+00:05:34.650 --> 00:05:39.850
+Use checkpoints for short changes, then
+delete them, and protect servers with real
+
+91
+00:05:40.100 --> 00:05:41.700
+backups on other storage.
+
+92
+00:05:41.950 --> 00:05:47.150
+PowerShell Direct lets you run PowerShell
+inside a VM from its Hyper-V host.
+
+93
+00:05:47.400 --> 00:05:49.800
+It does not use the network.
+
+94
+00:05:50.050 --> 00:05:54.450
+It talks to the guest through Hyper-V
+itself, over the VMBus.
+
+95
+00:05:54.700 --> 00:06:01.900
+So it works even if the VM has no network
+adapter, a wrong IP address, or a firewall
+
+96
+00:06:02.150 --> 00:06:03.750
+that blocks remote management.
+
+97
+00:06:04.000 --> 00:06:09.200
+The requirements: host and guest run
+Windows 10, Windows Server 2016 or later.
+
+98
+00:06:09.450 --> 00:06:15.050
+You run it on the host that runs the VM,
+as a Hyper-V administrator.
+
+99
+00:06:15.300 --> 00:06:21.300
+The VM must be running, and you need
+credentials for an account in the guest.
+
+100
+00:06:21.550 --> 00:06:23.550
+First, store the guest's credentials.
+
+101
+00:06:23.800 --> 00:06:27.800
+Get-Credential with VM1 backslash
+Administrator opens a dialog for the
+
+102
+00:06:28.050 --> 00:06:32.050
+password of VM1's own Administrator
+account, not your domain account.
+
+103
+00:06:32.300 --> 00:06:37.500
+Invoke-Command with dash VMName runs one
+command or script block inside VM1 and
+
+104
+00:06:37.750 --> 00:06:38.950
+then closes.
+
+105
+00:06:39.200 --> 00:06:40.800
+Here, hostname returns VM1.
+
+106
+00:06:41.050 --> 00:06:44.250
+Enter-PSSession with dash VMName starts an
+interactive session.
+
+107
+00:06:44.500 --> 00:06:50.100
+The prompt changes to VM1 in square
+brackets, so you always know where your
+
+108
+00:06:50.350 --> 00:06:51.550
+commands run.
+
+109
+00:06:51.800 --> 00:06:54.600
+Exit-PSSession takes you back to the host.
+
+110
+00:06:54.850 --> 00:07:00.850
+In the lab you first rename the guest to
+VM1, so this account name works.
+
+111
+00:07:01.100 --> 00:07:05.100
+Copy-VMFile copies a file from the host
+into a guest.
+
+112
+00:07:05.350 --> 00:07:10.150
+It needs the Guest Service Interface
+integration service, which is off by
+
+113
+00:07:10.400 --> 00:07:13.600
+default, so turn it on first with
+Enable-VMIntegrationService.
+
+114
+00:07:13.850 --> 00:07:19.850
+Then Copy-VMFile takes the VM name, a
+source path on the host, and a destination
+
+115
+00:07:20.100 --> 00:07:21.700
+path in the guest.
+
+116
+00:07:21.950 --> 00:07:28.350
+Dash FileSource Host is required, and it
+is the only value, so the copy only goes
+
+117
+00:07:28.600 --> 00:07:30.200
+from host to guest.
+
+118
+00:07:30.450 --> 00:07:35.250
+Dash CreateFullPath creates the folder in
+the guest if it is missing.
+
+119
+00:07:35.500 --> 00:07:39.100
+Then PowerShell Direct can read the file
+inside VM1.
+
+120
+00:07:39.350 --> 00:07:42.950
+Nested virtualization means running
+Hyper-V inside a virtual machine.
+
+121
+00:07:43.200 --> 00:07:45.200
+Our pod is an example.
+
+122
+00:07:45.450 --> 00:07:50.650
+HV01 is itself a VM in NetLab, and NetLab
+hands the processor's virtualization
+
+123
+00:07:50.900 --> 00:07:52.500
+features through to it.
+
+124
+00:07:52.750 --> 00:07:55.550
+HV01 could do the same for VM1.
+
+125
+00:07:55.800 --> 00:08:03.000
+You need an Intel processor with VT-x and
+EPT, or a recent AMD EPYC or Ryzen with a
+
+126
+00:08:03.250 --> 00:08:04.450
+newer host version.
+
+127
+00:08:04.700 --> 00:08:08.300
+You turn it on while the VM is off.
+
+128
+00:08:08.550 --> 00:08:14.150
+While Hyper-V runs inside a VM, that VM's
+memory stays fixed, even with Dynamic
+
+129
+00:08:14.400 --> 00:08:15.600
+Memory.
+
+130
+00:08:15.850 --> 00:08:21.050
+And nested VMs need MAC address spoofing
+or NAT to reach the network.
+
+131
+00:08:21.300 --> 00:08:24.100
+Here are the commands on the host.
+
+132
+00:08:24.350 --> 00:08:29.150
+First, Stop-VM, because the processor
+setting cannot change while the VM runs.
+
+133
+00:08:29.400 --> 00:08:32.200
+Then Set-VMProcessor with dash
+ExposeVirtualizationExtensions dollar true
+
+134
+00:08:32.450 --> 00:08:35.250
+passes the virtualization features to the
+guest.
+
+135
+00:08:35.500 --> 00:08:38.300
+Next, Get-VMNetworkAdapter piped to
+Set-VMNetworkAdapter with dash
+
+136
+00:08:38.550 --> 00:08:42.950
+MacAddressSpoofing On lets frames from
+nested VMs pass through VM1's adapter.
+
+137
+00:08:43.200 --> 00:08:45.600
+Get-VMProcessor confirms the setting is
+True.
+
+138
+00:08:45.850 --> 00:08:47.450
+Then start the VM.
+
+139
+00:08:47.700 --> 00:08:53.300
+The next step would be installing Hyper-V
+inside VM1, but that needs more memory
+
+140
+00:08:53.550 --> 00:08:55.550
+than our host can spare.
+
+141
+00:08:55.800 --> 00:09:00.600
+A host with one network adapter is a
+single point of failure.
+
+142
+00:09:00.850 --> 00:09:04.850
+Teaming joins several adapters, so traffic
+continues if one fails.
+
+143
+00:09:05.100 --> 00:09:10.300
+For Hyper-V hosts, Microsoft uses Switch
+Embedded Teaming, or SET, which is built
+
+144
+00:09:10.550 --> 00:09:12.150
+into the Hyper-V switch.
+
+145
+00:09:12.400 --> 00:09:17.600
+It takes up to eight identical adapters
+and works in switch independent mode.
+
+146
+00:09:17.850 --> 00:09:22.650
+The older LBFO NIC Teaming from Server
+Manager is deprecated for Hyper-V.
+
+147
+00:09:22.900 --> 00:09:28.900
+From Windows Server 2022 on, binding a
+Hyper-V switch to an LBFO team is blocked
+
+148
+00:09:29.150 --> 00:09:30.350
+by default.
+
+149
+00:09:30.600 --> 00:09:35.400
+You create a SET switch with New-VMSwitch,
+two adapter names, and dash
+
+150
+00:09:35.650 --> 00:09:36.850
+EnableEmbeddedTeaming dollar true.
+
+151
+00:09:37.100 --> 00:09:40.700
+HV01 has one adapter, so this stays a
+concept.
+
+152
+00:09:40.950 --> 00:09:42.550
+Four mistakes to avoid.
+
+153
+00:09:42.800 --> 00:09:45.600
+One: keeping checkpoints as the only
+backup.
+
+154
+00:09:45.850 --> 00:09:51.450
+Back up to other storage, and delete each
+checkpoint once the change is tested.
+
+155
+00:09:51.700 --> 00:09:54.500
+Two: deleting AVHDX files in File
+Explorer.
+
+156
+00:09:54.750 --> 00:09:59.150
+Delete checkpoints in Hyper-V Manager or
+with Remove-VMSnapshot, so Hyper-V merges
+
+157
+00:09:59.400 --> 00:10:00.600
+them.
+
+158
+00:10:00.850 --> 00:10:05.250
+Three: PowerShell Direct with the wrong
+credentials or a stopped VM.
+
+159
+00:10:05.500 --> 00:10:10.700
+Run it on the host, start the VM, and use
+the guest's account.
+
+160
+00:10:10.950 --> 00:10:16.150
+Four: exposing virtualization on a running
+VM, or forgetting the network for nested
+
+161
+00:10:16.400 --> 00:10:17.600
+VMs.
+
+162
+00:10:17.850 --> 00:10:21.850
+Stop the VM first, then turn on MAC
+address spoofing.
+
+163
+00:10:22.100 --> 00:10:23.700
+Time to check yourself.
+
+164
+00:10:23.950 --> 00:10:25.550
+VM1 uses production checkpoints.
+
+165
+00:10:25.800 --> 00:10:31.000
+You took Before-Change, created C colon
+Lab proof dot txt, and then took
+
+166
+00:10:31.250 --> 00:10:32.450
+After-Change.
+
+167
+00:10:32.700 --> 00:10:34.300
+First, you apply Before-Change.
+
+168
+00:10:34.550 --> 00:10:38.950
+What state is VM1 in, and is proof dot txt
+there?
+
+169
+00:10:39.200 --> 00:10:41.200
+Second, you delete both checkpoints.
+
+170
+00:10:41.450 --> 00:10:43.850
+What happens to the AVHDX files?
+
+171
+00:10:44.100 --> 00:10:46.500
+Third, VM1's network adapter is
+disconnected.
+
+172
+00:10:46.750 --> 00:10:51.550
+Can Invoke-Command with dash VMName still
+work, and what does it need?
+
+173
+00:10:51.800 --> 00:10:55.800
+Fourth, a new host has two identical 25
+gigabit adapters.
+
+174
+00:10:56.050 --> 00:10:59.650
+How do you team them for the Hyper-V
+switch?
+
+175
+00:10:59.900 --> 00:11:01.900
+Pause the video and answer.
+
+176
+00:11:02.150 --> 00:11:06.150
+One: VM1 is off, and proof dot txt is
+gone.
+
+177
+00:11:06.400 --> 00:11:12.800
+A production checkpoint has no memory
+state, so you start VM1 and it is back to
+
+178
+00:11:13.050 --> 00:11:14.650
+before the file existed.
+
+179
+00:11:14.900 --> 00:11:20.100
+Two: Hyper-V merges the AVHDX files into
+their parents and then removes them.
+
+180
+00:11:20.350 --> 00:11:23.150
+VM1 runs on VM1 dot vhdx again.
+
+181
+00:11:23.400 --> 00:11:27.400
+Three: yes, because PowerShell Direct does
+not use the network.
+
+182
+00:11:27.650 --> 00:11:33.250
+Run it on HV01 as an administrator, with
+VM1 running and VM1's own Administrator
+
+183
+00:11:33.500 --> 00:11:34.700
+credentials.
+
+184
+00:11:34.950 --> 00:11:39.750
+Four: use SET, with New-VMSwitch and dash
+EnableEmbeddedTeaming dollar true, not an
+
+185
+00:11:40.000 --> 00:11:41.200
+LBFO team.
+
+186
+00:11:41.450 --> 00:11:43.850
+Let me show you on HV01.
+
+187
+00:11:44.100 --> 00:11:47.300
+VM1's settings show production checkpoints
+with the fallback.
+
+188
+00:11:47.550 --> 00:11:50.750
+I take a checkpoint and rename it
+Before-Change.
+
+189
+00:11:51.000 --> 00:11:56.200
+Inside VM1 I create proof dot txt, then
+take After-Change with Checkpoint-VM, and
+
+190
+00:11:56.450 --> 00:11:58.050
+Get-VMSnapshot shows the tree.
+
+191
+00:11:58.300 --> 00:11:59.900
+Now I apply Before-Change.
+
+192
+00:12:00.150 --> 00:12:01.350
+VM1 is off.
+
+193
+00:12:01.600 --> 00:12:04.800
+I start it, and the file is gone.
+
+194
+00:12:05.050 --> 00:12:09.450
+I delete both checkpoints, and VM1 is back
+on its VHDX.
+
+195
+00:12:09.700 --> 00:12:12.100
+Last, I disconnect VM1's network adapter.
+
+196
+00:12:12.350 --> 00:12:15.550
+Invoke-Command still returns VM1, and
+Enter-PSSession still opens.
+
+197
+00:12:15.800 --> 00:12:17.000
+No network needed.
+
+198
+00:12:17.250 --> 00:12:18.450
+Let's sum up.
+
+199
+00:12:18.700 --> 00:12:23.900
+A checkpoint freezes the disk, and new
+writes go to an AVHDX file.
+
+200
+00:12:24.150 --> 00:12:28.950
+Production checkpoints are the default and
+use VSS; standard checkpoints save memory
+
+201
+00:12:29.200 --> 00:12:30.400
+too.
+
+202
+00:12:30.650 --> 00:12:35.850
+Deleting a checkpoint merges its AVHDX,
+and a checkpoint is never a backup.
+
+203
+00:12:36.100 --> 00:12:40.900
+PowerShell Direct uses dash VMName and the
+guest's credentials, with no network
+
+204
+00:12:41.150 --> 00:12:42.350
+needed.
+
+205
+00:12:42.600 --> 00:12:45.000
+Copy-VMFile needs the Guest Service
+Interface.
+
+206
+00:12:45.250 --> 00:12:50.050
+For nested virtualization, expose the
+extensions with the VM off, and team
+
+207
+00:12:50.300 --> 00:12:51.900
+Hyper-V adapters with SET.
+
+208
+00:12:52.150 --> 00:12:53.350
+In Lab 7.
+
+209
+00:12:53.600 --> 00:12:59.200
+3, about 75 minutes and practice only, you
+do all of this on HV01.

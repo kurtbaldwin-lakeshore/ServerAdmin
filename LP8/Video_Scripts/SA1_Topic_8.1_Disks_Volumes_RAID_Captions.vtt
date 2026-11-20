@@ -1,0 +1,897 @@
+WEBVTT
+
+NOTE SA1 Topic 8.1: Disks, Volumes and RAID. Timings are estimates at 150 words a minute; re-sync after recording.
+
+1
+00:00:00.000 --> 00:00:01.600
+Welcome to Topic 8.
+
+2
+00:00:01.850 --> 00:00:06.250
+1, Disks, Volumes and RAID, the start of
+Learning Plan 8.
+
+3
+00:00:06.500 --> 00:00:12.100
+Every file server starts with the same
+job: turn blank drives into safe, usable
+
+4
+00:00:12.350 --> 00:00:13.550
+storage.
+
+5
+00:00:13.800 --> 00:00:19.800
+You will compare hard drives, SSDs and
+NVMe drives, and the three ways to connect
+
+6
+00:00:20.050 --> 00:00:22.050
+storage: DAS, NAS and SAN.
+
+7
+00:00:22.300 --> 00:00:27.500
+You will choose MBR or GPT and see why
+dynamic disks are out.
+
+8
+00:00:27.750 --> 00:00:33.750
+You will pick NTFS or ReFS, create, extend
+and shrink volumes in Disk Management and
+
+9
+00:00:34.000 --> 00:00:38.400
+PowerShell, and calculate what RAID gives
+you and what it costs.
+
+10
+00:00:38.650 --> 00:00:41.050
+Servers use three kinds of drives.
+
+11
+00:00:41.300 --> 00:00:47.300
+A hard disk drive, or HDD, has spinning
+platters, at 7,200, 10,000 or 15,000 rpm.
+
+12
+00:00:47.550 --> 00:00:52.750
+It is cheap per terabyte but slow, so it
+suits archives and backups.
+
+13
+00:00:53.000 --> 00:00:59.400
+An SSD stores data in flash memory with no
+moving parts, so it is much faster.
+
+14
+00:00:59.650 --> 00:01:04.050
+Flash wears out with writes, so SSDs carry
+an endurance rating.
+
+15
+00:01:04.300 --> 00:01:10.300
+NVMe SSDs talk over PCI Express lanes
+instead of SATA or SAS, for the lowest
+
+16
+00:01:10.550 --> 00:01:11.750
+delay.
+
+17
+00:01:12.000 --> 00:01:16.800
+Hot-swap bays let you replace a failed
+drive while the server runs.
+
+18
+00:01:17.050 --> 00:01:23.050
+Direct-attached storage, or DAS, is inside
+the server or on a shelf connected with a
+
+19
+00:01:23.300 --> 00:01:24.500
+SAS cable.
+
+20
+00:01:24.750 --> 00:01:26.750
+Only that server uses it.
+
+21
+00:01:27.000 --> 00:01:30.200
+The four data disks on SRV01 are DAS.
+
+22
+00:01:30.450 --> 00:01:36.050
+Network-attached storage, or NAS, is a box
+that shares folders over the network with
+
+23
+00:01:36.300 --> 00:01:37.500
+SMB or NFS.
+
+24
+00:01:37.750 --> 00:01:40.950
+That is file storage, used in Lab 8.
+
+25
+00:01:41.200 --> 00:01:42.400
+3.
+
+26
+00:01:42.650 --> 00:01:47.850
+A storage area network, or SAN, gives
+servers whole disks, called LUNs, over
+
+27
+00:01:48.100 --> 00:01:49.700
+iSCSI or Fibre Channel.
+
+28
+00:01:49.950 --> 00:01:55.550
+That is block storage that looks like a
+local disk, used in Lab 8.
+
+29
+00:01:55.800 --> 00:01:57.000
+4.
+
+30
+00:01:57.250 --> 00:02:00.850
+Here is the disk you build in the lab.
+
+31
+00:02:01.100 --> 00:02:05.100
+A disk first gets a partition style, MBR
+or GPT.
+
+32
+00:02:05.350 --> 00:02:07.750
+Then you cut it into partitions.
+
+33
+00:02:08.000 --> 00:02:14.400
+A partition with a file system on it, such
+as NTFS or ReFS, is a volume.
+
+34
+00:02:14.650 --> 00:02:19.850
+Then you give it a drive letter like E, or
+a mount point.
+
+35
+00:02:20.100 --> 00:02:27.300
+A mount point makes a volume appear as an
+empty folder on an NTFS volume, such as E
+
+36
+00:02:27.550 --> 00:02:28.750
+Archive.
+
+37
+00:02:29.000 --> 00:02:33.400
+Windows may also add a small reserved
+partition with no letter.
+
+38
+00:02:33.650 --> 00:02:37.650
+MBR, the Master Boot Record, is the old
+partition style.
+
+39
+00:02:37.900 --> 00:02:44.300
+It can only use 2 terabytes of a disk and
+holds four primary partitions, or three
+
+40
+00:02:44.550 --> 00:02:47.350
+plus an extended partition with logical
+drives.
+
+41
+00:02:47.600 --> 00:02:52.800
+GPT, the GUID Partition Table, handles
+disks far larger than anything sold today
+
+42
+00:02:53.050 --> 00:02:55.850
+and up to 128 partitions in Windows.
+
+43
+00:02:56.100 --> 00:03:01.700
+It keeps a backup copy of its table, and
+UEFI computers boot from it.
+
+44
+00:03:01.950 --> 00:03:07.150
+GPT is the default in Disk Management and
+in Initialize-Disk, so choose GPT.
+
+45
+00:03:07.400 --> 00:03:12.200
+Changing later is hard, because Disk
+Management converts only an empty disk.
+
+46
+00:03:12.450 --> 00:03:15.250
+Every new disk is a basic disk.
+
+47
+00:03:15.500 --> 00:03:21.500
+It holds partitions and simple volumes,
+and that is all you need in this course.
+
+48
+00:03:21.750 --> 00:03:26.550
+Dynamic disks are the old way Windows
+built spanned, striped, mirrored and
+
+49
+00:03:26.800 --> 00:03:28.800
+RAID-5 volumes across several disks.
+
+50
+00:03:29.050 --> 00:03:33.850
+Microsoft now calls dynamic disks
+deprecated and does not recommend them for
+
+51
+00:03:34.100 --> 00:03:35.300
+new deployments.
+
+52
+00:03:35.550 --> 00:03:41.550
+You may still find them on old servers,
+and going back to basic means deleting
+
+53
+00:03:41.800 --> 00:03:43.000
+every volume.
+
+54
+00:03:43.250 --> 00:03:47.250
+Instead, pool disks with Storage Spaces,
+which is Topic 8.
+
+55
+00:03:47.500 --> 00:03:50.300
+2, or use a hardware RAID controller.
+
+56
+00:03:50.550 --> 00:03:53.750
+Windows Server gives you two main file
+systems.
+
+57
+00:03:54.000 --> 00:03:56.000
+NTFS is the general-purpose one.
+
+58
+00:03:56.250 --> 00:03:59.450
+It can boot, so C is always NTFS.
+
+59
+00:03:59.700 --> 00:04:04.100
+It can shrink, and it supports disk quotas
+and removable media.
+
+60
+00:04:04.350 --> 00:04:08.350
+ReFS, the Resilient File System, is built
+for big data.
+
+61
+00:04:08.600 --> 00:04:13.400
+It handles volumes up to 35 petabytes,
+against 256 terabytes for NTFS.
+
+62
+00:04:13.650 --> 00:04:18.050
+Block clone copies large files almost
+instantly, and integrity streams keep
+
+63
+00:04:18.300 --> 00:04:19.900
+checksums of file data.
+
+64
+00:04:20.150 --> 00:04:22.950
+But ReFS cannot boot and cannot shrink.
+
+65
+00:04:23.200 --> 00:04:26.000
+Both support permissions, BitLocker,
+deduplication and extending.
+
+66
+00:04:26.250 --> 00:04:30.650
+Use NTFS by default, and ReFS for VMs,
+backups and archives.
+
+67
+00:04:30.900 --> 00:04:33.300
+Disk Management is the graphical tool.
+
+68
+00:04:33.550 --> 00:04:35.950
+Right-click Start and choose Disk
+Management.
+
+69
+00:04:36.200 --> 00:04:42.600
+In the lower pane, find the new disk by
+its size and state: 20 gigabytes, Unknown,
+
+70
+00:04:42.850 --> 00:04:44.050
+Offline.
+
+71
+00:04:44.300 --> 00:04:47.900
+Numbers can change, so do not trust them
+alone.
+
+72
+00:04:48.150 --> 00:04:53.350
+Right-click the grey label on the left,
+not the bar, and choose Online.
+
+73
+00:04:53.600 --> 00:04:56.000
+The disk now says Not Initialized.
+
+74
+00:04:56.250 --> 00:04:59.450
+Right-click the label again and choose
+Initialize Disk.
+
+75
+00:04:59.700 --> 00:05:05.300
+In the dialog, check that only your disk
+is selected, choose GPT, GUID Partition
+
+76
+00:05:05.550 --> 00:05:07.150
+Table, and select OK.
+
+77
+00:05:07.400 --> 00:05:10.200
+The disk becomes Basic, with unallocated
+space.
+
+78
+00:05:10.450 --> 00:05:14.450
+Now right-click the unallocated space and
+choose New Simple Volume.
+
+79
+00:05:14.700 --> 00:05:18.300
+On Specify Volume Size, the size is in
+megabytes.
+
+80
+00:05:18.550 --> 00:05:22.150
+Ten gigabytes is 10 times 1024, so type
+10240.
+
+81
+00:05:22.400 --> 00:05:28.800
+The next page assigns a drive letter, E in
+our lab, or a mount point folder.
+
+82
+00:05:29.050 --> 00:05:33.850
+On Format Partition, choose the file
+system, NTFS here, keep the default
+
+83
+00:05:34.100 --> 00:05:37.700
+allocation unit size, and type a volume
+label, Data.
+
+84
+00:05:37.950 --> 00:05:39.550
+Leave quick format on.
+
+85
+00:05:39.800 --> 00:05:45.800
+Select Next and Finish, and in a few
+seconds Data E appears, healthy and ready.
+
+86
+00:05:46.050 --> 00:05:50.050
+The same job in PowerShell takes a handful
+of cmdlets.
+
+87
+00:05:50.300 --> 00:05:54.300
+Get-Disk, filtered on partition style RAW,
+lists the blank disks.
+
+88
+00:05:54.550 --> 00:05:59.750
+Set-Disk with IsOffline false brings the
+disk online, and IsReadOnly false makes it
+
+89
+00:06:00.000 --> 00:06:01.200
+writable.
+
+90
+00:06:01.450 --> 00:06:05.050
+Initialize-Disk with partition style GPT
+writes the partition table.
+
+91
+00:06:05.300 --> 00:06:11.300
+Then New-Partition with a size of 10GB and
+drive letter E creates the partition, and
+
+92
+00:06:11.550 --> 00:06:16.750
+you pipe it straight into Format-Volume
+with the file system and the label.
+
+93
+00:06:17.000 --> 00:06:22.600
+In the lab a variable holds the disk, so
+you never mistype its number.
+
+94
+00:06:22.850 --> 00:06:24.850
+Volumes can grow and shrink.
+
+95
+00:06:25.100 --> 00:06:27.900
+Right-click a volume and choose Extend
+Volume.
+
+96
+00:06:28.150 --> 00:06:31.350
+The wizard asks how many megabytes to add.
+
+97
+00:06:31.600 --> 00:06:37.600
+The unallocated space must be on the same
+disk and right after the volume, with
+
+98
+00:06:37.850 --> 00:06:39.050
+nothing in between.
+
+99
+00:06:39.300 --> 00:06:42.500
+NTFS and ReFS volumes can both be
+extended.
+
+100
+00:06:42.750 --> 00:06:45.150
+Shrink Volume works the other way.
+
+101
+00:06:45.400 --> 00:06:51.800
+Windows first checks how much space it can
+free, then you type the amount to shrink
+
+102
+00:06:52.050 --> 00:06:53.250
+in megabytes.
+
+103
+00:06:53.500 --> 00:06:59.900
+Only NTFS volumes can shrink, and files
+that cannot move, such as a page file, set
+
+104
+00:07:00.150 --> 00:07:01.350
+the limit.
+
+105
+00:07:01.600 --> 00:07:03.600
+In PowerShell, start with
+Get-PartitionSupportedSize.
+
+106
+00:07:03.850 --> 00:07:09.850
+It shows SizeMin and SizeMax in bytes, the
+smallest and largest the partition can be
+
+107
+00:07:10.100 --> 00:07:11.300
+right now.
+
+108
+00:07:11.550 --> 00:07:13.550
+Stay between those two values.
+
+109
+00:07:13.800 --> 00:07:18.200
+Resize-Partition with a bigger size
+extends the volume, here to 12GB.
+
+110
+00:07:18.450 --> 00:07:22.450
+Resize-Partition with a smaller size
+shrinks it, back to 10GB.
+
+111
+00:07:22.700 --> 00:07:28.700
+To check, read the partition's Size
+property and divide by 1GB, so you see a
+
+112
+00:07:28.950 --> 00:07:30.550
+simple 12 or 10.
+
+113
+00:07:30.800 --> 00:07:35.600
+PowerShell understands suffixes like GB
+and MB, while Disk Management always asks
+
+114
+00:07:35.850 --> 00:07:37.050
+in megabytes.
+
+115
+00:07:37.300 --> 00:07:41.700
+RAID makes several drives act as one, a
+big Server+ topic.
+
+116
+00:07:41.950 --> 00:07:44.350
+RAID 0 stripes data across drives.
+
+117
+00:07:44.600 --> 00:07:49.000
+It is fast, but if any drive fails,
+everything is lost.
+
+118
+00:07:49.250 --> 00:07:54.450
+RAID 1 mirrors: two drives hold the same
+data, so either can fail.
+
+119
+00:07:54.700 --> 00:08:00.300
+RAID 5 stripes data with parity, a
+calculation that can rebuild a lost block,
+
+120
+00:08:00.550 --> 00:08:02.950
+spread over at least three drives.
+
+121
+00:08:03.200 --> 00:08:08.800
+RAID 6 keeps two parity blocks, so it
+needs four drives and survives two
+
+122
+00:08:09.050 --> 00:08:10.250
+failures.
+
+123
+00:08:10.500 --> 00:08:14.500
+RAID 10 stripes across mirrored pairs, for
+speed and safety.
+
+124
+00:08:14.750 --> 00:08:21.950
+Here are the formulas, where n is the
+number of drives and s is the size of one.
+
+125
+00:08:22.200 --> 00:08:26.200
+RAID 0 gives you all of it, n times s.
+
+126
+00:08:26.450 --> 00:08:28.850
+RAID 1 gives one drive's worth.
+
+127
+00:08:29.100 --> 00:08:34.700
+RAID 5 gives n minus 1 times s, and RAID 6
+n minus 2.
+
+128
+00:08:34.950 --> 00:08:36.550
+RAID 10 gives half.
+
+129
+00:08:36.800 --> 00:08:41.200
+Six 4 terabyte drives give 24, 20, 16 or
+12 terabytes.
+
+130
+00:08:41.450 --> 00:08:47.450
+One small write on RAID 5 means reading
+old data and parity, then writing both:
+
+131
+00:08:47.700 --> 00:08:48.900
+four operations.
+
+132
+00:08:49.150 --> 00:08:50.750
+RAID 6 needs six.
+
+133
+00:08:51.000 --> 00:08:53.400
+RAID 1 and 10 need two.
+
+134
+00:08:53.650 --> 00:08:57.650
+A hot spare is an extra drive that sits
+idle.
+
+135
+00:08:57.900 --> 00:09:02.700
+When a drive fails, the array rebuilds
+onto the spare at once.
+
+136
+00:09:02.950 --> 00:09:04.550
+It adds no capacity.
+
+137
+00:09:04.800 --> 00:09:10.800
+A hardware RAID controller is a card with
+its own processor and cache, and Windows
+
+138
+00:09:11.050 --> 00:09:12.650
+sees just one disk.
+
+139
+00:09:12.900 --> 00:09:17.700
+In write-back mode, it reports done once
+data is in its cache.
+
+140
+00:09:17.950 --> 00:09:22.750
+A battery or a flash module protects that
+cache if power fails.
+
+141
+00:09:23.000 --> 00:09:26.600
+Software RAID, like Storage Spaces, uses
+the server's CPU.
+
+142
+00:09:26.850 --> 00:09:29.650
+And remember: RAID is not a backup.
+
+143
+00:09:29.900 --> 00:09:31.100
+Four common mistakes.
+
+144
+00:09:31.350 --> 00:09:34.550
+One: choosing a disk by its number alone.
+
+145
+00:09:34.800 --> 00:09:39.200
+Numbers change, so match the size and the
+RAW state first.
+
+146
+00:09:39.450 --> 00:09:41.850
+Two: treating RAID as a backup.
+
+147
+00:09:42.100 --> 00:09:48.900
+RAID keeps you running when a drive dies,
+but a deleted or encrypted file is gone on
+
+148
+00:09:49.150 --> 00:09:50.350
+every drive.
+
+149
+00:09:50.600 --> 00:09:56.200
+Three: using ReFS for C, or for a volume
+you may need to shrink.
+
+150
+00:09:56.450 --> 00:10:00.050
+ReFS cannot boot or shrink and has no
+quotas.
+
+151
+00:10:00.300 --> 00:10:06.300
+Four: trying to extend into free space
+that is not right next to the volume.
+
+152
+00:10:06.550 --> 00:10:08.150
+Plan your layout first.
+
+153
+00:10:08.400 --> 00:10:10.000
+Time to check yourself.
+
+154
+00:10:10.250 --> 00:10:15.050
+First, a new 6 terabyte disk must hold one
+5 terabyte volume.
+
+155
+00:10:15.300 --> 00:10:18.500
+Do you choose MBR or GPT, and why?
+
+156
+00:10:18.750 --> 00:10:22.350
+Second, five 8 terabyte drives are in RAID
+5.
+
+157
+00:10:22.600 --> 00:10:27.000
+What is the usable capacity, and how many
+drives can fail?
+
+158
+00:10:27.250 --> 00:10:31.650
+Third, you want to shrink F, which is
+formatted with ReFS.
+
+159
+00:10:31.900 --> 00:10:33.100
+What happens?
+
+160
+00:10:33.350 --> 00:10:38.150
+Fourth, a file server must keep running if
+any two drives fail.
+
+161
+00:10:38.400 --> 00:10:44.400
+Which RAID level do you choose, and how
+many drives do you need at least?
+
+162
+00:10:44.650 --> 00:10:46.650
+Pause the video and answer.
+
+163
+00:10:46.900 --> 00:10:48.500
+Here are the answers.
+
+164
+00:10:48.750 --> 00:10:49.950
+One: GPT.
+
+165
+00:10:50.200 --> 00:10:57.400
+MBR can only use 2 terabytes of a disk,
+while GPT uses all 6, and it is the
+
+166
+00:10:57.650 --> 00:10:58.850
+default anyway.
+
+167
+00:10:59.100 --> 00:11:02.300
+Two: 32 terabytes, and one drive can fail.
+
+168
+00:11:02.550 --> 00:11:07.350
+RAID 5 gives n minus 1 times s, so 4 times
+8.
+
+169
+00:11:07.600 --> 00:11:10.400
+Three: you cannot shrink a ReFS volume.
+
+170
+00:11:10.650 --> 00:11:16.650
+Copy the data off, delete the volume and
+create it again at the new size.
+
+171
+00:11:16.900 --> 00:11:20.100
+Four: RAID 6, with at least four drives.
+
+172
+00:11:20.350 --> 00:11:22.750
+Double parity survives any two failures.
+
+173
+00:11:23.000 --> 00:11:25.400
+Let me show you on SRV01.
+
+174
+00:11:25.650 --> 00:11:30.850
+In Disk Management, the four new disks
+show 20 gigabytes, Unknown and Offline,
+
+175
+00:11:31.100 --> 00:11:33.500
+and Get-Disk shows them as RAW.
+
+176
+00:11:33.750 --> 00:11:40.150
+I bring the first one online, initialize
+it as GPT, and create E, Data, NTFS, 10240
+
+177
+00:11:40.400 --> 00:11:41.600
+megabytes.
+
+178
+00:11:41.850 --> 00:11:49.050
+Now I extend E by 2 gigabytes, check it
+shows 12, and shrink it back to 10 with
+
+179
+00:11:49.300 --> 00:11:50.500
+Resize-Partition.
+
+180
+00:11:50.750 --> 00:11:53.550
+Next, PowerShell creates F, Archive, with
+ReFS.
+
+181
+00:11:53.800 --> 00:12:00.200
+Watch the menus: F cannot shrink, and E
+can no longer extend, because F sits right
+
+182
+00:12:00.450 --> 00:12:01.650
+after it.
+
+183
+00:12:01.900 --> 00:12:03.900
+E has a Quota tab.
+
+184
+00:12:04.150 --> 00:12:05.350
+F does not.
+
+185
+00:12:05.600 --> 00:12:06.800
+To wrap up.
+
+186
+00:12:07.050 --> 00:12:13.450
+Hard drives give capacity, SSDs and NVMe
+give speed, and storage can be DAS, NAS or
+
+187
+00:12:13.700 --> 00:12:14.900
+SAN.
+
+188
+00:12:15.150 --> 00:12:19.150
+Use GPT and basic disks, because dynamic
+disks are deprecated.
+
+189
+00:12:19.400 --> 00:12:25.800
+Use NTFS for general volumes and C, and
+ReFS for big data, knowing it cannot boot
+
+190
+00:12:26.050 --> 00:12:27.250
+or shrink.
+
+191
+00:12:27.500 --> 00:12:30.700
+Bring disks online, initialize, partition
+and format them.
+
+192
+00:12:30.950 --> 00:12:34.150
+Extend needs free space right after the
+volume.
+
+193
+00:12:34.400 --> 00:12:38.800
+RAID trades capacity for safety, and it is
+never a backup.
+
+194
+00:12:39.050 --> 00:12:40.250
+Lab 8.
+
+195
+00:12:40.500 --> 00:12:44.900
+1 takes about 75 minutes on SRV01, plus a
+RAID worksheet.

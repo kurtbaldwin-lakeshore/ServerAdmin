@@ -1,0 +1,5 @@
+MC	Which hypervisor type runs directly on the hardware?	Type 1	correct	Type 2	incorrect	Hosted	incorrect	Emulated	incorrect
+MC	Which switch connects VMs only, without the host?	Private	correct	Internal	incorrect	External	incorrect	Default Switch	incorrect
+TF	An External switch with sharing allowed gives the host a vEthernet adapter.	true
+MC	Which edition allows unlimited Windows Server VMs on the licensed host?	Datacenter	correct	Standard	incorrect	Essentials	incorrect	Windows 11 Enterprise	incorrect
+MC	Which cmdlet sets the default VM and virtual hard disk folders of a host?	Set-VMHost	correct	New-VMSwitch	incorrect	Set-VM	incorrect	New-VHD	incorrect

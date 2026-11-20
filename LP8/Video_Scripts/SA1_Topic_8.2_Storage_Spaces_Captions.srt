@@ -1,0 +1,928 @@
+1
+00:00:00,000 --> 00:00:01,600
+Welcome to Topic 8.
+
+2
+00:00:01,850 --> 00:00:03,050
+2, Storage Spaces.
+
+3
+00:00:03,300 --> 00:00:04,500
+In Topic 8.
+
+4
+00:00:04,750 --> 00:00:09,150
+1 you worked with single disks and learned
+RAID on paper.
+
+5
+00:00:09,400 --> 00:00:13,400
+Now Windows Server does the RAID for you,
+in software.
+
+6
+00:00:13,650 --> 00:00:18,850
+You will learn the four layers of Storage
+Spaces and the primordial pool.
+
+7
+00:00:19,100 --> 00:00:25,100
+You will pick a resiliency type from the
+minimum disks and the usable space it
+
+8
+00:00:25,350 --> 00:00:26,550
+gives.
+
+9
+00:00:26,800 --> 00:00:31,600
+You will choose thin or fixed
+provisioning, build a pool, virtual disks
+
+10
+00:00:31,850 --> 00:00:37,050
+and volumes in Server Manager and in
+PowerShell, check their health, and plan
+
+11
+00:00:37,300 --> 00:00:40,100
+what to do when a disk fails.
+
+12
+00:00:40,350 --> 00:00:42,350
+Storage Spaces has four layers.
+
+13
+00:00:42,600 --> 00:00:46,200
+At the bottom are physical disks, plain
+blank drives.
+
+14
+00:00:46,450 --> 00:00:50,050
+They do not have to be the same size.
+
+15
+00:00:50,300 --> 00:00:56,300
+You group them into a storage pool, and
+Windows treats all their space as one.
+
+16
+00:00:56,550 --> 00:01:00,950
+From the pool you carve virtual disks,
+also called storage spaces.
+
+17
+00:01:01,200 --> 00:01:08,000
+Each one has its own resiliency, such as a
+mirror or parity, and Windows sees it as
+
+18
+00:01:08,250 --> 00:01:09,450
+an ordinary disk.
+
+19
+00:01:09,700 --> 00:01:14,900
+On top you create volumes, with a drive
+letter and NTFS or ReFS.
+
+20
+00:01:15,150 --> 00:01:21,150
+In the lab, four 20 GB disks become
+SA1Pool, with Mirror1 and Parity1 on it.
+
+21
+00:01:21,400 --> 00:01:26,200
+Before you create any pool, Windows
+already shows one, called the primordial
+
+22
+00:01:26,450 --> 00:01:27,650
+pool.
+
+23
+00:01:27,900 --> 00:01:30,300
+It is not a real pool.
+
+24
+00:01:30,550 --> 00:01:36,150
+It is the list of every disk that is able
+to join a pool.
+
+25
+00:01:36,400 --> 00:01:41,600
+When you put disks into a new pool, they
+leave the primordial pool.
+
+26
+00:01:41,850 --> 00:01:45,450
+If you see no primordial pool, no disk
+qualifies.
+
+27
+00:01:45,700 --> 00:01:51,700
+A disk qualifies when it is blank, with no
+partitions, and at least 4 GB.
+
+28
+00:01:51,950 --> 00:01:58,350
+It must not hide behind a RAID controller,
+so it connects through a simple host bus
+
+29
+00:01:58,600 --> 00:01:59,800
+adapter.
+
+30
+00:02:00,050 --> 00:02:03,250
+And a storage space cannot hold Windows
+itself.
+
+31
+00:02:03,500 --> 00:02:06,700
+This table is the heart of the topic.
+
+32
+00:02:06,950 --> 00:02:12,150
+Simple stripes data with no protection:
+one disk, full capacity, and one failure
+
+33
+00:02:12,400 --> 00:02:13,600
+loses data.
+
+34
+00:02:13,850 --> 00:02:19,450
+A two-way mirror keeps two copies: at
+least two disks, survives one failure, and
+
+35
+00:02:19,700 --> 00:02:21,700
+you get half the space.
+
+36
+00:02:21,950 --> 00:02:25,950
+A three-way mirror needs five disks and
+keeps a third.
+
+37
+00:02:26,200 --> 00:02:31,400
+Parity needs three disks, survives one
+failure and gives two thirds or more.
+
+38
+00:02:31,650 --> 00:02:35,250
+Dual parity needs seven disks and survives
+two failures.
+
+39
+00:02:35,500 --> 00:02:41,100
+For the Server+ exam, plan capacity: raw
+space times the usable share, then leave
+
+40
+00:02:41,350 --> 00:02:42,550
+free space.
+
+41
+00:02:42,800 --> 00:02:48,800
+When you create a virtual disk, you choose
+how it takes space from the pool.
+
+42
+00:02:49,050 --> 00:02:51,850
+Fixed takes the full size right away.
+
+43
+00:02:52,100 --> 00:02:58,900
+Parity1 in the lab is fixed, so its 10 GB,
+plus the parity, is reserved at once.
+
+44
+00:02:59,150 --> 00:03:01,150
+Thin only promises the size.
+
+45
+00:03:01,400 --> 00:03:07,000
+Mirror1 says 10 GB, but it takes pool
+space only as data is written.
+
+46
+00:03:07,250 --> 00:03:08,850
+The catch is overcommit.
+
+47
+00:03:09,100 --> 00:03:13,100
+Thin disks can promise more than the pool
+really has.
+
+48
+00:03:13,350 --> 00:03:19,750
+Windows warns at 70 percent pool use by
+default, and if the pool fills, the space
+
+49
+00:03:20,000 --> 00:03:21,200
+goes offline.
+
+50
+00:03:21,450 --> 00:03:24,650
+So watch free space and add disks early.
+
+51
+00:03:24,900 --> 00:03:27,300
+Where does the speed come from?
+
+52
+00:03:27,550 --> 00:03:32,350
+A virtual disk writes data in stripes
+across several disks at once.
+
+53
+00:03:32,600 --> 00:03:37,000
+The number of disks one stripe spans is
+the column count.
+
+54
+00:03:37,250 --> 00:03:40,450
+More columns means more disks working in
+parallel.
+
+55
+00:03:40,700 --> 00:03:46,700
+The amount written to each column in one
+stripe is the interleave, 256 KB by
+
+56
+00:03:46,950 --> 00:03:48,150
+default.
+
+57
+00:03:48,400 --> 00:03:50,800
+The wizard chooses both for you.
+
+58
+00:03:51,050 --> 00:03:55,050
+PowerShell can set them with dash
+NumberOfColumns and dash Interleave.
+
+59
+00:03:55,300 --> 00:04:02,100
+One planning rule: to grow a space later,
+the pool needs free space on as many disks
+
+60
+00:04:02,350 --> 00:04:06,750
+as the space has columns, times the copies
+for a mirror.
+
+61
+00:04:07,000 --> 00:04:11,800
+In Server Manager, open File and Storage
+Services, then Volumes, then Storage
+
+62
+00:04:12,050 --> 00:04:13,250
+Pools.
+
+63
+00:04:13,500 --> 00:04:15,500
+The page has three tiles.
+
+64
+00:04:15,750 --> 00:04:17,750
+Storage Pools lists the pools.
+
+65
+00:04:18,000 --> 00:04:22,800
+Before you build anything, the only entry
+is Primordial, under Storage Spaces.
+
+66
+00:04:23,050 --> 00:04:26,250
+The Virtual Disks tile is empty for now.
+
+67
+00:04:26,500 --> 00:04:30,900
+The Physical Disks tile lists the disks of
+the selected pool.
+
+68
+00:04:31,150 --> 00:04:37,150
+Identify the data disks by their size, 20
+GB, never by disk number alone, because
+
+69
+00:04:37,400 --> 00:04:38,600
+numbers can change.
+
+70
+00:04:38,850 --> 00:04:44,850
+The Tasks menu on each tile starts the
+wizards: New Storage Pool, and later New
+
+71
+00:04:45,100 --> 00:04:46,300
+Virtual Disk.
+
+72
+00:04:46,550 --> 00:04:49,350
+The New Storage Pool Wizard is short.
+
+73
+00:04:49,600 --> 00:04:56,000
+First you name the pool, SA1Pool, and pick
+the primordial pool of SRV01 as the source
+
+74
+00:04:56,250 --> 00:04:57,450
+of disks.
+
+75
+00:04:57,700 --> 00:05:02,500
+Then you tick the physical disks, all four
+20 GB data disks.
+
+76
+00:05:02,750 --> 00:05:05,150
+Each disk has an Allocation setting.
+
+77
+00:05:05,400 --> 00:05:07,400
+Automatic means it carries data.
+
+78
+00:05:07,650 --> 00:05:11,650
+Hot Spare means it waits unused until
+another disk fails.
+
+79
+00:05:11,900 --> 00:05:15,500
+In the lab you keep all four on Automatic.
+
+80
+00:05:15,750 --> 00:05:20,950
+Confirm, select Create, and the four disks
+leave the primordial pool and become
+
+81
+00:05:21,200 --> 00:05:22,400
+SA1Pool.
+
+82
+00:05:22,650 --> 00:05:28,650
+Next, select the pool and choose New
+Virtual Disk from the Tasks menu of the
+
+83
+00:05:28,900 --> 00:05:30,100
+Virtual Disks tile.
+
+84
+00:05:30,350 --> 00:05:31,550
+Name it Mirror1.
+
+85
+00:05:31,800 --> 00:05:36,200
+On the Storage Layout page you pick
+Simple, Mirror or Parity.
+
+86
+00:05:36,450 --> 00:05:40,450
+With only four disks, Mirror always means
+a two-way mirror.
+
+87
+00:05:40,700 --> 00:05:47,100
+The page that lets you choose a three-way
+mirror appears only when the pool has five
+
+88
+00:05:47,350 --> 00:05:48,550
+or more disks.
+
+89
+00:05:48,800 --> 00:05:52,800
+Then choose Thin provisioning and a size
+of 10 GB.
+
+90
+00:05:53,050 --> 00:05:59,050
+On the last page, keep Create a volume
+when this wizard closes ticked, so the
+
+91
+00:05:59,300 --> 00:06:01,300
+next wizard opens by itself.
+
+92
+00:06:01,550 --> 00:06:06,750
+The New Volume Wizard is the same one you
+met in Topic 8.
+
+93
+00:06:07,000 --> 00:06:11,000
+1, because a virtual disk looks like any
+other disk.
+
+94
+00:06:11,250 --> 00:06:14,050
+Pick SRV01 and the virtual disk Mirror1.
+
+95
+00:06:14,300 --> 00:06:15,900
+Keep the maximum size.
+
+96
+00:06:16,150 --> 00:06:18,150
+Assign the drive letter M.
+
+97
+00:06:18,400 --> 00:06:23,600
+On File System Settings choose NTFS or
+ReFS, keep the default allocation unit
+
+98
+00:06:23,850 --> 00:06:26,250
+size, and type the label Mirror.
+
+99
+00:06:26,500 --> 00:06:28,500
+Leave short file names off.
+
+100
+00:06:28,750 --> 00:06:33,950
+When you select Create, the wizard brings
+the disk online, initializes it, creates
+
+101
+00:06:34,200 --> 00:06:36,200
+the partition and formats it.
+
+102
+00:06:36,450 --> 00:06:38,850
+Now the same work in PowerShell.
+
+103
+00:06:39,100 --> 00:06:44,300
+Get-PhysicalDisk dash CanPool true lists
+only the disks that are free to pool.
+
+104
+00:06:44,550 --> 00:06:48,950
+Save them in a variable, then
+New-StoragePool creates SA1Pool from those
+
+105
+00:06:49,200 --> 00:06:51,600
+disks in the Windows Storage subsystem.
+
+106
+00:06:51,850 --> 00:06:54,250
+The pool reports Healthy and OK.
+
+107
+00:06:54,500 --> 00:06:59,700
+New-VirtualDisk creates a space: give it
+the pool, a name, the resiliency setting
+
+108
+00:06:59,950 --> 00:07:01,550
+and the provisioning type.
+
+109
+00:07:01,800 --> 00:07:04,600
+Mirror1 is a mirror, thin, 10 GB.
+
+110
+00:07:04,850 --> 00:07:07,250
+Parity1 is parity, fixed, 10 GB.
+
+111
+00:07:07,500 --> 00:07:11,100
+The sizes in the output depend on your
+pod.
+
+112
+00:07:11,350 --> 00:07:14,550
+A new virtual disk still needs a volume.
+
+113
+00:07:14,800 --> 00:07:17,200
+Use the pipeline from Topic 8.
+
+114
+00:07:17,450 --> 00:07:18,650
+1.
+
+115
+00:07:18,900 --> 00:07:22,900
+Get-VirtualDisk finds Parity1, Get-Disk
+turns it into a disk, Initialize-Disk
+
+116
+00:07:23,150 --> 00:07:28,350
+makes it GPT, New-Partition gives it the
+letter P, and Format-Volume formats it
+
+117
+00:07:28,600 --> 00:07:31,000
+with ReFS and the label Parity.
+
+118
+00:07:31,250 --> 00:07:32,450
+Then check health.
+
+119
+00:07:32,700 --> 00:07:36,700
+Get-VirtualDisk shows each space with its
+resiliency, provisioning, HealthStatus and
+
+120
+00:07:36,950 --> 00:07:38,150
+OperationalStatus.
+
+121
+00:07:38,400 --> 00:07:41,200
+Healthy and OK are what you want.
+
+122
+00:07:41,450 --> 00:07:44,250
+Get-StoragePool shows the same for the
+pool.
+
+123
+00:07:44,500 --> 00:07:48,500
+There is also New-Volume, which does
+everything in one step.
+
+124
+00:07:48,750 --> 00:07:51,150
+What happens when a disk fails?
+
+125
+00:07:51,400 --> 00:07:55,000
+The virtual disk shows HealthStatus
+Warning and OperationalStatus Degraded,
+
+126
+00:07:55,250 --> 00:07:57,650
+but your data is still there.
+
+127
+00:07:57,900 --> 00:08:00,300
+Now follow the steps in order.
+
+128
+00:08:00,550 --> 00:08:06,150
+Add a new disk to the pool, or let a hot
+spare step in.
+
+129
+00:08:06,400 --> 00:08:10,400
+Retire the failed disk with
+Set-PhysicalDisk dash Usage Retired, so
+
+130
+00:08:10,650 --> 00:08:12,650
+nothing new lands on it.
+
+131
+00:08:12,900 --> 00:08:17,700
+Run Repair-VirtualDisk and wait for the
+job, which you can watch with
+
+132
+00:08:17,950 --> 00:08:19,150
+Get-StorageJob.
+
+133
+00:08:19,400 --> 00:08:22,600
+Only then remove the disk and pull it.
+
+134
+00:08:22,850 --> 00:08:25,250
+A repair needs free pool space.
+
+135
+00:08:25,500 --> 00:08:28,300
+In the pod, this is concept only.
+
+136
+00:08:28,550 --> 00:08:32,550
+How does Storage Spaces compare with a
+hardware RAID controller?
+
+137
+00:08:32,800 --> 00:08:38,800
+Storage Spaces runs in Windows, takes
+disks of any size and lets you add more
+
+138
+00:08:39,050 --> 00:08:41,450
+later, with thin provisioning and tiers.
+
+139
+00:08:41,700 --> 00:08:46,900
+Hardware RAID runs on a controller card,
+usually wants matching disks, and often
+
+140
+00:08:47,150 --> 00:08:49,550
+has a battery-backed or flash-backed
+cache.
+
+141
+00:08:49,800 --> 00:08:53,800
+Hardware RAID can hold the boot disk;
+Storage Spaces cannot.
+
+142
+00:08:54,050 --> 00:08:57,650
+Do not stack them: Storage Spaces wants
+plain disks.
+
+143
+00:08:57,900 --> 00:09:04,700
+A common design is two disks in hardware
+RAID 1 for Windows, and the data disks in
+
+144
+00:09:04,950 --> 00:09:06,150
+Storage Spaces.
+
+145
+00:09:06,400 --> 00:09:08,800
+Two more ideas, as concepts only.
+
+146
+00:09:09,050 --> 00:09:14,250
+Storage tiers mix fast SSDs and slower
+hard disks in one virtual disk.
+
+147
+00:09:14,500 --> 00:09:20,500
+Windows moves busy data to the SSD tier
+and quiet data to the hard disks.
+
+148
+00:09:20,750 --> 00:09:22,350
+Tiers need fixed provisioning.
+
+149
+00:09:22,600 --> 00:09:24,600
+Storage Spaces Direct goes further.
+
+150
+00:09:24,850 --> 00:09:30,850
+A failover cluster of 2 to 16 servers
+pools the local drives of every server
+
+151
+00:09:31,100 --> 00:09:35,100
+over the network, so storage survives a
+whole server failing.
+
+152
+00:09:35,350 --> 00:09:39,750
+It needs Datacenter edition and is the
+base of Azure Local.
+
+153
+00:09:40,000 --> 00:09:43,600
+The AZ-802 exam covers it; our
+single-server pod cannot.
+
+154
+00:09:43,850 --> 00:09:45,050
+Four common mistakes.
+
+155
+00:09:45,300 --> 00:09:47,300
+One: picking disks by number.
+
+156
+00:09:47,550 --> 00:09:52,750
+Numbers change, so pick by size and blank
+state, or let Get-PhysicalDisk dash
+
+157
+00:09:53,000 --> 00:09:54,200
+CanPool true choose.
+
+158
+00:09:54,450 --> 00:09:57,650
+Two: using thin disks without watching the
+pool.
+
+159
+00:09:57,900 --> 00:10:03,500
+They can overcommit it, so watch free
+space and add disks before it fills.
+
+160
+00:10:03,750 --> 00:10:05,750
+Three: parity for busy servers.
+
+161
+00:10:06,000 --> 00:10:12,000
+Parity writes are slow, so use a mirror
+for virtual machines and busy shares, and
+
+162
+00:10:12,250 --> 00:10:14,250
+parity for archive and backup.
+
+163
+00:10:14,500 --> 00:10:16,900
+Four: pulling a failed disk first.
+
+164
+00:10:17,150 --> 00:10:21,150
+Add, retire, repair and wait, and only
+then remove it.
+
+165
+00:10:21,400 --> 00:10:23,000
+Time to check yourself.
+
+166
+00:10:23,250 --> 00:10:25,650
+SA1Pool has four 20 GB disks.
+
+167
+00:10:25,900 --> 00:10:31,900
+First, about how much data fits in one
+two-way mirror that uses the whole pool?
+
+168
+00:10:32,150 --> 00:10:36,950
+Second, why does the wizard not offer a
+three-way mirror for SA1Pool?
+
+169
+00:10:37,200 --> 00:10:40,000
+Third, Mirror1 is thin and 10 GB.
+
+170
+00:10:40,250 --> 00:10:45,850
+Why does the pool show much less used
+space than 10 GB times two?
+
+171
+00:10:46,100 --> 00:10:49,300
+Fourth, Get-VirtualDisk shows Mirror1 as
+Warning and Degraded.
+
+172
+00:10:49,550 --> 00:10:52,350
+What happened, and what do you do?
+
+173
+00:10:52,600 --> 00:10:57,000
+Pause the video and answer all four before
+you go on.
+
+174
+00:10:57,250 --> 00:10:58,850
+Here are the answers.
+
+175
+00:10:59,100 --> 00:11:00,700
+One: about 40 GB.
+
+176
+00:11:00,950 --> 00:11:07,350
+A two-way mirror stores everything twice,
+so 80 GB of raw space gives half, minus a
+
+177
+00:11:07,600 --> 00:11:09,200
+little for pool metadata.
+
+178
+00:11:09,450 --> 00:11:14,650
+Two: a three-way mirror needs at least
+five disks, and SA1Pool has four.
+
+179
+00:11:14,900 --> 00:11:21,700
+Three: a thin disk takes pool space only
+as data is written, so an empty one uses
+
+180
+00:11:21,950 --> 00:11:23,150
+almost nothing.
+
+181
+00:11:23,400 --> 00:11:27,400
+Four: a disk failed, but the data is still
+there.
+
+182
+00:11:27,650 --> 00:11:33,650
+Add a new disk, retire the failed one, run
+Repair-VirtualDisk, wait for it to finish,
+
+183
+00:11:33,900 --> 00:11:36,300
+and then remove the old disk.
+
+184
+00:11:36,550 --> 00:11:38,950
+Let me show you on SRV01.
+
+185
+00:11:39,200 --> 00:11:45,200
+Under Disks you see the four blank 20 GB
+disks, and under Storage Pools the
+
+186
+00:11:45,450 --> 00:11:46,650
+primordial pool.
+
+187
+00:11:46,900 --> 00:11:52,900
+I run the New Storage Pool Wizard, name it
+SA1Pool and tick all four disks.
+
+188
+00:11:53,150 --> 00:11:58,750
+Then the New Virtual Disk Wizard makes
+Mirror1: Mirror layout, notice there is no
+
+189
+00:11:59,000 --> 00:12:01,000
+three-way choice, thin, 10 GB.
+
+190
+00:12:01,250 --> 00:12:05,650
+The New Volume Wizard gives it M and the
+label Mirror.
+
+191
+00:12:05,900 --> 00:12:09,900
+In PowerShell, New-VirtualDisk makes
+Parity1, fixed, and the disk pipeline
+
+192
+00:12:10,150 --> 00:12:12,550
+formats it as P with ReFS.
+
+193
+00:12:12,800 --> 00:12:16,000
+Finally Get-VirtualDisk shows both spaces
+Healthy and OK.
+
+194
+00:12:16,250 --> 00:12:17,450
+To wrap up.
+
+195
+00:12:17,700 --> 00:12:24,100
+Blank disks go into a pool, virtual disks
+or spaces are carved from it, and volumes
+
+196
+00:12:24,350 --> 00:12:25,550
+sit on top.
+
+197
+00:12:25,800 --> 00:12:31,000
+A two-way mirror needs two disks, a
+three-way mirror five, parity three and
+
+198
+00:12:31,250 --> 00:12:32,450
+dual parity seven.
+
+199
+00:12:32,700 --> 00:12:38,700
+Usable space is raw space times the usable
+share, and you keep free space for
+
+200
+00:12:38,950 --> 00:12:40,150
+repairs.
+
+201
+00:12:40,400 --> 00:12:44,800
+Thin grows as it is used; fixed takes its
+space now.
+
+202
+00:12:45,050 --> 00:12:49,850
+Check HealthStatus and OperationalStatus,
+and when a disk fails, retire it, then
+
+203
+00:12:50,100 --> 00:12:51,300
+repair.
+
+204
+00:12:51,550 --> 00:12:52,750
+In Lab 8.
+
+205
+00:12:53,000 --> 00:12:57,800
+2 you build all of this on SRV01 in about
+70 minutes.

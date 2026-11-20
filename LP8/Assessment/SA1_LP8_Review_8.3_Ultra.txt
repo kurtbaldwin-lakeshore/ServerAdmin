@@ -1,0 +1,5 @@
+MC	Advanced Sharing starts with which share permission entry?	Everyone Read	correct	Authenticated Users Change	incorrect	Administrators Full Control	incorrect	Domain Users Change	incorrect
+MC	Share Change and NTFS Read &amp; execute. What does the user get over the network?	Read &amp; execute: the more restrictive gate	correct	Change	incorrect	Full control	incorrect	No access	incorrect
+MC	What does access-based enumeration do?	Shows users only the files and folders they can access	correct	Encrypts the share	incorrect	Blocks file types	incorrect	Limits the space a folder uses	incorrect
+TF	Share permissions also apply to a user signed in at the file server's own console.	false
+MC	Which tab shows what one user can really do on a folder?	Effective Access	correct	Auditing	incorrect	Share	incorrect	General	incorrect

@@ -1,0 +1,911 @@
+1
+00:00:00,000 --> 00:00:01,600
+Welcome to Topic 8.
+
+2
+00:00:01,850 --> 00:00:05,450
+4, the last topic about storage and file
+services.
+
+3
+00:00:05,700 --> 00:00:10,100
+You will meet three tools that every file
+server administrator uses.
+
+4
+00:00:10,350 --> 00:00:15,550
+First, File Server Resource Manager, or
+FSRM, which limits how much data users
+
+5
+00:00:15,800 --> 00:00:19,400
+store and which kinds of files they may
+save.
+
+6
+00:00:19,650 --> 00:00:25,250
+Second, iSCSI, which gives a server a disk
+over the network, from another Windows
+
+7
+00:00:25,500 --> 00:00:27,900
+server or from a NAS appliance.
+
+8
+00:00:28,150 --> 00:00:31,750
+Third, Data Deduplication, which stores
+repeated data only once.
+
+9
+00:00:32,000 --> 00:00:37,600
+By the end you can set them up with the
+GUI and with PowerShell.
+
+10
+00:00:37,850 --> 00:00:43,050
+File Server Resource Manager is a role
+service of File and Storage Services.
+
+11
+00:00:43,300 --> 00:00:49,300
+It answers two questions about a folder:
+how much may users store, and what may
+
+12
+00:00:49,550 --> 00:00:50,750
+they store.
+
+13
+00:00:51,000 --> 00:00:52,600
+Quota management limits space.
+
+14
+00:00:52,850 --> 00:00:54,850
+File screening controls file types.
+
+15
+00:00:55,100 --> 00:00:59,500
+Storage reports show you usage, large
+files, duplicates and screening attempts.
+
+16
+00:00:59,750 --> 00:01:04,150
+Classification and file management tasks
+are concept only in this course.
+
+17
+00:01:04,400 --> 00:01:09,200
+One limit to remember: FSRM works on NTFS
+volumes only, not ReFS.
+
+18
+00:01:09,450 --> 00:01:13,850
+You install it with Install-WindowsFeature
+FS-Resource-Manager and open it from the
+
+19
+00:01:14,100 --> 00:01:15,700
+Server Manager Tools menu.
+
+20
+00:01:15,950 --> 00:01:19,550
+A quota sets a space limit on a folder.
+
+21
+00:01:19,800 --> 00:01:25,400
+A hard quota enforces it: once the folder
+is full, nobody can save more.
+
+22
+00:01:25,650 --> 00:01:31,650
+A soft quota lets users go over and only
+sends notifications, so it is for
+
+23
+00:01:31,900 --> 00:01:33,100
+monitoring.
+
+24
+00:01:33,350 --> 00:01:38,150
+Notification thresholds fire at a
+percentage, for example a warning email at
+
+25
+00:01:38,400 --> 00:01:39,600
+85 percent.
+
+26
+00:01:39,850 --> 00:01:44,650
+Quota templates save settings for reuse,
+like the built-in 100 MB Limit.
+
+27
+00:01:44,900 --> 00:01:50,900
+An auto apply quota sits on a parent
+folder and gives every existing and new
+
+28
+00:01:51,150 --> 00:01:52,750
+subfolder its own quota.
+
+29
+00:01:53,000 --> 00:01:57,000
+Here is the Create Quota dialog in the
+FSRM console.
+
+30
+00:01:57,250 --> 00:02:01,250
+In Quota path, type the folder, C colon
+Shares Projects.
+
+31
+00:02:01,500 --> 00:02:06,300
+Keep Create quota on path, so the quota
+covers this one folder.
+
+32
+00:02:06,550 --> 00:02:11,750
+You can derive the settings from a
+template, or select Define custom quota
+
+33
+00:02:12,000 --> 00:02:14,000
+properties and then Custom Properties.
+
+34
+00:02:14,250 --> 00:02:19,450
+In the Quota Properties dialog, under
+Space Limit, type 100 and choose MB.
+
+35
+00:02:19,700 --> 00:02:24,100
+Then select Hard quota, Do not allow users
+to exceed limit.
+
+36
+00:02:24,350 --> 00:02:26,350
+Select OK and then Create.
+
+37
+00:02:26,600 --> 00:02:30,600
+For one folder, skip saving the settings
+as a template.
+
+38
+00:02:30,850 --> 00:02:33,650
+This is the File Screen Properties dialog.
+
+39
+00:02:33,900 --> 00:02:38,700
+Under Screening type, active screening
+blocks the files: the user gets Access
+
+40
+00:02:38,950 --> 00:02:40,150
+denied.
+
+41
+00:02:40,400 --> 00:02:44,400
+Passive screening lets the save happen and
+only notifies you.
+
+42
+00:02:44,650 --> 00:02:47,850
+Under file groups, you pick what to block.
+
+43
+00:02:48,100 --> 00:02:54,500
+A file group is a named list of patterns,
+and Audio and Video Files includes star
+
+44
+00:02:54,750 --> 00:02:58,750
+dot mp3, star dot mp4, star dot wav and
+more.
+
+45
+00:02:59,000 --> 00:03:04,600
+And if one subfolder needs audio files
+after all, a file screen exception allows
+
+46
+00:03:04,850 --> 00:03:06,450
+that group again there.
+
+47
+00:03:06,700 --> 00:03:10,700
+The same work in PowerShell takes only a
+few lines.
+
+48
+00:03:10,950 --> 00:03:13,350
+Install-WindowsFeature adds FSRM with its
+tools.
+
+49
+00:03:13,600 --> 00:03:19,200
+New-FsrmQuota with dash Path and dash Size
+100MB creates a hard quota, because you
+
+50
+00:03:19,450 --> 00:03:21,450
+did not add dash SoftLimit.
+
+51
+00:03:21,700 --> 00:03:24,900
+To use a template instead, add dash
+Template.
+
+52
+00:03:25,150 --> 00:03:29,950
+New-FsrmFileScreen with dash IncludeGroup
+Audio and Video Files and the switch dash
+
+53
+00:03:30,200 --> 00:03:32,200
+Active creates the active screen.
+
+54
+00:03:32,450 --> 00:03:35,250
+Get-FsrmFileGroup shows the patterns in a
+group.
+
+55
+00:03:35,500 --> 00:03:39,900
+Finally, Get-FsrmQuota shows the size in
+bytes, 104857600, and SoftLimit False,
+
+56
+00:03:40,150 --> 00:03:42,950
+which tells you the quota is enforced.
+
+57
+00:03:43,200 --> 00:03:46,400
+Now to storage networking, a Server plus
+topic.
+
+58
+00:03:46,650 --> 00:03:51,050
+A storage area network, or SAN, gives a
+server block storage.
+
+59
+00:03:51,300 --> 00:03:56,100
+The server sees a raw disk and creates the
+file system itself.
+
+60
+00:03:56,350 --> 00:04:00,750
+iSCSI sends disk commands over ordinary
+Ethernet, on TCP port 3260.
+
+61
+00:04:01,000 --> 00:04:03,800
+The initiator is the client, here SRV01.
+
+62
+00:04:04,050 --> 00:04:08,850
+The target is the storage server, here
+SRV-CORE, offering the target sa1-target.
+
+63
+00:04:09,100 --> 00:04:14,300
+A LUN, a logical unit number, is one disk
+that a target offers.
+
+64
+00:04:14,550 --> 00:04:21,350
+Compare that with a NAS, where you get a
+file share and the NAS owns the file
+
+65
+00:04:21,600 --> 00:04:22,800
+system.
+
+66
+00:04:23,050 --> 00:04:27,450
+Every initiator and target has an iSCSI
+Qualified Name, or IQN.
+
+67
+00:04:27,700 --> 00:04:33,700
+SRV01's IQN starts with iqn, then the year
+and month the naming authority owned its
+
+68
+00:04:33,950 --> 00:04:39,550
+domain, then that domain reversed, com dot
+microsoft, and after the colon a unique
+
+69
+00:04:39,800 --> 00:04:41,000
+name.
+
+70
+00:04:41,250 --> 00:04:46,050
+A portal is the IP address and port where
+a target listens.
+
+71
+00:04:46,300 --> 00:04:49,100
+A Windows target lists the allowed
+initiators.
+
+72
+00:04:49,350 --> 00:04:55,350
+CHAP adds a shared secret, and mutual CHAP
+checks both sides; our lab uses none.
+
+73
+00:04:55,600 --> 00:05:01,600
+In production, iSCSI runs on its own
+network or VLAN, and MPIO adds a second
+
+74
+00:05:01,850 --> 00:05:03,050
+path.
+
+75
+00:05:03,300 --> 00:05:07,700
+SRV-CORE is Server Core, so you build the
+target in PowerShell.
+
+76
+00:05:07,950 --> 00:05:09,950
+Install-WindowsFeature
+FS-iSCSITarget-Server adds the role
+
+77
+00:05:10,200 --> 00:05:11,800
+service, with no restart.
+
+78
+00:05:12,050 --> 00:05:17,650
+Create a folder, then New-IscsiVirtualDisk
+makes C colon iSCSI lun1 dot vhdx, 5 GB.
+
+79
+00:05:17,900 --> 00:05:23,100
+Without dash UseFixed the file is dynamic
+and grows as data is written.
+
+80
+00:05:23,350 --> 00:05:26,950
+New-IscsiServerTarget creates sa1-target,
+and dash InitiatorIds allows only SRV01's
+
+81
+00:05:27,200 --> 00:05:28,400
+IQN.
+
+82
+00:05:28,650 --> 00:05:32,650
+Add-IscsiVirtualDiskTargetMapping maps the
+disk to the target as LUN 0.
+
+83
+00:05:32,900 --> 00:05:36,900
+Get-IscsiServerTarget then shows the
+target, its IQN and the status
+
+84
+00:05:37,150 --> 00:05:39,150
+NotConnected, until SRV01 logs on.
+
+85
+00:05:39,400 --> 00:05:45,000
+On SRV01 you open the iSCSI Initiator,
+from Server Manager Tools or by running
+
+86
+00:05:45,250 --> 00:05:46,450
+iscsicpl.
+
+87
+00:05:46,700 --> 00:05:51,100
+The first time, Windows offers to start
+the Microsoft iSCSI service.
+
+88
+00:05:51,350 --> 00:05:52,550
+Select Yes.
+
+89
+00:05:52,800 --> 00:05:58,800
+On the Targets tab, Quick Connect finds
+the targets at an address and logs on.
+
+90
+00:05:59,050 --> 00:06:05,050
+You can also add the portal on the
+Discovery tab, then select a target and
+
+91
+00:06:05,300 --> 00:06:06,500
+Connect.
+
+92
+00:06:06,750 --> 00:06:12,350
+The Connect To Target dialog can add the
+connection to Favorite Targets, so it
+
+93
+00:06:12,600 --> 00:06:14,200
+returns after a restart.
+
+94
+00:06:14,450 --> 00:06:16,850
+Connected means a new disk appears.
+
+95
+00:06:17,100 --> 00:06:21,100
+The Configuration tab shows this server's
+initiator name, its IQN.
+
+96
+00:06:21,350 --> 00:06:24,150
+Here is the initiator side in PowerShell.
+
+97
+00:06:24,400 --> 00:06:26,400
+The service is called MSiSCSI.
+
+98
+00:06:26,650 --> 00:06:30,250
+Set it to start automatically and start it
+now.
+
+99
+00:06:30,500 --> 00:06:34,900
+New-IscsiTargetPortal adds SRV-CORE's
+address as a portal, so discovery runs on
+
+100
+00:06:35,150 --> 00:06:36,350
+TCP port 3260.
+
+101
+00:06:36,600 --> 00:06:41,800
+Get-IscsiTarget lists what the portal
+offers, and you pick the target whose name
+
+102
+00:06:42,050 --> 00:06:43,250
+contains sa1-target.
+
+103
+00:06:43,500 --> 00:06:47,500
+Connect-IscsiTarget logs on, and dash
+IsPersistent true makes the connection
+
+104
+00:06:47,750 --> 00:06:49,750
+come back after every restart.
+
+105
+00:06:50,000 --> 00:06:53,600
+Get-IscsiSession confirms it: IsConnected
+and IsPersistent are both True.
+
+106
+00:06:53,850 --> 00:06:57,850
+Forget IsPersistent and your disk
+disappears at the next reboot.
+
+107
+00:06:58,100 --> 00:07:03,300
+A NAS appliance like NAS01, running
+TrueNAS, can also be an iSCSI target.
+
+108
+00:07:03,550 --> 00:07:05,550
+Same steps, other portal: 192.
+
+109
+00:07:05,800 --> 00:07:07,000
+168.
+
+110
+00:07:07,250 --> 00:07:08,450
+50.
+
+111
+00:07:08,700 --> 00:07:09,900
+40.
+
+112
+00:07:10,150 --> 00:07:16,150
+TrueNAS sets its own IQN prefix, so you
+match the target by its name, sa1-nas.
+
+113
+00:07:16,400 --> 00:07:22,400
+On Windows Server, new disks on a shared
+bus often arrive offline, because of the
+
+114
+00:07:22,650 --> 00:07:23,850
+SAN policy.
+
+115
+00:07:24,100 --> 00:07:30,100
+Pick the right disk by its size, 10 GB
+here, never by its number alone.
+
+116
+00:07:30,350 --> 00:07:36,350
+Bring it online, initialize it as GPT,
+create a partition N and format it NTFS
+
+117
+00:07:36,600 --> 00:07:38,200
+with the label NAS.
+
+118
+00:07:38,450 --> 00:07:40,450
+Look at the three files.
+
+119
+00:07:40,700 --> 00:07:45,100
+Each is cut into chunks, and many chunks
+are the same.
+
+120
+00:07:45,350 --> 00:07:50,150
+The chunk store, in System Volume
+Information, keeps each unique chunk once,
+
+121
+00:07:50,400 --> 00:07:51,600
+optionally compressed.
+
+122
+00:07:51,850 --> 00:07:55,850
+Here twelve chunks of data need only five
+stored chunks.
+
+123
+00:07:56,100 --> 00:08:00,500
+The files now hold reparse points that
+point to their chunks.
+
+124
+00:08:00,750 --> 00:08:05,550
+It is post-processing: files are written
+normally, and a scheduled job optimizes
+
+125
+00:08:05,800 --> 00:08:07,000
+them later.
+
+126
+00:08:07,250 --> 00:08:13,250
+It works on data volumes, NTFS or ReFS,
+never on the system or boot volume.
+
+127
+00:08:13,500 --> 00:08:16,700
+Server 2025 also has separate ReFS native
+dedup.
+
+128
+00:08:16,950 --> 00:08:20,950
+In Server Manager, go to File and Storage
+Services, Volumes.
+
+129
+00:08:21,200 --> 00:08:25,600
+Right-click the data volume E colon and
+select Configure Data Deduplication.
+
+130
+00:08:25,850 --> 00:08:28,650
+In the dialog, choose the usage type.
+
+131
+00:08:28,900 --> 00:08:33,700
+General purpose file server is the usage
+type called Default in PowerShell.
+
+132
+00:08:33,950 --> 00:08:38,350
+Virtual Desktop Infrastructure server is
+HyperV, and Virtualized Backup Server is
+
+133
+00:08:38,600 --> 00:08:39,800
+Backup.
+
+134
+00:08:40,050 --> 00:08:44,050
+Next, Deduplicate files older than, in
+days, defaults to 3.
+
+135
+00:08:44,300 --> 00:08:49,500
+In the lab you set 0 so you can see
+results right away.
+
+136
+00:08:49,750 --> 00:08:55,350
+You can exclude file types and folders,
+and the schedule button sets when jobs
+
+137
+00:08:55,600 --> 00:08:56,800
+run.
+
+138
+00:08:57,050 --> 00:08:59,850
+In PowerShell, Install-WindowsFeature
+FS-Data-Deduplication adds the feature.
+
+139
+00:09:00,100 --> 00:09:04,500
+Enable-DedupVolume with dash UsageType
+Default turns it on for E colon.
+
+140
+00:09:04,750 --> 00:09:08,350
+Set-DedupVolume with dash
+MinimumFileAgeDays 0 is the lab shortcut.
+
+141
+00:09:08,600 --> 00:09:13,800
+Then Start-DedupJob, type Optimization,
+with dash Wait, runs a job now and shows
+
+142
+00:09:14,050 --> 00:09:15,250
+progress.
+
+143
+00:09:15,500 --> 00:09:19,900
+Get-DedupStatus and Get-DedupVolume show
+saved space, optimized files and the usage
+
+144
+00:09:20,150 --> 00:09:21,350
+type.
+
+145
+00:09:21,600 --> 00:09:24,400
+Your numbers will differ from anyone
+else's.
+
+146
+00:09:24,650 --> 00:09:30,250
+Normally you do not start jobs by hand:
+optimization runs about every hour, and
+
+147
+00:09:30,500 --> 00:09:32,900
+garbage collection and scrubbing run
+weekly.
+
+148
+00:09:33,150 --> 00:09:34,750
+Four mistakes to avoid.
+
+149
+00:09:35,000 --> 00:09:40,200
+One: choosing a soft quota or passive
+screening when you meant to block.
+
+150
+00:09:40,450 --> 00:09:44,450
+Soft and passive only notify, so pick hard
+and active.
+
+151
+00:09:44,700 --> 00:09:49,100
+Two: connecting two servers to the same
+LUN without a cluster.
+
+152
+00:09:49,350 --> 00:09:51,350
+The file system gets corrupted.
+
+153
+00:09:51,600 --> 00:09:54,800
+List only one server's IQN on the target.
+
+154
+00:09:55,050 --> 00:09:58,250
+Three: connecting a target without making
+it persistent.
+
+155
+00:09:58,500 --> 00:10:01,700
+After the next restart, the disk is gone.
+
+156
+00:10:01,950 --> 00:10:06,750
+Four: expecting dedup to save space at
+once, or on C colon.
+
+157
+00:10:07,000 --> 00:10:11,000
+It works on data volumes, after the
+minimum file age.
+
+158
+00:10:11,250 --> 00:10:18,050
+C colon Shares Projects has a 100 MB hard
+quota and an active Audio and Video Files
+
+159
+00:10:18,300 --> 00:10:19,500
+screen.
+
+160
+00:10:19,750 --> 00:10:25,350
+First, the folder holds 90 MB and a user
+saves a 20 MB file.
+
+161
+00:10:25,600 --> 00:10:29,600
+What happens, and what would happen with a
+soft quota?
+
+162
+00:10:29,850 --> 00:10:33,050
+Second, a user saves song dot mp3 there.
+
+163
+00:10:33,300 --> 00:10:36,500
+What happens, and what would passive
+screening do?
+
+164
+00:10:36,750 --> 00:10:42,750
+Third, in our iSCSI setup, which side is
+the initiator, and which port must reach
+
+165
+00:10:43,000 --> 00:10:44,200
+SRV-CORE?
+
+166
+00:10:44,450 --> 00:10:48,850
+Fourth, why can you not enable Data
+Deduplication on C colon?
+
+167
+00:10:49,100 --> 00:10:51,100
+Pause and answer all four.
+
+168
+00:10:51,350 --> 00:10:58,150
+One: with the hard quota, the save fails,
+because 90 plus 20 is more than 100 MB.
+
+169
+00:10:58,400 --> 00:11:03,600
+With a soft quota it would work, and you
+would only get notifications.
+
+170
+00:11:03,850 --> 00:11:09,050
+Two: active screening refuses song dot
+mp3, and the user sees Access denied.
+
+171
+00:11:09,300 --> 00:11:12,500
+Passive screening would save it and only
+notify.
+
+172
+00:11:12,750 --> 00:11:18,750
+Three: SRV01 is the initiator and SRV-CORE
+is the target, so SRV01 must reach TCP
+
+173
+00:11:19,000 --> 00:11:20,600
+port 3260 at 192.
+
+174
+00:11:20,850 --> 00:11:22,050
+168.
+
+175
+00:11:22,300 --> 00:11:23,500
+50.
+
+176
+00:11:23,750 --> 00:11:24,950
+21.
+
+177
+00:11:25,200 --> 00:11:30,800
+Four: C colon is the system and boot
+volume, and deduplication only runs on
+
+178
+00:11:31,050 --> 00:11:33,450
+data volumes such as E colon.
+
+179
+00:11:33,700 --> 00:11:34,900
+Now the pod.
+
+180
+00:11:35,150 --> 00:11:41,950
+On SRV01, I install FSRM and give the
+Projects folder a 100 MB hard quota and an
+
+181
+00:11:42,200 --> 00:11:44,200
+active audio and video screen.
+
+182
+00:11:44,450 --> 00:11:50,850
+Watch: the second 60 MB file fails with
+not enough space, and song dot mp3 gets
+
+183
+00:11:51,100 --> 00:11:52,300
+Access denied.
+
+184
+00:11:52,550 --> 00:11:58,150
+On SRV-CORE, I build sa1-target with a 5
+GB virtual disk for SRV01 only.
+
+185
+00:11:58,400 --> 00:12:03,600
+Back on SRV01, the iSCSI Initiator
+discovers the portal and connects as a
+
+186
+00:12:03,850 --> 00:12:07,450
+favorite target, and the new disk becomes
+I colon.
+
+187
+00:12:07,700 --> 00:12:12,900
+Last, I turn on deduplication for E colon
+and run an optimization job.
+
+188
+00:12:13,150 --> 00:12:17,550
+FSRM gives you quotas, file screens and
+storage reports on NTFS.
+
+189
+00:12:17,800 --> 00:12:23,400
+Hard quotas block, soft quotas notify, and
+templates and auto apply quotas save work.
+
+190
+00:12:23,650 --> 00:12:27,650
+Active file screens block file groups;
+passive screens only notify.
+
+191
+00:12:27,900 --> 00:12:33,500
+iSCSI connects an initiator to a target
+and its LUNs, identified by IQNs, through
+
+192
+00:12:33,750 --> 00:12:35,750
+a portal on TCP 3260.
+
+193
+00:12:36,000 --> 00:12:40,400
+Make connections persistent, and expect
+new SAN disks to arrive offline.
+
+194
+00:12:40,650 --> 00:12:45,450
+Deduplication works on data volumes with a
+chunk store and scheduled jobs.
+
+195
+00:12:45,700 --> 00:12:46,900
+In Lab 8.
+
+196
+00:12:47,150 --> 00:12:52,350
+4, about 90 minutes and practice only, you
+build all of this yourself.

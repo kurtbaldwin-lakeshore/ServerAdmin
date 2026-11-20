@@ -1,0 +1,5 @@
+MC	Which FSRM quota type stops users from saving past the limit?	Hard quota	correct	Soft quota	incorrect	Passive quota	incorrect	Auto apply template only	incorrect
+MC	Which screening type blocks the files in a file group?	Active screening	correct	Passive screening	incorrect	A file screen exception	incorrect	A storage report	incorrect
+MC	Which side is the iSCSI initiator in Lab 8.4?	SRV01	correct	SRV-CORE	incorrect	DC01	incorrect	CLIENT01	incorrect
+MC	Which TCP port does iSCSI use?	3260	correct	445	incorrect	53	incorrect	3389	incorrect
+TF	Data Deduplication can be enabled on the system volume C:.	false

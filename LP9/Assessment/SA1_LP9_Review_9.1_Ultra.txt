@@ -1,0 +1,5 @@
+MC	Which tool records counters over time and stops by itself?	A data collector set with a stop condition	correct	Task Manager	incorrect	Resource Monitor	incorrect	Get-Process	incorrect
+MC	Which keys open Task Manager?	Ctrl+Shift+Esc	correct	Ctrl+G	incorrect	Ctrl+H	incorrect	Ctrl+Alt+F4	incorrect
+MC	Which Memory counter shows the RAM free for new work?	Available MBytes	correct	Pages/sec	incorrect	% Idle Time	incorrect	Bytes Total/sec	incorrect
+TF	% Processor Time jumps to 90% for two seconds while you open a program. That is a CPU bottleneck.	false
+MC	Which command opens Resource Monitor?	resmon	correct	perfmon /report	incorrect	taskmgr /r	incorrect	eventvwr	incorrect

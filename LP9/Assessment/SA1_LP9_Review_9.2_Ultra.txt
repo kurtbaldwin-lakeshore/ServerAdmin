@@ -1,0 +1,5 @@
+MC	Which level number is Warning in Get-WinEvent -FilterHashtable?	3	correct	1	incorrect	2	incorrect	4	incorrect
+MC	Which Windows log holds audit events such as failed sign-ins?	Security	correct	Application	incorrect	Setup	incorrect	System	incorrect
+MC	Which cmdlet reads events from event logs?	Get-WinEvent	correct	Get-Counter	incorrect	Get-Process	incorrect	Get-Service	incorrect
+TF	Filter Current Log deletes the events that do not match the filter.	false
+MC	On the collector, where do forwarded events appear?	Windows Logs, Forwarded Events	correct	Windows Logs, Application	incorrect	Custom Views, Administrative Events	incorrect	Applications and Services Logs, Microsoft	incorrect

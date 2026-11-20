@@ -1,0 +1,5 @@
+MC	Which list shows every disk that can join a storage pool before you create one?	The primordial pool	correct	The VIRTUAL DISKS tile	incorrect	Disk Management	incorrect	The Volumes page	incorrect
+MC	How many disks does a two-way mirror need at least?	2	correct	3	incorrect	5	incorrect	7	incorrect
+MC	Which provisioning type takes pool space only as data is written?	Thin	correct	Fixed	incorrect	Parity	incorrect	Simple	incorrect
+MC	Which cmdlet creates a storage space (virtual disk) in a pool?	New-VirtualDisk	correct	New-StoragePool	incorrect	New-Partition	incorrect	Get-PhysicalDisk	incorrect
+TF	A storage space can hold the Windows boot volume.	false

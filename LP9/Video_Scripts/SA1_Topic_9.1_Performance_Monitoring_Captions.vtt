@@ -1,0 +1,946 @@
+WEBVTT
+
+NOTE SA1 Topic 9.1: Performance Monitoring. Timings are estimates at 150 words a minute; re-sync after recording.
+
+1
+00:00:00.000 --> 00:00:01.600
+Welcome to Topic 9.
+
+2
+00:00:01.850 --> 00:00:03.050
+1, Performance Monitoring.
+
+3
+00:00:03.300 --> 00:00:07.700
+Sooner or later someone will tell you the
+server is slow.
+
+4
+00:00:07.950 --> 00:00:13.150
+This topic gives you the tools to answer
+with facts instead of guesses.
+
+5
+00:00:13.400 --> 00:00:19.000
+You will learn why baselines matter, which
+counters to watch for CPU, memory, disk
+
+6
+00:00:19.250 --> 00:00:22.850
+and network, and what the usual warning
+levels are.
+
+7
+00:00:23.100 --> 00:00:28.300
+You will find a busy process with Task
+Manager and Resource Monitor, watch
+
+8
+00:00:28.550 --> 00:00:33.750
+counters in Performance Monitor, record
+them with a data collector set, and read
+
+9
+00:00:34.000 --> 00:00:36.000
+them from PowerShell with Get-Counter.
+
+10
+00:00:36.250 --> 00:00:37.850
+Why monitor at all?
+
+11
+00:00:38.100 --> 00:00:41.300
+Because a number on its own means little.
+
+12
+00:00:41.550 --> 00:00:43.550
+Is forty percent CPU bad?
+
+13
+00:00:43.800 --> 00:00:47.400
+It depends on what is normal for that
+server.
+
+14
+00:00:47.650 --> 00:00:52.850
+A baseline is a recording of normal, made
+while the server is healthy.
+
+15
+00:00:53.100 --> 00:00:55.900
+Weeks one to four set the baseline.
+
+16
+00:00:56.150 --> 00:00:59.750
+From week five, CPU climbs a little every
+week.
+
+17
+00:01:00.000 --> 00:01:06.400
+That trend tells you the server will run
+out of capacity, so you can plan early.
+
+18
+00:01:06.650 --> 00:01:11.450
+Monitoring also shows whether you keep
+your service level agreement, your promise
+
+19
+00:01:11.700 --> 00:01:14.500
+to users about response time or uptime.
+
+20
+00:01:14.750 --> 00:01:17.150
+Server+ covers baselines and SLAs too.
+
+21
+00:01:17.400 --> 00:01:20.200
+Every server has four subsystems to watch.
+
+22
+00:01:20.450 --> 00:01:22.050
+The CPU runs instructions.
+
+23
+00:01:22.300 --> 00:01:25.500
+Memory holds the programs and data in use.
+
+24
+00:01:25.750 --> 00:01:28.950
+The disk stores everything, including the
+paging file.
+
+25
+00:01:29.200 --> 00:01:32.400
+The network moves data to and from
+clients.
+
+26
+00:01:32.650 --> 00:01:34.250
+They affect each other.
+
+27
+00:01:34.500 --> 00:01:39.700
+When memory runs short, Windows moves
+pages of memory out to the disk.
+
+28
+00:01:39.950 --> 00:01:41.550
+That is called paging.
+
+29
+00:01:41.800 --> 00:01:47.000
+Now the disk is busy, disk latency rises,
+and the server feels slow.
+
+30
+00:01:47.250 --> 00:01:52.050
+It looks like a disk problem, but the real
+cause is memory.
+
+31
+00:01:52.300 --> 00:01:57.100
+A bottleneck is the one resource that
+holds back all the others.
+
+32
+00:01:57.350 --> 00:02:01.750
+A counter is one measurement that Windows
+keeps up to date.
+
+33
+00:02:02.000 --> 00:02:04.000
+Here are seven to know.
+
+34
+00:02:04.250 --> 00:02:09.450
+Look closer when CPU stays over about
+eighty to eighty-five percent for minutes.
+
+35
+00:02:09.700 --> 00:02:14.900
+When Available MBytes falls under ten
+percent of RAM, memory is getting short,
+
+36
+00:02:15.150 --> 00:02:17.950
+and under five hundred megabytes is
+critical.
+
+37
+00:02:18.200 --> 00:02:23.000
+Pages per second that stays high while
+memory is low means paging.
+
+38
+00:02:23.250 --> 00:02:27.650
+A disk read that takes more than
+twenty-five milliseconds is slow.
+
+39
+00:02:27.900 --> 00:02:32.700
+Low percent Idle Time and a long queue
+mean a busy disk.
+
+40
+00:02:32.950 --> 00:02:38.150
+Treat these as guidance from Microsoft,
+not hard limits, and compare with your
+
+41
+00:02:38.400 --> 00:02:39.600
+baseline.
+
+42
+00:02:39.850 --> 00:02:42.250
+Task Manager is the quickest look.
+
+43
+00:02:42.500 --> 00:02:44.100
+Press Control, Shift, Escape.
+
+44
+00:02:44.350 --> 00:02:50.750
+On the Processes page, select the CPU or
+Memory column heading to sort, and the top
+
+45
+00:02:51.000 --> 00:02:52.600
+process becomes your suspect.
+
+46
+00:02:52.850 --> 00:02:57.650
+The Performance page shows live graphs for
+CPU, memory, disk and Ethernet.
+
+47
+00:02:57.900 --> 00:03:01.900
+On the CPU page, note the number of
+logical processors.
+
+48
+00:03:02.150 --> 00:03:08.150
+That matters later: a process that loops
+on one logical processor fills just one of
+
+49
+00:03:08.400 --> 00:03:11.200
+them, so the total may look moderate.
+
+50
+00:03:11.450 --> 00:03:14.650
+Remember that Task Manager shows the
+present moment.
+
+51
+00:03:14.900 --> 00:03:17.300
+One look is not a baseline.
+
+52
+00:03:17.550 --> 00:03:22.750
+The Details page lists every process
+separately, with its process ID, or PID.
+
+53
+00:03:23.000 --> 00:03:26.600
+Many processes share a name, like svchost
+or powershell.
+
+54
+00:03:26.850 --> 00:03:32.050
+To tell them apart, right-click a column
+heading, choose Select columns, and tick
+
+55
+00:03:32.300 --> 00:03:33.500
+Command line.
+
+56
+00:03:33.750 --> 00:03:39.350
+Now you see the full path and the
+arguments each process was started with.
+
+57
+00:03:39.600 --> 00:03:45.200
+Here, one powershell process is running a
+loop that counts up forever and never
+
+58
+00:03:45.450 --> 00:03:46.650
+stops.
+
+59
+00:03:46.900 --> 00:03:48.500
+That is your culprit.
+
+60
+00:03:48.750 --> 00:03:51.150
+End task stops that one PID.
+
+61
+00:03:51.400 --> 00:03:56.200
+But first find out what started it, or it
+may come back.
+
+62
+00:03:56.450 --> 00:03:58.450
+PowerShell does the same job.
+
+63
+00:03:58.700 --> 00:04:03.900
+Get-Process, sorted by the CPU property,
+lists the processes that have used the
+
+64
+00:04:04.150 --> 00:04:05.350
+most processor time.
+
+65
+00:04:05.600 --> 00:04:11.200
+Note that CPU here is total seconds since
+the process started, not a percentage.
+
+66
+00:04:11.450 --> 00:04:16.650
+To tell two powershell processes apart,
+ask CIM for the Win32 Process class,
+
+67
+00:04:16.900 --> 00:04:20.100
+filtered by name, and select ProcessId and
+CommandLine.
+
+68
+00:04:20.350 --> 00:04:24.350
+That is the same information as the Task
+Manager column.
+
+69
+00:04:24.600 --> 00:04:29.000
+Then Stop-Process with the ID ends it,
+just like End task.
+
+70
+00:04:29.250 --> 00:04:34.850
+This also works in a remote PowerShell
+session, where there is no Task Manager
+
+71
+00:04:35.100 --> 00:04:36.300
+window to click.
+
+72
+00:04:36.550 --> 00:04:40.950
+Ending a busy process helps only until
+something starts it again.
+
+73
+00:04:41.200 --> 00:04:43.200
+So ask who started it.
+
+74
+00:04:43.450 --> 00:04:46.650
+Get-CimInstance Win32 Process gives each
+process a ParentProcessId.
+
+75
+00:04:46.900 --> 00:04:48.900
+Read the parent's command line.
+
+76
+00:04:49.150 --> 00:04:53.950
+A service host running the Schedule
+service means Task Scheduler started it.
+
+77
+00:04:54.200 --> 00:04:58.200
+Look in the Task Scheduler Library, or run
+Get-ScheduledTask and
+
+78
+00:04:58.450 --> 00:05:00.450
+Get-ScheduledTaskInfo for the last result.
+
+79
+00:05:00.700 --> 00:05:04.700
+Check services and their startup type too,
+and startup apps.
+
+80
+00:05:04.950 --> 00:05:08.150
+Fix the source first:
+Disable-ScheduledTask, or disable the
+
+81
+00:05:08.400 --> 00:05:09.600
+service.
+
+82
+00:05:09.850 --> 00:05:11.450
+Then end the process.
+
+83
+00:05:11.700 --> 00:05:13.300
+Resource Monitor goes deeper.
+
+84
+00:05:13.550 --> 00:05:14.750
+Type resmon.
+
+85
+00:05:15.000 --> 00:05:19.000
+It has five tabs: Overview, CPU, Memory,
+Disk and Network.
+
+86
+00:05:19.250 --> 00:05:26.050
+Tick the check box next to a process, and
+it stays selected on every tab, so the
+
+87
+00:05:26.300 --> 00:05:28.700
+lower tables show only that process.
+
+88
+00:05:28.950 --> 00:05:34.950
+On the Disk tab, Disk Activity shows which
+files it reads and writes, with response
+
+89
+00:05:35.200 --> 00:05:36.400
+times.
+
+90
+00:05:36.650 --> 00:05:42.250
+On the Network tab, Listening Ports shows
+which process waits on which port: 3389
+
+91
+00:05:42.500 --> 00:05:46.500
+for Remote Desktop, 445 for SMB and 5985
+for WinRM.
+
+92
+00:05:46.750 --> 00:05:48.750
+Get-NetTCPConnection gives the same list.
+
+93
+00:05:49.000 --> 00:05:51.000
+For counters, open Performance Monitor.
+
+94
+00:05:51.250 --> 00:05:55.650
+Type perfmon, then select Monitoring
+Tools, Performance Monitor, and the green
+
+95
+00:05:55.900 --> 00:05:57.100
+plus.
+
+96
+00:05:57.350 --> 00:06:02.550
+In Add Counters, expand an object such as
+PhysicalDisk and pick a counter.
+
+97
+00:06:02.800 --> 00:06:04.400
+Then pick an instance.
+
+98
+00:06:04.650 --> 00:06:10.650
+An instance is one copy of what the object
+measures: one disk, one processor core,
+
+99
+00:06:10.900 --> 00:06:12.100
+one network adapter.
+
+100
+00:06:12.350 --> 00:06:17.150
+The underscore Total instance combines
+them, which is a good first look.
+
+101
+00:06:17.400 --> 00:06:19.000
+Select Add, then OK.
+
+102
+00:06:19.250 --> 00:06:24.050
+Tick Show description whenever you are not
+sure what a counter means.
+
+103
+00:06:24.300 --> 00:06:26.300
+Performance Monitor has three views.
+
+104
+00:06:26.550 --> 00:06:28.550
+Press Control G to switch.
+
+105
+00:06:28.800 --> 00:06:34.800
+Line is the default and shows about one
+hundred seconds at one sample per second.
+
+106
+00:06:35.050 --> 00:06:37.850
+Histogram bar shows one bar per counter.
+
+107
+00:06:38.100 --> 00:06:39.700
+Report shows plain numbers.
+
+108
+00:06:39.950 --> 00:06:45.150
+Under the line graph you see Last,
+Average, Minimum, Maximum and Duration for
+
+109
+00:06:45.400 --> 00:06:48.200
+the counter you select in the legend.
+
+110
+00:06:48.450 --> 00:06:52.050
+Windows Admin Center has a Performance
+Monitor tool too.
+
+111
+00:06:52.300 --> 00:06:57.900
+It offers the same counters in a browser,
+for remote servers, with Line, Report,
+
+112
+00:06:58.150 --> 00:07:02.150
+Min-Max and Heatmap graphs, and you can
+save a workspace.
+
+113
+00:07:02.400 --> 00:07:05.200
+Live graphs disappear when you close them.
+
+114
+00:07:05.450 --> 00:07:09.450
+To record over time, you create a data
+collector set.
+
+115
+00:07:09.700 --> 00:07:15.700
+Under User Defined, select New, Data
+Collector Set, give it a name such as SA1
+
+116
+00:07:15.950 --> 00:07:17.950
+Baseline, and choose Create manually.
+
+117
+00:07:18.200 --> 00:07:22.600
+Pick Performance counter, add your
+counters, and set the sample interval.
+
+118
+00:07:22.850 --> 00:07:27.250
+The wizard offers fifteen seconds; in the
+lab you use five.
+
+119
+00:07:27.500 --> 00:07:31.100
+The root directory is C, PerfLogs, Admin,
+SA1 Baseline.
+
+120
+00:07:31.350 --> 00:07:36.150
+Under System you also find two ready-made
+sets, System Diagnostics and System
+
+121
+00:07:36.400 --> 00:07:37.600
+Performance.
+
+122
+00:07:37.850 --> 00:07:40.250
+They run for about a minute.
+
+123
+00:07:40.500 --> 00:07:44.900
+A set with no stop condition runs until
+somebody stops it.
+
+124
+00:07:45.150 --> 00:07:50.350
+So open its Properties, select the Stop
+Condition tab, and set an overall
+
+125
+00:07:50.600 --> 00:07:52.600
+duration, for example five minutes.
+
+126
+00:07:52.850 --> 00:07:58.050
+At one sample every five seconds, that is
+about sixty samples per counter.
+
+127
+00:07:58.300 --> 00:08:02.300
+You can predict that number because you
+chose both values.
+
+128
+00:08:02.550 --> 00:08:07.750
+Each run creates a new report under
+Reports, User Defined, with the computer
+
+129
+00:08:08.000 --> 00:08:10.800
+name, the date and a run number.
+
+130
+00:08:11.050 --> 00:08:17.850
+Open it, and you get the same graph tools,
+but on recorded data from the log file.
+
+131
+00:08:18.100 --> 00:08:20.500
+In PowerShell, Get-Counter reads counters
+directly.
+
+132
+00:08:20.750 --> 00:08:26.350
+Put the counter paths in a variable, then
+add SampleInterval for the seconds between
+
+133
+00:08:26.600 --> 00:08:29.000
+samples and MaxSamples for how many.
+
+134
+00:08:29.250 --> 00:08:32.850
+Without them you get one sample, one
+second apart.
+
+135
+00:08:33.100 --> 00:08:37.500
+Each sample has one timestamp and a value
+for every counter.
+
+136
+00:08:37.750 --> 00:08:42.150
+For data collector sets there is a
+command-line tool called logman.
+
+137
+00:08:42.400 --> 00:08:48.800
+logman create counter makes a set; dash si
+sets the sample interval and dash rf how
+
+138
+00:08:49.050 --> 00:08:50.250
+long it runs.
+
+139
+00:08:50.500 --> 00:08:55.300
+logman start runs it, and logman query
+shows its settings and status.
+
+140
+00:08:55.550 --> 00:08:57.550
+Now put the clues together.
+
+141
+00:08:57.800 --> 00:09:03.400
+Low Available MBytes, high Pages per
+second and a busy disk point to memory.
+
+142
+00:09:03.650 --> 00:09:07.650
+Find the process using the most memory, or
+add RAM.
+
+143
+00:09:07.900 --> 00:09:13.500
+CPU over eighty-five percent for minutes,
+with one process on top, points to the
+
+144
+00:09:13.750 --> 00:09:14.950
+CPU.
+
+145
+00:09:15.200 --> 00:09:18.000
+Find that process and its command line.
+
+146
+00:09:18.250 --> 00:09:24.250
+Slow disk reads with a long queue while
+memory is fine point to the disk.
+
+147
+00:09:24.500 --> 00:09:27.700
+Traffic near link speed points to the
+network.
+
+148
+00:09:27.950 --> 00:09:33.150
+And always check memory first, because a
+memory shortage makes the disk look
+
+149
+00:09:33.400 --> 00:09:34.600
+guilty.
+
+150
+00:09:34.850 --> 00:09:36.450
+Four mistakes to avoid.
+
+151
+00:09:36.700 --> 00:09:40.700
+One: judging a server from one look at
+Task Manager.
+
+152
+00:09:40.950 --> 00:09:45.350
+Record a data collector set and compare it
+with the baseline.
+
+153
+00:09:45.600 --> 00:09:48.800
+Two: buying faster disks when memory is
+short.
+
+154
+00:09:49.050 --> 00:09:52.250
+Check Available MBytes and Pages per
+second first.
+
+155
+00:09:52.500 --> 00:09:55.700
+Three: treating rules of thumb as hard
+limits.
+
+156
+00:09:55.950 --> 00:10:01.550
+Short spikes are normal; look for values
+that stay high and differ from the
+
+157
+00:10:01.800 --> 00:10:03.000
+baseline.
+
+158
+00:10:03.250 --> 00:10:05.250
+Four: leaving a test running.
+
+159
+00:10:05.500 --> 00:10:11.500
+Give every data collector set a stop
+condition, and stop your CPU loop when you
+
+160
+00:10:11.750 --> 00:10:12.950
+finish the lab.
+
+161
+00:10:13.200 --> 00:10:14.800
+Time to check yourself.
+
+162
+00:10:15.050 --> 00:10:20.650
+First: SRV01 has four logical processors,
+and one process loops on one of them.
+
+163
+00:10:20.900 --> 00:10:25.300
+About what does percent Processor Time for
+the Total instance show?
+
+164
+00:10:25.550 --> 00:10:31.550
+Second: Available MBytes is low, Pages per
+second is high, and a disk read takes
+
+165
+00:10:31.800 --> 00:10:33.000
+forty milliseconds.
+
+166
+00:10:33.250 --> 00:10:35.250
+What do you fix first?
+
+167
+00:10:35.500 --> 00:10:41.100
+Third: a data collector set samples every
+five seconds and stops after five minutes.
+
+168
+00:10:41.350 --> 00:10:44.950
+About how many samples does it record per
+counter?
+
+169
+00:10:45.200 --> 00:10:47.600
+Fourth: Details shows two powershell
+processes.
+
+170
+00:10:47.850 --> 00:10:51.450
+How do you tell which one runs the loop?
+
+171
+00:10:51.700 --> 00:10:53.700
+Pause the video and answer.
+
+172
+00:10:53.950 --> 00:10:55.550
+Here are the answers.
+
+173
+00:10:55.800 --> 00:10:57.400
+One: about twenty-five percent.
+
+174
+00:10:57.650 --> 00:11:03.250
+The Total instance averages all logical
+processors, so one full core out of four
+
+175
+00:11:03.500 --> 00:11:05.100
+adds about a quarter.
+
+176
+00:11:05.350 --> 00:11:06.550
+Two: memory first.
+
+177
+00:11:06.800 --> 00:11:13.600
+The paging is what keeps the disk busy, so
+more RAM, or less memory use, calms the
+
+178
+00:11:13.850 --> 00:11:15.050
+disk too.
+
+179
+00:11:15.300 --> 00:11:16.500
+Three: about sixty.
+
+180
+00:11:16.750 --> 00:11:20.350
+Five minutes is three hundred seconds,
+divided by five.
+
+181
+00:11:20.600 --> 00:11:25.000
+Four: add the Command line column in
+Details, or use Get-CimInstance.
+
+182
+00:11:25.250 --> 00:11:28.050
+The loop's command line contains while
+true.
+
+183
+00:11:28.300 --> 00:11:30.300
+Did you get all four?
+
+184
+00:11:30.550 --> 00:11:32.550
+Let's see it on SRV01.
+
+185
+00:11:32.800 --> 00:11:37.600
+In Task Manager, the CPU page shows the
+number of logical processors.
+
+186
+00:11:37.850 --> 00:11:41.050
+On Details, I add the Command line column.
+
+187
+00:11:41.300 --> 00:11:46.100
+In Performance Monitor, I add processor
+time and Available MBytes, and switch
+
+188
+00:11:46.350 --> 00:11:47.950
+views with Control G.
+
+189
+00:11:48.200 --> 00:11:52.200
+Here is SA1 Baseline, already recorded,
+with its first report.
+
+190
+00:11:52.450 --> 00:11:56.450
+Now I start a loop in a second PowerShell
+window.
+
+191
+00:11:56.700 --> 00:11:57.900
+CPU climbs.
+
+192
+00:11:58.150 --> 00:12:03.750
+Task Manager sorts it to the top, and the
+command line gives it away.
+
+193
+00:12:04.000 --> 00:12:06.000
+Resource Monitor filters to it.
+
+194
+00:12:06.250 --> 00:12:08.250
+Get-Counter confirms the CPU value.
+
+195
+00:12:08.500 --> 00:12:11.300
+End task, and the CPU drops back.
+
+196
+00:12:11.550 --> 00:12:12.750
+To wrap up.
+
+197
+00:12:13.000 --> 00:12:15.800
+A baseline tells you what normal is.
+
+198
+00:12:16.050 --> 00:12:18.850
+Watch CPU, memory, disk and network
+together.
+
+199
+00:12:19.100 --> 00:12:22.700
+Task Manager and Resource Monitor show the
+present moment.
+
+200
+00:12:22.950 --> 00:12:27.350
+Performance Monitor and data collector
+sets show what happens over time.
+
+201
+00:12:27.600 --> 00:12:33.200
+The rules of thumb are guidance, and
+memory is the first thing to check.
+
+202
+00:12:33.450 --> 00:12:34.650
+In Lab 9.
+
+203
+00:12:34.900 --> 00:12:40.900
+1, about eighty-five minutes and practice
+only, you use all of these tools on SRV01,
+
+204
+00:12:41.150 --> 00:12:47.150
+record SA1 Baseline twice, once quiet and
+once under a CPU loop you start yourself,
+
+205
+00:12:47.400 --> 00:12:52.600
+compare the reports, practice with a
+scheduled task of your own, and finish
+
+206
+00:12:52.850 --> 00:12:54.050
+with Get-Counter.

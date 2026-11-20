@@ -1,0 +1,907 @@
+1
+00:00:00,000 --> 00:00:01,600
+Welcome to Topic 9.
+
+2
+00:00:01,850 --> 00:00:03,050
+2, Event Logs.
+
+3
+00:00:03,300 --> 00:00:09,700
+When something goes wrong on a server, the
+event logs are usually the first place to
+
+4
+00:00:09,950 --> 00:00:13,550
+look, because Windows writes down what
+happened and when.
+
+5
+00:00:13,800 --> 00:00:19,800
+In this topic you will find your way
+around Event Viewer and read an event
+
+6
+00:00:20,050 --> 00:00:21,250
+properly.
+
+7
+00:00:21,500 --> 00:00:27,900
+You will filter logs, save a custom view
+and choose how much history a log keeps.
+
+8
+00:00:28,150 --> 00:00:34,150
+Then you will ask the same questions in
+PowerShell, create test events of your own
+
+9
+00:00:34,400 --> 00:00:39,200
+with eventcreate, and forward events from
+SRV01 to a collector on DC01.
+
+10
+00:00:39,450 --> 00:00:43,850
+Open Event Viewer and look at the tree on
+the left.
+
+11
+00:00:44,100 --> 00:00:46,500
+Windows Logs holds the classic logs.
+
+12
+00:00:46,750 --> 00:00:49,150
+Application is for programs and services.
+
+13
+00:00:49,400 --> 00:00:52,600
+Security holds audit events, like sign-ins
+and lockouts.
+
+14
+00:00:52,850 --> 00:00:58,050
+Setup records roles, features and updates,
+and System is Windows itself, its drivers
+
+15
+00:00:58,300 --> 00:00:59,500
+and services.
+
+16
+00:00:59,750 --> 00:01:04,150
+Forwarded Events stays empty until this
+computer collects events from others.
+
+17
+00:01:04,400 --> 00:01:10,800
+Under Applications and Services Logs, each
+role or app has its own log, such as DNS
+
+18
+00:01:11,050 --> 00:01:12,250
+Server.
+
+19
+00:01:12,500 --> 00:01:18,500
+Very detailed Analytic and Debug logs stay
+hidden until you show them from the View
+
+20
+00:01:18,750 --> 00:01:19,950
+menu.
+
+21
+00:01:20,200 --> 00:01:22,200
+Custom Views are saved filters.
+
+22
+00:01:22,450 --> 00:01:26,450
+Select an event and the General tab shows
+its properties.
+
+23
+00:01:26,700 --> 00:01:29,900
+The level tells you how serious it is.
+
+24
+00:01:30,150 --> 00:01:36,550
+The source is the program or component
+that wrote the event, and the Event ID is
+
+25
+00:01:36,800 --> 00:01:38,000
+its number.
+
+26
+00:01:38,250 --> 00:01:44,250
+Together, source and Event ID name the
+kind of event, because the same number can
+
+27
+00:01:44,500 --> 00:01:46,900
+mean different things from different
+sources.
+
+28
+00:01:47,150 --> 00:01:52,750
+Task Category and Keywords add detail; in
+the Security log the keywords say Audit
+
+29
+00:01:53,000 --> 00:01:54,600
+Success or Audit Failure.
+
+30
+00:01:54,850 --> 00:01:58,850
+Logged is the time, and Computer is where
+it happened.
+
+31
+00:01:59,100 --> 00:02:03,500
+There are five levels, and PowerShell uses
+a number for each.
+
+32
+00:02:03,750 --> 00:02:08,950
+Critical is one: a serious failure, like a
+restart without a clean shutdown.
+
+33
+00:02:09,200 --> 00:02:14,400
+Error is two: something failed, such as a
+service that would not start.
+
+34
+00:02:14,650 --> 00:02:19,050
+Warning is three: not a failure yet, but
+worth a look.
+
+35
+00:02:19,300 --> 00:02:23,700
+Information is four, and Verbose, five, is
+extra detail for debugging.
+
+36
+00:02:23,950 --> 00:02:27,950
+When people say problems, they mean
+Critical, Error and Warning.
+
+37
+00:02:28,200 --> 00:02:30,200
+The Security log is different.
+
+38
+00:02:30,450 --> 00:02:35,650
+Success and failure there are keywords,
+Audit Success and Audit Failure, so that
+
+39
+00:02:35,900 --> 00:02:38,300
+log shows a Keywords column first.
+
+40
+00:02:38,550 --> 00:02:42,950
+A busy log can hold thousands of events,
+so you filter.
+
+41
+00:02:43,200 --> 00:02:47,600
+Select a log, then Filter Current Log in
+the Actions pane.
+
+42
+00:02:47,850 --> 00:02:50,250
+Set Logged to Last 24 hours.
+
+43
+00:02:50,500 --> 00:02:52,500
+Tick Critical, Error and Warning.
+
+44
+00:02:52,750 --> 00:02:58,350
+You can stay with the current log or pick
+a source, such as SA1Lab.
+
+45
+00:02:58,600 --> 00:03:06,200
+In the Event IDs box, type a number to
+show only that ID, or a minus sign and a
+
+46
+00:03:06,450 --> 00:03:08,450
+number to leave one out.
+
+47
+00:03:08,700 --> 00:03:11,900
+Remember, a filter only changes what you
+see.
+
+48
+00:03:12,150 --> 00:03:16,150
+Nothing is deleted, and Clear Filter
+brings every event back.
+
+49
+00:03:16,400 --> 00:03:21,200
+A filter works on one log and disappears
+when you clear it.
+
+50
+00:03:21,450 --> 00:03:24,650
+A custom view is a filter you keep.
+
+51
+00:03:24,900 --> 00:03:30,500
+Select Create Custom View, tick Critical,
+Error and Warning, and choose two logs at
+
+52
+00:03:30,750 --> 00:03:32,350
+once: Application and System.
+
+53
+00:03:32,600 --> 00:03:35,400
+Save it with the name SA1 Problems.
+
+54
+00:03:35,650 --> 00:03:40,450
+It now sits under Custom Views every time
+you open Event Viewer.
+
+55
+00:03:40,700 --> 00:03:45,500
+You can export it and import it on your
+other servers too.
+
+56
+00:03:45,750 --> 00:03:50,150
+Administrative Events is a built-in view
+that works the same way.
+
+57
+00:03:50,400 --> 00:03:51,600
+Four more tools.
+
+58
+00:03:51,850 --> 00:03:58,650
+Find searches the text of the events in
+the current log, which is handy for a name
+
+59
+00:03:58,900 --> 00:04:00,100
+like SA1Lab.
+
+60
+00:04:00,350 --> 00:04:07,550
+Save All Events As writes the log to an
+evtx file that you can open later on any
+
+61
+00:04:07,800 --> 00:04:09,000
+computer.
+
+62
+00:04:09,250 --> 00:04:14,850
+Attach Task To This Event creates a
+scheduled task that starts a program each
+
+63
+00:04:15,100 --> 00:04:16,700
+time that event appears.
+
+64
+00:04:16,950 --> 00:04:19,350
+We treat it as a concept.
+
+65
+00:04:19,600 --> 00:04:22,800
+And behind every filter is an XML query.
+
+66
+00:04:23,050 --> 00:04:29,850
+You can see it on the filter's XML tab,
+and the Details tab shows one event as
+
+67
+00:04:30,100 --> 00:04:31,300
+XML.
+
+68
+00:04:31,550 --> 00:04:33,950
+Right-click a log and choose Properties.
+
+69
+00:04:34,200 --> 00:04:37,800
+Maximum log size decides how much history
+you keep.
+
+70
+00:04:38,050 --> 00:04:42,050
+Then you choose what happens when the log
+is full.
+
+71
+00:04:42,300 --> 00:04:47,100
+Overwrite events as needed is the default:
+the oldest events go first.
+
+72
+00:04:47,350 --> 00:04:54,550
+Archive the log when full saves the full
+log as a file and starts a new one, so
+
+73
+00:04:54,800 --> 00:04:56,400
+watch your disk space.
+
+74
+00:04:56,650 --> 00:05:02,650
+Do not overwrite events sounds safe, but
+when the log is full, new events are
+
+75
+00:05:02,900 --> 00:05:05,300
+simply lost until someone clears it.
+
+76
+00:05:05,550 --> 00:05:11,550
+One more fact: clearing the Security log
+writes event 1102, so a cleared log leaves
+
+77
+00:05:11,800 --> 00:05:13,000
+a trace.
+
+78
+00:05:13,250 --> 00:05:16,050
+Get-WinEvent does all of this from
+PowerShell.
+
+79
+00:05:16,300 --> 00:05:19,900
+With ListLog you see each log's size and
+mode.
+
+80
+00:05:20,150 --> 00:05:22,150
+Circular means overwrite as needed.
+
+81
+00:05:22,400 --> 00:05:27,200
+With LogName and MaxEvents you get the
+newest events from one log.
+
+82
+00:05:27,450 --> 00:05:29,850
+The most useful parameter is
+FilterHashtable.
+
+83
+00:05:30,100 --> 00:05:33,300
+It is Filter Current Log written as code.
+
+84
+00:05:33,550 --> 00:05:39,550
+Give it the log names, the levels as
+numbers, one, two and three for the
+
+85
+00:05:39,800 --> 00:05:43,000
+problems, and a StartTime, here one day
+ago.
+
+86
+00:05:43,250 --> 00:05:49,650
+You can also use the keys ProviderName for
+the source and Id for the Event ID.
+
+87
+00:05:49,900 --> 00:05:55,100
+To practice, it helps to have an event
+whose answer you already know.
+
+88
+00:05:55,350 --> 00:05:57,350
+eventcreate writes one for you.
+
+89
+00:05:57,600 --> 00:06:04,000
+In an administrator window, give it the
+type with slash T, the ID with slash ID,
+
+90
+00:06:04,250 --> 00:06:10,650
+the log with slash L, the source with
+slash SO and the text with slash D.
+
+91
+00:06:10,900 --> 00:06:16,100
+Here that is a warning, ID 900, in
+Application, from the source SA1Lab.
+
+92
+00:06:16,350 --> 00:06:19,950
+A new source name is registered the first
+time.
+
+93
+00:06:20,200 --> 00:06:25,800
+Two limits: IDs go from 1 to 1000, and
+only Application or System, never
+
+94
+00:06:26,050 --> 00:06:27,250
+Security.
+
+95
+00:06:27,500 --> 00:06:30,300
+Event forwarding copies events to one
+collector.
+
+96
+00:06:30,550 --> 00:06:35,350
+In the lab, SRV01 is the source and DC01
+is the collector.
+
+97
+00:06:35,600 --> 00:06:41,600
+They talk over WinRM, which is on by
+default, on port 5985, with Kerberos in
+
+98
+00:06:41,850 --> 00:06:43,050
+the domain.
+
+99
+00:06:43,300 --> 00:06:48,500
+DC01 runs the Windows Event Collector
+service and stores the events in Forwarded
+
+100
+00:06:48,750 --> 00:06:49,950
+Events.
+
+101
+00:06:50,200 --> 00:06:54,600
+In a collector-initiated subscription,
+DC01 lists its sources and reads their
+
+102
+00:06:54,850 --> 00:06:56,850
+logs with its computer account.
+
+103
+00:06:57,100 --> 00:07:01,500
+In a source-initiated subscription, Group
+Policy tells the sources where the
+
+104
+00:07:01,750 --> 00:07:04,150
+collector is, and they push events.
+
+105
+00:07:04,400 --> 00:07:06,400
+That scales to many servers.
+
+106
+00:07:06,650 --> 00:07:11,050
+On DC01, open Subscriptions in Event
+Viewer and create a subscription.
+
+107
+00:07:11,300 --> 00:07:13,300
+Name it SA1 SRV01 Warnings.
+
+108
+00:07:13,550 --> 00:07:15,950
+The destination log is Forwarded Events.
+
+109
+00:07:16,200 --> 00:07:20,600
+Choose Collector initiated, then Select
+Computers, add SRV01 and use Test.
+
+110
+00:07:20,850 --> 00:07:26,050
+With Select Events, choose the Application
+log and the levels Critical, Error and
+
+111
+00:07:26,300 --> 00:07:27,500
+Warning.
+
+112
+00:07:27,750 --> 00:07:31,350
+Under Advanced, keep Machine Account and
+pick the delivery.
+
+113
+00:07:31,600 --> 00:07:36,000
+Normal pulls in batches and can take up to
+15 minutes.
+
+114
+00:07:36,250 --> 00:07:42,250
+Minimize Latency pushes within about 30
+seconds, which is what you want in a lab.
+
+115
+00:07:42,500 --> 00:07:44,900
+Here are the command line steps.
+
+116
+00:07:45,150 --> 00:07:50,750
+On SRV01, add the computer account SA1
+backslash DC01 dollar to the local group
+
+117
+00:07:51,000 --> 00:07:52,200
+Event Log Readers.
+
+118
+00:07:52,450 --> 00:07:55,250
+Computer accounts end with a dollar sign.
+
+119
+00:07:55,500 --> 00:07:57,500
+On DC01, run wecutil qc.
+
+120
+00:07:57,750 --> 00:08:02,550
+It sets the Windows Event Collector
+service to a delayed automatic start,
+
+121
+00:08:02,800 --> 00:08:06,400
+starts it and turns on the Forwarded
+Events log.
+
+122
+00:08:06,650 --> 00:08:12,250
+wecutil gr shows the runtime status of the
+subscription for each source; you want
+
+123
+00:08:12,500 --> 00:08:13,700
+Active.
+
+124
+00:08:13,950 --> 00:08:18,350
+Last, Get-WinEvent on the ForwardedEvents
+log shows your event, and MachineName
+
+125
+00:08:18,600 --> 00:08:21,000
+tells you it came from SRV01.
+
+126
+00:08:21,250 --> 00:08:24,850
+You have already used event logs in this
+course.
+
+127
+00:08:25,100 --> 00:08:26,300
+In Lab 6.
+
+128
+00:08:26,550 --> 00:08:32,150
+3, event 4625 on CLIENT01 recorded each
+failed sign-in, and event 4740 on DC01
+
+129
+00:08:32,400 --> 00:08:33,600
+recorded the lockout.
+
+130
+00:08:33,850 --> 00:08:35,050
+In Lab 6.
+
+131
+00:08:35,300 --> 00:08:40,500
+4, event 3076 in the CodeIntegrity
+Operational log told you App Control would
+
+132
+00:08:40,750 --> 00:08:42,350
+have blocked a program.
+
+133
+00:08:42,600 --> 00:08:48,600
+DHCP writes to its own DHCP-Server logs,
+plus the text audit log you read in
+
+134
+00:08:48,850 --> 00:08:52,850
+Learning Plan 5, and DNS has the DNS
+Server log.
+
+135
+00:08:53,100 --> 00:08:58,700
+The tools from this topic work for all of
+them, for example Get-WinEvent with
+
+136
+00:08:58,950 --> 00:09:00,950
+LogName Security and Id 4740.
+
+137
+00:09:01,200 --> 00:09:06,800
+Many servers send their events to a
+central store, where they are kept longer,
+
+138
+00:09:07,050 --> 00:09:09,050
+searched and turned into alerts.
+
+139
+00:09:09,300 --> 00:09:11,700
+Event forwarding is the built-in way.
+
+140
+00:09:11,950 --> 00:09:16,750
+A SIEM, short for Security Information and
+Event Management, collects logs from
+
+141
+00:09:17,000 --> 00:09:21,400
+servers, firewalls and other devices,
+links related events and raises alerts.
+
+142
+00:09:21,650 --> 00:09:27,250
+Azure Monitor can collect Windows events
+with its agent and a data collection rule.
+
+143
+00:09:27,500 --> 00:09:33,100
+For the Server Plus exam, remember the
+idea: size logs, keep copies off the
+
+144
+00:09:33,350 --> 00:09:36,550
+server, review them and alert on what
+matters.
+
+145
+00:09:36,800 --> 00:09:38,400
+Four mistakes to avoid.
+
+146
+00:09:38,650 --> 00:09:41,050
+One: searching by Event ID alone.
+
+147
+00:09:41,300 --> 00:09:45,700
+IDs repeat across sources, so filter by
+source and ID together.
+
+148
+00:09:45,950 --> 00:09:49,950
+Two: clearing a log to make the errors go
+away.
+
+149
+00:09:50,200 --> 00:09:54,600
+The cause is still there, and now the
+evidence is gone.
+
+150
+00:09:54,850 --> 00:09:57,250
+Save first, then fix the cause.
+
+151
+00:09:57,500 --> 00:10:00,700
+Three: a subscription that fails with
+Access denied.
+
+152
+00:10:00,950 --> 00:10:05,750
+On the source, add the collector's
+computer account to Event Log Readers.
+
+153
+00:10:06,000 --> 00:10:09,200
+Four: waiting for forwarded events with
+Normal delivery.
+
+154
+00:10:09,450 --> 00:10:14,650
+That can take up to 15 minutes; use
+Minimize Latency in the lab.
+
+155
+00:10:14,900 --> 00:10:16,500
+Time to check yourself.
+
+156
+00:10:16,750 --> 00:10:18,750
+You manage SRV01 and DC01.
+
+157
+00:10:19,000 --> 00:10:23,800
+First: which FilterHashtable keys show
+Error and Warning events from System in
+
+158
+00:10:24,050 --> 00:10:25,250
+the last day?
+
+159
+00:10:25,500 --> 00:10:27,900
+Second: eventcreate with ID 1500 fails.
+
+160
+00:10:28,150 --> 00:10:29,350
+Why?
+
+161
+00:10:29,600 --> 00:10:32,800
+And can eventcreate write to the Security
+log?
+
+162
+00:10:33,050 --> 00:10:36,250
+Third: DC01's subscription shows Access
+denied for SRV01.
+
+163
+00:10:36,500 --> 00:10:38,500
+What is missing on SRV01?
+
+164
+00:10:38,750 --> 00:10:44,750
+Fourth: the Application log is set to Do
+not overwrite events, and it is full.
+
+165
+00:10:45,000 --> 00:10:46,200
+What happens next?
+
+166
+00:10:46,450 --> 00:10:52,050
+Pause the video here and answer all four
+before you continue to the answers.
+
+167
+00:10:52,300 --> 00:10:53,900
+Here are the answers.
+
+168
+00:10:54,150 --> 00:10:59,750
+One: LogName System, Level two and three,
+and StartTime set to Get-Date minus one
+
+169
+00:11:00,000 --> 00:11:01,200
+day.
+
+170
+00:11:01,450 --> 00:11:04,650
+Add level one if you want Critical too.
+
+171
+00:11:04,900 --> 00:11:10,500
+Two: eventcreate accepts IDs from 1 to
+1000 only, and it writes only to
+
+172
+00:11:10,750 --> 00:11:12,750
+Application or System, never Security.
+
+173
+00:11:13,000 --> 00:11:18,600
+Three: SA1 backslash DC01 dollar is not in
+Event Log Readers on SRV01; a
+
+174
+00:11:18,850 --> 00:11:21,650
+collector-initiated subscription reads
+with DC01's computer account.
+
+175
+00:11:21,900 --> 00:11:26,700
+Four: new events are lost until someone
+saves and clears the log.
+
+176
+00:11:26,950 --> 00:11:29,750
+Overwrite as needed or archiving avoids
+that.
+
+177
+00:11:30,000 --> 00:11:32,400
+Let's see it in the pod.
+
+178
+00:11:32,650 --> 00:11:35,050
+On SRV01 I open Event Viewer.
+
+179
+00:11:35,300 --> 00:11:40,500
+In an administrator terminal I run
+eventcreate for a warning, ID 900, source
+
+180
+00:11:40,750 --> 00:11:41,950
+SA1Lab.
+
+181
+00:11:42,200 --> 00:11:45,400
+After a refresh, there it is in
+Application.
+
+182
+00:11:45,650 --> 00:11:52,050
+I filter for problems in the last 24
+hours, then save a custom view called SA1
+
+183
+00:11:52,300 --> 00:11:54,300
+Problems across Application and System.
+
+184
+00:11:54,550 --> 00:11:58,150
+Get-WinEvent finds the same event by
+source and ID.
+
+185
+00:11:58,400 --> 00:12:02,400
+Now I add DC01's computer account to Event
+Log Readers.
+
+186
+00:12:02,650 --> 00:12:07,850
+On DC01 I run wecutil qc and create the
+subscription with Minimize Latency.
+
+187
+00:12:08,100 --> 00:12:14,500
+I create one more event on SRV01, and
+within a minute it shows up in DC01's
+
+188
+00:12:14,750 --> 00:12:17,550
+Forwarded Events, with SRV01 as the
+computer.
+
+189
+00:12:17,800 --> 00:12:19,000
+To wrap up.
+
+190
+00:12:19,250 --> 00:12:23,650
+Events live in Windows Logs and in
+Applications and Services Logs.
+
+191
+00:12:23,900 --> 00:12:29,900
+Source and Event ID name an event, and the
+level says how bad it is.
+
+192
+00:12:30,150 --> 00:12:35,750
+Filters, custom views, and the size and
+retention settings help you find and keep
+
+193
+00:12:36,000 --> 00:12:37,600
+the events that matter.
+
+194
+00:12:37,850 --> 00:12:42,250
+Get-WinEvent with FilterHashtable asks the
+same questions in code, eventcreate gives
+
+195
+00:12:42,500 --> 00:12:46,900
+you known test events, and forwarding
+copies events to a collector.
+
+196
+00:12:47,150 --> 00:12:48,350
+Lab 9.
+
+197
+00:12:48,600 --> 00:12:53,000
+2 takes about 75 minutes in NetLab and is
+practice only.

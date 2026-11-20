@@ -1,0 +1,976 @@
+1
+00:00:00,000 --> 00:00:01,600
+Welcome to Topic 7.
+
+2
+00:00:01,850 --> 00:00:03,850
+1, Hyper-V and Virtual Switches.
+
+3
+00:00:04,100 --> 00:00:07,300
+This learning plan turns one server into
+many.
+
+4
+00:00:07,550 --> 00:00:13,150
+First you learn what virtualization is,
+and the difference between type 1 and type
+
+5
+00:00:13,400 --> 00:00:14,600
+2 hypervisors.
+
+6
+00:00:14,850 --> 00:00:19,250
+You see how Hyper-V is built, with
+partitions and the VMBus.
+
+7
+00:00:19,500 --> 00:00:24,300
+You check the host hardware and the
+license before you install anything.
+
+8
+00:00:24,550 --> 00:00:29,350
+Then you install Hyper-V with Server
+Manager and PowerShell, set the host
+
+9
+00:00:29,600 --> 00:00:35,200
+defaults, and build the three kinds of
+virtual switches that every later lab in
+
+10
+00:00:35,450 --> 00:00:36,650
+this plan uses.
+
+11
+00:00:36,900 --> 00:00:42,100
+Picture three physical servers: one for
+DNS, one for DHCP, one for files.
+
+12
+00:00:42,350 --> 00:00:44,350
+Each one sits mostly idle.
+
+13
+00:00:44,600 --> 00:00:49,800
+Virtualization lets one physical computer
+run all three as virtual machines, or VMs.
+
+14
+00:00:50,050 --> 00:00:54,850
+Each VM acts like its own computer with
+its own operating system.
+
+15
+00:00:55,100 --> 00:00:56,300
+Three terms.
+
+16
+00:00:56,550 --> 00:01:02,950
+The host is the physical computer that
+runs the VMs; in our pod that is HV01.
+
+17
+00:01:03,200 --> 00:01:07,600
+A guest is a VM and the operating system
+inside it.
+
+18
+00:01:07,850 --> 00:01:13,450
+And the hypervisor is the software that
+shares the hardware and keeps the VMs
+
+19
+00:01:13,700 --> 00:01:14,900
+apart.
+
+20
+00:01:15,150 --> 00:01:17,150
+Hypervisors come in two types.
+
+21
+00:01:17,400 --> 00:01:23,800
+A type 1 hypervisor runs directly on the
+hardware, which is why it is called bare
+
+22
+00:01:24,050 --> 00:01:25,250
+metal.
+
+23
+00:01:25,500 --> 00:01:30,300
+Hyper-V and VMware ESXi are type 1, and
+servers use this type.
+
+24
+00:01:30,550 --> 00:01:37,350
+A type 2 hypervisor is an app that runs on
+top of a normal operating system, like
+
+25
+00:01:37,600 --> 00:01:40,400
+VMware Workstation or VirtualBox on a
+desktop.
+
+26
+00:01:40,650 --> 00:01:46,650
+Type 1 is faster and more secure, because
+nothing sits between it and the hardware.
+
+27
+00:01:46,900 --> 00:01:52,500
+Yet Hyper-V is type 1 even though you
+install it as a Windows role.
+
+28
+00:01:52,750 --> 00:01:54,750
+The next slide shows why.
+
+29
+00:01:55,000 --> 00:01:59,400
+With Hyper-V installed, the Windows
+hypervisor loads first, on the hardware.
+
+30
+00:01:59,650 --> 00:02:06,050
+Then your Windows Server starts on top of
+it in the root partition, also called the
+
+31
+00:02:06,300 --> 00:02:07,500
+parent partition.
+
+32
+00:02:07,750 --> 00:02:13,350
+It is the only partition with direct
+access to the hardware and the real
+
+33
+00:02:13,600 --> 00:02:14,800
+drivers.
+
+34
+00:02:15,050 --> 00:02:18,250
+It creates a child partition for each VM.
+
+35
+00:02:18,500 --> 00:02:23,700
+A child partition reaches devices only
+through the VMBus, a fast channel between
+
+36
+00:02:23,950 --> 00:02:25,950
+partitions, or through the hypervisor.
+
+37
+00:02:26,200 --> 00:02:32,200
+In each VM, clients called VSCs send
+device requests over the VMBus to VSPs in
+
+38
+00:02:32,450 --> 00:02:33,650
+the root.
+
+39
+00:02:33,900 --> 00:02:36,300
+Before you install, check the hardware.
+
+40
+00:02:36,550 --> 00:02:41,750
+You need a 64-bit processor with SLAT,
+second level address translation, so the
+
+41
+00:02:42,000 --> 00:02:44,000
+processor maps VM memory itself.
+
+42
+00:02:44,250 --> 00:02:49,050
+You need VM Monitor Mode extensions, which
+means Intel VT or AMD-V.
+
+43
+00:02:49,300 --> 00:02:54,900
+Virtualization must be turned on in the
+BIOS or UEFI, often off by default.
+
+44
+00:02:55,150 --> 00:03:01,150
+And hardware Data Execution Prevention
+must be on: the XD bit on Intel, the NX
+
+45
+00:03:01,400 --> 00:03:02,600
+bit on AMD.
+
+46
+00:03:02,850 --> 00:03:06,050
+Run systeminfo and look for four Yes
+lines.
+
+47
+00:03:06,300 --> 00:03:11,500
+If a hypervisor is already running, you
+see a message saying so instead.
+
+48
+00:03:11,750 --> 00:03:12,950
+Remember Topic 1.
+
+49
+00:03:13,200 --> 00:03:14,400
+2.
+
+50
+00:03:14,650 --> 00:03:19,850
+The edition decides how many Windows
+Server VMs a licensed host may run.
+
+51
+00:03:20,100 --> 00:03:24,100
+Standard edition allows two, when all
+physical cores are licensed.
+
+52
+00:03:24,350 --> 00:03:27,950
+For two more, you license all the cores
+again.
+
+53
+00:03:28,200 --> 00:03:33,000
+Datacenter, which our pod runs, allows
+unlimited Windows Server VMs on the
+
+54
+00:03:33,250 --> 00:03:34,450
+licensed host.
+
+55
+00:03:34,700 --> 00:03:41,100
+Like a Server Plus technician, size the
+host for itself plus every VM that runs at
+
+56
+00:03:41,350 --> 00:03:42,550
+once.
+
+57
+00:03:42,800 --> 00:03:46,400
+Plan for failure: one host now carries
+many servers.
+
+58
+00:03:46,650 --> 00:03:51,450
+And guests that are not Windows Server
+follow their own license terms.
+
+59
+00:03:51,700 --> 00:03:54,500
+Installing Hyper-V starts like any other
+role.
+
+60
+00:03:54,750 --> 00:03:58,750
+In Server Manager, open Manage, then Add
+Roles and Features.
+
+61
+00:03:59,000 --> 00:04:04,600
+On the Server Roles page, check Hyper-V
+and select Add Features, so the management
+
+62
+00:04:04,850 --> 00:04:06,050
+tools come along.
+
+63
+00:04:06,300 --> 00:04:09,100
+Hyper-V adds three pages of its own.
+
+64
+00:04:09,350 --> 00:04:14,550
+On Virtual Switches, select no adapter:
+you create the switches later, with the
+
+65
+00:04:14,800 --> 00:04:16,400
+names the labs expect.
+
+66
+00:04:16,650 --> 00:04:22,250
+On Migration and Default Stores, leave the
+defaults; you change the paths in Hyper-V
+
+67
+00:04:22,500 --> 00:04:23,700
+Settings.
+
+68
+00:04:23,950 --> 00:04:28,350
+On the Confirmation page, check Restart
+the destination server automatically if
+
+69
+00:04:28,600 --> 00:04:30,200
+required, then select Install.
+
+70
+00:04:30,450 --> 00:04:33,250
+Here is the same job in PowerShell.
+
+71
+00:04:33,500 --> 00:04:38,300
+Get-WindowsFeature with the name Hyper-V
+shows Available, so it is not installed
+
+72
+00:04:38,550 --> 00:04:39,750
+yet.
+
+73
+00:04:40,000 --> 00:04:43,600
+Then run Install-WindowsFeature with the
+name Hyper-V, dash IncludeManagementTools,
+
+74
+00:04:43,850 --> 00:04:45,050
+and dash Restart.
+
+75
+00:04:45,300 --> 00:04:50,100
+The server restarts by itself, possibly
+twice, because the hypervisor can only
+
+76
+00:04:50,350 --> 00:04:51,550
+load at boot.
+
+77
+00:04:51,800 --> 00:04:55,400
+Sign in again and run Get-WindowsFeature
+for Hyper-V star.
+
+78
+00:04:55,650 --> 00:05:00,850
+Now the role, the Hyper-V module and the
+GUI tools all show Installed.
+
+79
+00:05:01,100 --> 00:05:05,900
+On Server Core, that switch adds only the
+PowerShell module, nothing else.
+
+80
+00:05:06,150 --> 00:05:10,150
+Open Hyper-V Manager from the Tools menu
+in Server Manager.
+
+81
+00:05:10,400 --> 00:05:14,800
+On the left you see Hyper-V Manager and
+the host, HV01.
+
+82
+00:05:15,050 --> 00:05:21,050
+The middle shows the Virtual Machines
+list, which is empty on a new host, then
+
+83
+00:05:21,300 --> 00:05:24,500
+Checkpoints, and a details pane at the
+bottom.
+
+84
+00:05:24,750 --> 00:05:29,550
+On the right, the Actions pane holds the
+jobs for the host.
+
+85
+00:05:29,800 --> 00:05:33,800
+New creates a virtual machine or a virtual
+hard disk.
+
+86
+00:05:34,050 --> 00:05:36,050
+Hyper-V Settings holds host-wide defaults.
+
+87
+00:05:36,300 --> 00:05:40,300
+And Virtual Switch Manager is where you
+build virtual networks.
+
+88
+00:05:40,550 --> 00:05:42,550
+You use all three today.
+
+89
+00:05:42,800 --> 00:05:45,200
+Hyper-V Settings holds the host defaults.
+
+90
+00:05:45,450 --> 00:05:51,050
+Under Virtual Hard Disks, set the folder
+for disk files, C colon Hyper-V Disks.
+
+91
+00:05:51,300 --> 00:05:54,500
+Under Virtual Machines, set C colon
+Hyper-V VMs.
+
+92
+00:05:54,750 --> 00:06:00,750
+Enhanced Session Mode gives you a Remote
+Desktop style connection to a VM, and it
+
+93
+00:06:01,000 --> 00:06:02,600
+needs two check boxes.
+
+94
+00:06:02,850 --> 00:06:07,250
+Under Server, Enhanced Session Mode
+Policy, check Allow enhanced session mode.
+
+95
+00:06:07,500 --> 00:06:11,500
+Under User, Enhanced Session Mode, check
+Use enhanced session mode.
+
+96
+00:06:11,750 --> 00:06:17,750
+Set-VMHost sets the paths and the server
+policy; the user setting is per user, in
+
+97
+00:06:18,000 --> 00:06:19,200
+Hyper-V Manager only.
+
+98
+00:06:19,450 --> 00:06:25,050
+A virtual switch is a software network
+switch inside the host, and every VM
+
+99
+00:06:25,300 --> 00:06:26,900
+adapter plugs into one.
+
+100
+00:06:27,150 --> 00:06:28,750
+There are three types.
+
+101
+00:06:29,000 --> 00:06:34,600
+An External switch binds to a physical
+network adapter, so VMs reach the real
+
+102
+00:06:34,850 --> 00:06:37,650
+network like any server on the LAN.
+
+103
+00:06:37,900 --> 00:06:39,100
+Think bridged networking.
+
+104
+00:06:39,350 --> 00:06:44,950
+An Internal switch connects the VMs and
+the host, but not the physical network.
+
+105
+00:06:45,200 --> 00:06:48,400
+Think host-only networking, great for a
+test lab.
+
+106
+00:06:48,650 --> 00:06:51,450
+A Private switch connects only the VMs.
+
+107
+00:06:51,700 --> 00:06:54,100
+Even the host cannot reach them.
+
+108
+00:06:54,350 --> 00:06:58,750
+In Virtual Switch Manager, select New
+virtual network switch, choose External,
+
+109
+00:06:59,000 --> 00:07:01,000
+and select Create Virtual Switch.
+
+110
+00:07:01,250 --> 00:07:02,450
+Name it External.
+
+111
+00:07:02,700 --> 00:07:05,500
+Under Connection type, pick the physical
+adapter.
+
+112
+00:07:05,750 --> 00:07:10,950
+The list shows the adapter's description,
+not its name, so match it with
+
+113
+00:07:11,200 --> 00:07:12,400
+Get-NetAdapter first.
+
+114
+00:07:12,650 --> 00:07:17,850
+Keep Allow management operating system to
+share this network adapter checked, so the
+
+115
+00:07:18,100 --> 00:07:19,700
+host keeps its network.
+
+116
+00:07:19,950 --> 00:07:23,550
+Leave the VLAN ID box off in the pod.
+
+117
+00:07:23,800 --> 00:07:29,400
+When you select OK, a warning says the
+network may drop for a moment.
+
+118
+00:07:29,650 --> 00:07:30,850
+Select Yes.
+
+119
+00:07:31,100 --> 00:07:33,100
+What happens behind the scenes?
+
+120
+00:07:33,350 --> 00:07:37,750
+The physical adapter, Ethernet, becomes
+only an uplink for the switch.
+
+121
+00:07:38,000 --> 00:07:43,200
+Because sharing is allowed, Windows adds a
+virtual adapter for the host, named
+
+122
+00:07:43,450 --> 00:07:44,650
+vEthernet External,.
+
+123
+00:07:44,900 --> 00:07:47,700
+The host's IP settings move to it.
+
+124
+00:07:47,950 --> 00:07:49,550
+So HV01's address, 192.
+
+125
+00:07:49,800 --> 00:07:51,000
+168.
+
+126
+00:07:51,250 --> 00:07:52,450
+50.
+
+127
+00:07:52,700 --> 00:07:55,100
+30, now sits on vEthernet External.
+
+128
+00:07:55,350 --> 00:08:00,950
+An Internal switch also gives the host a
+vEthernet adapter; a Private switch gives
+
+129
+00:08:01,200 --> 00:08:02,400
+none.
+
+130
+00:08:02,650 --> 00:08:07,850
+The VLAN ID box would tag the host's
+traffic with a VLAN number.
+
+131
+00:08:08,100 --> 00:08:13,300
+Use it only when the physical switch port
+is set up for it.
+
+132
+00:08:13,550 --> 00:08:15,150
+Now the PowerShell way.
+
+133
+00:08:15,400 --> 00:08:19,400
+New-VMSwitch with dash NetAdapterName
+creates an external switch; naming an
+
+134
+00:08:19,650 --> 00:08:22,050
+adapter is what makes it external.
+
+135
+00:08:22,300 --> 00:08:26,300
+Add dash AllowManagementOS true to share
+it with the host.
+
+136
+00:08:26,550 --> 00:08:30,550
+For the other two, use dash SwitchType
+Internal or Private.
+
+137
+00:08:30,800 --> 00:08:33,600
+Get-VMSwitch lists all three with their
+types.
+
+138
+00:08:33,850 --> 00:08:38,250
+Get-NetAdapter now shows two new host
+adapters, vEthernet External and vEthernet
+
+139
+00:08:38,500 --> 00:08:39,700
+Internal.
+
+140
+00:08:39,950 --> 00:08:43,150
+Last, New-NetIPAddress gives vEthernet
+Internal the address 10.
+
+141
+00:08:43,400 --> 00:08:44,600
+10.
+
+142
+00:08:44,850 --> 00:08:46,050
+10.
+
+143
+00:08:46,300 --> 00:08:49,500
+1 with prefix length 24 and no gateway.
+
+144
+00:08:49,750 --> 00:08:53,750
+VMs on the internal network use it in Lab
+7.
+
+145
+00:08:54,000 --> 00:08:55,200
+2.
+
+146
+00:08:55,450 --> 00:09:01,050
+Each VM gets its own virtual network
+adapter, plugged into one switch, and its
+
+147
+00:09:01,300 --> 00:09:04,900
+settings live in the VM's settings under
+Network Adapter.
+
+148
+00:09:05,150 --> 00:09:08,350
+You can change the switch at any time.
+
+149
+00:09:08,600 --> 00:09:14,600
+Bandwidth management sets a minimum and a
+maximum, so one VM cannot hog the physical
+
+150
+00:09:14,850 --> 00:09:16,050
+adapter.
+
+151
+00:09:16,300 --> 00:09:21,900
+MAC address spoofing lets a VM send from
+other MAC addresses, which nested VMs
+
+152
+00:09:22,150 --> 00:09:23,350
+need.
+
+153
+00:09:23,600 --> 00:09:29,600
+DHCP guard and router guard drop DHCP or
+router messages from VMs that should not
+
+154
+00:09:29,850 --> 00:09:31,050
+send them.
+
+155
+00:09:31,300 --> 00:09:33,700
+You use them in Labs 7.
+
+156
+00:09:33,950 --> 00:09:35,150
+2 and 7.
+
+157
+00:09:35,400 --> 00:09:36,600
+3.
+
+158
+00:09:36,850 --> 00:09:38,450
+Four mistakes to avoid.
+
+159
+00:09:38,700 --> 00:09:42,700
+One: installing Hyper-V with
+virtualization turned off in the firmware.
+
+160
+00:09:42,950 --> 00:09:49,350
+Check systeminfo first, and turn on Intel
+VT or AMD-V in the BIOS or UEFI setup.
+
+161
+00:09:49,600 --> 00:09:54,400
+Two: clearing Allow management operating
+system to share on the host's only
+
+162
+00:09:54,650 --> 00:09:55,850
+adapter.
+
+163
+00:09:56,100 --> 00:09:59,700
+The host loses its network, so keep it
+checked.
+
+164
+00:09:59,950 --> 00:10:04,750
+Three: choosing a Private switch when the
+host must reach the VMs.
+
+165
+00:10:05,000 --> 00:10:07,800
+Private connects VMs only, so use
+Internal.
+
+166
+00:10:08,050 --> 00:10:10,450
+Four: leaving VM files in ProgramData.
+
+167
+00:10:10,700 --> 00:10:15,900
+Set the default paths in Hyper-V Settings
+before you create the first VM.
+
+168
+00:10:16,150 --> 00:10:17,750
+Time to check yourself.
+
+169
+00:10:18,000 --> 00:10:22,400
+HV01 now has Hyper-V and three switches:
+External, Internal and Private.
+
+170
+00:10:22,650 --> 00:10:27,850
+First, is Hyper-V a type 1 or a type 2
+hypervisor, and why?
+
+171
+00:10:28,100 --> 00:10:33,700
+Second, a test VM must talk to HV01 but
+never to the real network.
+
+172
+00:10:33,950 --> 00:10:36,750
+Which switch do you connect it to?
+
+173
+00:10:37,000 --> 00:10:42,600
+Third, after you create the External
+switch, HV01's IP address sits on a new
+
+174
+00:10:42,850 --> 00:10:44,050
+adapter.
+
+175
+00:10:44,300 --> 00:10:45,900
+Which one, and why?
+
+176
+00:10:46,150 --> 00:10:50,950
+And fourth, your company runs ten Windows
+Server VMs on one host.
+
+177
+00:10:51,200 --> 00:10:52,400
+Which edition fits?
+
+178
+00:10:52,650 --> 00:10:54,250
+Pause the video now.
+
+179
+00:10:54,500 --> 00:10:55,700
+One: type 1.
+
+180
+00:10:55,950 --> 00:11:01,150
+The Windows hypervisor runs on the
+hardware, and Windows Server runs in the
+
+181
+00:11:01,400 --> 00:11:03,800
+root partition on top of it.
+
+182
+00:11:04,050 --> 00:11:05,650
+Two: the Internal switch.
+
+183
+00:11:05,900 --> 00:11:09,100
+It connects the host and the VMs only.
+
+184
+00:11:09,350 --> 00:11:14,150
+Private would cut off the host, and
+External reaches the real network.
+
+185
+00:11:14,400 --> 00:11:15,600
+Three: vEthernet External.
+
+186
+00:11:15,850 --> 00:11:21,450
+Sharing the adapter with the host creates
+that virtual adapter, and the IP settings
+
+187
+00:11:21,700 --> 00:11:22,900
+move to it.
+
+188
+00:11:23,150 --> 00:11:25,950
+Four: Datacenter, with unlimited Windows
+Server VMs.
+
+189
+00:11:26,200 --> 00:11:31,000
+With Standard, you would have to license
+all the cores five times.
+
+190
+00:11:31,250 --> 00:11:36,450
+On HV01, systeminfo says a hypervisor has
+been detected, because HV01 itself runs
+
+191
+00:11:36,700 --> 00:11:37,900
+inside NetLab.
+
+192
+00:11:38,150 --> 00:11:43,350
+I note the description of the Ethernet
+adapter, then install Hyper-V in Server
+
+193
+00:11:43,600 --> 00:11:48,000
+Manager, with no switch in the wizard and
+an automatic restart.
+
+194
+00:11:48,250 --> 00:11:54,250
+After signing in again, I create the two
+folders and set them in Hyper-V Settings,
+
+195
+00:11:54,500 --> 00:11:56,500
+along with Enhanced Session Mode.
+
+196
+00:11:56,750 --> 00:12:01,550
+In Virtual Switch Manager I create
+External on the Ethernet adapter, then
+
+197
+00:12:01,800 --> 00:12:03,000
+Internal and Private.
+
+198
+00:12:03,250 --> 00:12:04,450
+Notice that 192.
+
+199
+00:12:04,700 --> 00:12:05,900
+168.
+
+200
+00:12:06,150 --> 00:12:07,350
+50.
+
+201
+00:12:07,600 --> 00:12:09,600
+30 moved to vEthernet External.
+
+202
+00:12:09,850 --> 00:12:13,050
+Finally, I give vEthernet Internal the
+address 10.
+
+203
+00:12:13,300 --> 00:12:14,500
+10.
+
+204
+00:12:14,750 --> 00:12:15,950
+10.
+
+205
+00:12:16,200 --> 00:12:17,400
+1.
+
+206
+00:12:17,650 --> 00:12:23,250
+Hyper-V is a type 1 hypervisor, with a
+root partition, child partitions, and the
+
+207
+00:12:23,500 --> 00:12:24,700
+VMBus between them.
+
+208
+00:12:24,950 --> 00:12:30,950
+The host needs SLAT, Intel VT or AMD-V
+turned on in the firmware, and DEP.
+
+209
+00:12:31,200 --> 00:12:34,800
+Datacenter gives unlimited Windows Server
+VMs, Standard gives two.
+
+210
+00:12:35,050 --> 00:12:39,850
+You install the role with Server Manager
+or Install-WindowsFeature, then set the
+
+211
+00:12:40,100 --> 00:12:43,300
+default paths and the Enhanced Session
+Mode Policy.
+
+212
+00:12:43,550 --> 00:12:48,350
+External, Internal and Private switches
+build your virtual networks, and the host
+
+213
+00:12:48,600 --> 00:12:49,800
+gets vEthernet adapters.
+
+214
+00:12:50,050 --> 00:12:51,250
+In Lab 7.
+
+215
+00:12:51,500 --> 00:12:57,100
+1, about 60 minutes and practice only, you
+build all of this on HV01.

@@ -1,0 +1,5 @@
+MC	Which generation does Microsoft recommend for current Windows Server guests?	Generation 2	correct	Generation 1	incorrect	Either; it can be changed later	incorrect	Generation 3	incorrect
+MC	Which disk type stores only the changes to a parent disk?	Differencing	correct	Fixed size	incorrect	Dynamically expanding	incorrect	Pass-through	incorrect
+TF	With Dynamic Memory, Hyper-V never gives a VM more than its Maximum RAM.	true
+MC	Which integration service do you turn on to copy files into a VM from the host?	Guest services	correct	Heartbeat	incorrect	Time synchronization	incorrect	Data Exchange	incorrect
+MC	What does Enhanced Session Mode give you in Virtual Machine Connection?	A Remote Desktop style session with clipboard, drives and a resizable window	correct	A faster disk	incorrect	A second network adapter	incorrect	Nested virtualization	incorrect

@@ -1,0 +1,936 @@
+1
+00:00:00,000 --> 00:00:01,600
+Welcome to Topic 7.
+
+2
+00:00:01,850 --> 00:00:03,450
+2, Creating Virtual Machines.
+
+3
+00:00:03,700 --> 00:00:04,900
+In Topic 7.
+
+4
+00:00:05,150 --> 00:00:08,350
+1 you built the host and its switches.
+
+5
+00:00:08,600 --> 00:00:10,600
+Now you add virtual machines.
+
+6
+00:00:10,850 --> 00:00:16,050
+You will walk through the New Virtual
+Machine Wizard and choose a generation.
+
+7
+00:00:16,300 --> 00:00:21,100
+You will set memory, including Dynamic
+Memory, and the number of virtual
+
+8
+00:00:21,350 --> 00:00:22,550
+processors.
+
+9
+00:00:22,800 --> 00:00:28,800
+You will compare disk formats and disk
+types, and build a VM on a differencing
+
+10
+00:00:29,050 --> 00:00:30,250
+disk.
+
+11
+00:00:30,500 --> 00:00:35,300
+Finally you will look at integration
+services and Enhanced Session Mode, and
+
+12
+00:00:35,550 --> 00:00:37,950
+see the PowerShell for every task.
+
+13
+00:00:38,200 --> 00:00:43,000
+In Hyper-V Manager, select New in the
+Action pane, then Virtual Machine.
+
+14
+00:00:43,250 --> 00:00:50,050
+The left pane lists every page in order,
+from the name of the VM to the summary.
+
+15
+00:00:50,300 --> 00:00:53,100
+This slide shows the Specify Generation
+page.
+
+16
+00:00:53,350 --> 00:00:57,750
+Choose Generation 2, which gives you UEFI
+firmware and Secure Boot.
+
+17
+00:00:58,000 --> 00:01:03,600
+Microsoft's advice is to create Generation
+2 unless you have a specific reason not
+
+18
+00:01:03,850 --> 00:01:05,050
+to.
+
+19
+00:01:05,300 --> 00:01:11,300
+Read the warning on the page: once the VM
+exists, you cannot change its generation.
+
+20
+00:01:11,550 --> 00:01:14,350
+Any page you skip keeps its default.
+
+21
+00:01:14,600 --> 00:01:16,200
+So what really differs?
+
+22
+00:01:16,450 --> 00:01:20,050
+Generation 1 uses old BIOS firmware and
+emulated hardware.
+
+23
+00:01:20,300 --> 00:01:27,500
+It boots from an IDE disk, an ISO or a
+physical DVD drive, a floppy, or a legacy
+
+24
+00:01:27,750 --> 00:01:28,950
+network adapter.
+
+25
+00:01:29,200 --> 00:01:33,200
+Generation 2 uses UEFI with Secure Boot on
+by default.
+
+26
+00:01:33,450 --> 00:01:39,850
+It boots from a SCSI disk in VHDX format,
+an ISO file, or a standard network
+
+27
+00:01:40,100 --> 00:01:41,300
+adapter.
+
+28
+00:01:41,550 --> 00:01:45,150
+It cannot use a physical DVD drive at all.
+
+29
+00:01:45,400 --> 00:01:50,600
+Remember, generation belongs to the VM,
+not the disk, and it is final.
+
+30
+00:01:50,850 --> 00:01:53,250
+Our lab VMs are Generation 2.
+
+31
+00:01:53,500 --> 00:01:59,100
+Without Dynamic Memory, a VM keeps all of
+its startup memory all the time.
+
+32
+00:01:59,350 --> 00:02:04,150
+With Dynamic Memory, Hyper-V moves memory
+between VMs as they need it.
+
+33
+00:02:04,400 --> 00:02:07,600
+VM1 starts with 2048 megabytes, its
+startup RAM.
+
+34
+00:02:07,850 --> 00:02:13,850
+When it sits idle, Hyper-V can take memory
+back, but never below the minimum, 512
+
+35
+00:02:14,100 --> 00:02:15,300
+megabytes.
+
+36
+00:02:15,550 --> 00:02:20,350
+When it gets busy, Hyper-V adds memory
+again, never above the maximum.
+
+37
+00:02:20,600 --> 00:02:24,600
+The buffer is spare memory kept free
+inside the VM.
+
+38
+00:02:24,850 --> 00:02:28,850
+Memory weight decides who wins when the
+host runs short.
+
+39
+00:02:29,100 --> 00:02:35,100
+Smart Paging uses disk as memory only
+while a VM restarts on a full host.
+
+40
+00:02:35,350 --> 00:02:37,750
+Here is where you set it.
+
+41
+00:02:38,000 --> 00:02:42,000
+Right-click the VM, choose Settings, and
+select Memory under Hardware.
+
+42
+00:02:42,250 --> 00:02:46,250
+Startup RAM is the memory the VM gets at
+boot.
+
+43
+00:02:46,500 --> 00:02:48,900
+Below it, select Enable Dynamic Memory.
+
+44
+00:02:49,150 --> 00:02:54,350
+You can only turn that on or off while the
+VM is off.
+
+45
+00:02:54,600 --> 00:02:57,800
+Then type the Minimum RAM and Maximum RAM.
+
+46
+00:02:58,050 --> 00:03:00,450
+Startup must sit between the two.
+
+47
+00:03:00,700 --> 00:03:06,300
+Memory buffer is a percentage, and the
+Memory weight slider runs from Low to
+
+48
+00:03:06,550 --> 00:03:07,750
+High.
+
+49
+00:03:08,000 --> 00:03:13,600
+While the VM runs, you can still raise the
+maximum or lower the minimum.
+
+50
+00:03:13,850 --> 00:03:15,050
+Next, processors.
+
+51
+00:03:15,300 --> 00:03:21,300
+Each virtual processor runs on one of the
+host's logical processors when it has work
+
+52
+00:03:21,550 --> 00:03:22,750
+to do.
+
+53
+00:03:23,000 --> 00:03:24,200
+VM1 gets two.
+
+54
+00:03:24,450 --> 00:03:27,650
+Change the count while the VM is off.
+
+55
+00:03:27,900 --> 00:03:30,300
+NUMA stands for Non-Uniform Memory Access.
+
+56
+00:03:30,550 --> 00:03:37,350
+Each CPU socket has memory close to it,
+and a VM that fits inside one NUMA node
+
+57
+00:03:37,600 --> 00:03:38,800
+runs fastest.
+
+58
+00:03:39,050 --> 00:03:44,650
+The Processor page also has resource
+control: a reserve, a limit and a relative
+
+59
+00:03:44,900 --> 00:03:46,100
+weight.
+
+60
+00:03:46,350 --> 00:03:49,550
+Now the Server Plus view: plan the host.
+
+61
+00:03:49,800 --> 00:03:51,400
+HV01 has 8 gigabytes.
+
+62
+00:03:51,650 --> 00:03:56,450
+Processors can be shared by many VMs, but
+memory cannot be overcommitted.
+
+63
+00:03:56,700 --> 00:04:00,700
+A virtual hard disk is a file on the host.
+
+64
+00:04:00,950 --> 00:04:02,550
+There are two formats.
+
+65
+00:04:02,800 --> 00:04:04,400
+VHDX is the default.
+
+66
+00:04:04,650 --> 00:04:11,050
+It can be up to 64 terabytes and protects
+its own metadata if the power fails.
+
+67
+00:04:11,300 --> 00:04:17,700
+VHD is the older format, up to about 2
+terabytes, still used for old hosts and
+
+68
+00:04:17,950 --> 00:04:19,550
+for uploads to Azure.
+
+69
+00:04:19,800 --> 00:04:21,800
+Then there are three types.
+
+70
+00:04:22,050 --> 00:04:29,250
+A fixed size disk takes all its space on
+day one; it is fast and has no surprises.
+
+71
+00:04:29,500 --> 00:04:32,700
+A dynamically expanding disk starts small
+and grows.
+
+72
+00:04:32,950 --> 00:04:37,350
+A differencing disk stores only the
+changes to a parent disk.
+
+73
+00:04:37,600 --> 00:04:41,600
+Let's look closer at differencing disks,
+because VM1 uses one.
+
+74
+00:04:41,850 --> 00:04:44,650
+The parent is the prepared base disk.
+
+75
+00:04:44,900 --> 00:04:48,900
+VM1's own file, VM1 dot vhdx, holds only
+VM1's changes.
+
+76
+00:04:49,150 --> 00:04:55,150
+When VM1 reads a block it has not changed,
+the read goes to the parent.
+
+77
+00:04:55,400 --> 00:04:57,800
+Every write goes to the child.
+
+78
+00:04:58,050 --> 00:05:04,050
+Many children can share one parent, and a
+child can even be a parent itself.
+
+79
+00:05:04,300 --> 00:05:07,100
+The big rule: never change the parent.
+
+80
+00:05:07,350 --> 00:05:09,750
+If it changes, every child breaks.
+
+81
+00:05:10,000 --> 00:05:12,400
+So make the parent read-only first.
+
+82
+00:05:12,650 --> 00:05:16,650
+In Hyper-V Manager, select Edit Disk in
+the Action pane.
+
+83
+00:05:16,900 --> 00:05:22,500
+The wizard asks you to locate the disk,
+choose an action, configure it, and
+
+84
+00:05:22,750 --> 00:05:23,950
+finish.
+
+85
+00:05:24,200 --> 00:05:29,000
+Compact makes a dynamic or differencing
+file smaller by removing empty blocks.
+
+86
+00:05:29,250 --> 00:05:36,050
+Convert copies the disk to a new file, for
+example VHD to VHDX, or dynamic to fixed.
+
+87
+00:05:36,300 --> 00:05:41,900
+Expand makes the disk bigger; after that
+you extend the volume inside the guest.
+
+88
+00:05:42,150 --> 00:05:48,550
+Other actions, such as Shrink and Merge,
+show up only when they fit the disk you
+
+89
+00:05:48,800 --> 00:05:50,000
+picked.
+
+90
+00:05:50,250 --> 00:05:52,250
+Here is VM1 in PowerShell.
+
+91
+00:05:52,500 --> 00:05:58,100
+First, a variable holds the path of the
+base disk, and Set-ItemProperty makes it
+
+92
+00:05:58,350 --> 00:05:59,550
+read-only.
+
+93
+00:05:59,800 --> 00:06:05,400
+New-VHD with the Differencing switch and
+the ParentPath creates VM1 dot vhdx as a
+
+94
+00:06:05,650 --> 00:06:06,850
+child.
+
+95
+00:06:07,100 --> 00:06:12,700
+New-VM creates the VM with Generation 2,
+2048 megabytes, the new disk and the
+
+96
+00:06:12,950 --> 00:06:14,150
+Internal switch.
+
+97
+00:06:14,400 --> 00:06:19,200
+Be careful: if you leave out Generation 2,
+you get Generation 1.
+
+98
+00:06:19,450 --> 00:06:25,450
+Set-VMMemory turns on Dynamic Memory with
+a minimum of 512 and a maximum of 2048.
+
+99
+00:06:25,700 --> 00:06:27,300
+Set-VMProcessor sets two processors.
+
+100
+00:06:27,550 --> 00:06:28,750
+VM2 is different.
+
+101
+00:06:29,000 --> 00:06:34,200
+It gets a brand new disk, so New-VM uses
+NewVHDPath and NewVHDSizeBytes, 60
+
+102
+00:06:34,450 --> 00:06:35,650
+gigabytes.
+
+103
+00:06:35,900 --> 00:06:38,300
+New-VM always makes that disk dynamic.
+
+104
+00:06:38,550 --> 00:06:44,950
+A Generation 2 VM made by New-VM has no
+DVD drive, so Add-VMDvdDrive adds one with
+
+105
+00:06:45,200 --> 00:06:46,800
+the Windows Server ISO.
+
+106
+00:06:47,050 --> 00:06:53,050
+Set-VMFirmware puts the DVD drive first in
+the boot order, so Windows Setup can start
+
+107
+00:06:53,300 --> 00:06:54,500
+from the ISO.
+
+108
+00:06:54,750 --> 00:06:59,950
+VM1's disk is differencing, and its size,
+127 gigabytes, comes from the parent.
+
+109
+00:07:00,200 --> 00:07:03,800
+VM2's disk is dynamic, 60 gigabytes, with
+no parent.
+
+110
+00:07:04,050 --> 00:07:09,250
+Integration services are small services
+inside the guest that talk to the host
+
+111
+00:07:09,500 --> 00:07:12,300
+over the VMBus, a fast internal channel.
+
+112
+00:07:12,550 --> 00:07:15,350
+In Settings, under Management, select
+Integration Services.
+
+113
+00:07:15,600 --> 00:07:20,000
+Operating system shutdown lets the host
+shut the guest down cleanly.
+
+114
+00:07:20,250 --> 00:07:24,650
+Time synchronization keeps the guest clock
+in step with the host.
+
+115
+00:07:24,900 --> 00:07:26,900
+Data Exchange shares simple facts.
+
+116
+00:07:27,150 --> 00:07:30,350
+Heartbeat tells the host the guest is
+alive.
+
+117
+00:07:30,600 --> 00:07:33,400
+Backup lets the host take consistent
+backups.
+
+118
+00:07:33,650 --> 00:07:37,650
+Guest services is the one that is off by
+default.
+
+119
+00:07:37,900 --> 00:07:43,100
+You need it to copy files in from the
+host, in Lab 7.
+
+120
+00:07:43,350 --> 00:07:44,550
+3.
+
+121
+00:07:44,800 --> 00:07:48,800
+Virtual Machine Connection, or VMConnect,
+normally shows a basic console.
+
+122
+00:07:49,050 --> 00:07:54,650
+Enhanced Session Mode uses Remote Desktop
+over the VMBus, so you get the clipboard,
+
+123
+00:07:54,900 --> 00:07:57,300
+local drives and a resizable window.
+
+124
+00:07:57,550 --> 00:07:59,150
+It takes two sides.
+
+125
+00:07:59,400 --> 00:08:04,600
+On the host, two settings: the server
+policy Allow enhanced session mode, which
+
+126
+00:08:04,850 --> 00:08:10,450
+is off by default on Windows Server, and
+the user setting Use enhanced session
+
+127
+00:08:10,700 --> 00:08:11,900
+mode.
+
+128
+00:08:12,150 --> 00:08:13,350
+Lab 7.
+
+129
+00:08:13,600 --> 00:08:14,800
+1 set both.
+
+130
+00:08:15,050 --> 00:08:20,650
+In the guest, Microsoft Learn says Remote
+Desktop Services must be enabled, and the
+
+131
+00:08:20,900 --> 00:08:25,300
+VM must run at least Windows 10 or Windows
+Server 2016.
+
+132
+00:08:25,550 --> 00:08:31,550
+Learn does not mention Server Core guests,
+so in the lab you record what VMConnect
+
+133
+00:08:31,800 --> 00:08:33,000
+shows.
+
+134
+00:08:33,250 --> 00:08:35,250
+Two more pages in Settings.
+
+135
+00:08:35,500 --> 00:08:41,100
+On the Security page, Enable Secure Boot
+is selected, and the template is Microsoft
+
+136
+00:08:41,350 --> 00:08:42,550
+Windows.
+
+137
+00:08:42,800 --> 00:08:46,000
+Secure Boot lets only signed boot loaders
+start.
+
+138
+00:08:46,250 --> 00:08:51,050
+For a Linux guest you would pick the
+Microsoft UEFI Certificate Authority
+
+139
+00:08:51,300 --> 00:08:52,500
+template.
+
+140
+00:08:52,750 --> 00:08:58,750
+Automatic Stop Action decides what happens
+to the VM when the host shuts down: save
+
+141
+00:08:59,000 --> 00:09:05,000
+its state, which is the default, turn it
+off, or shut down the guest cleanly.
+
+142
+00:09:05,250 --> 00:09:08,050
+In the lab you choose shut down.
+
+143
+00:09:08,300 --> 00:09:13,100
+Automatic Start Action and the Smart
+Paging file folder are set nearby.
+
+144
+00:09:13,350 --> 00:09:15,350
+The same settings in PowerShell.
+
+145
+00:09:15,600 --> 00:09:17,200
+Get-VMIntegrationService lists the
+services.
+
+146
+00:09:17,450 --> 00:09:22,650
+The PowerShell names differ a little from
+the Settings window; for example Data
+
+147
+00:09:22,900 --> 00:09:27,700
+Exchange is Key-Value Pair Exchange, and
+Guest services is Guest Service Interface,
+
+148
+00:09:27,950 --> 00:09:29,150
+which shows False.
+
+149
+00:09:29,400 --> 00:09:33,400
+Enable-VMIntegrationService turns it on,
+even while the VM is running.
+
+150
+00:09:33,650 --> 00:09:38,050
+Set-VM sets the automatic start and stop
+actions in one line.
+
+151
+00:09:38,300 --> 00:09:42,300
+Get-VMFirmware shows Secure Boot on with
+the Microsoft Windows template.
+
+152
+00:09:42,550 --> 00:09:47,350
+And Get-VMHost shows the Enhanced Session
+Mode policy, and Set-VMHost would change
+
+153
+00:09:47,600 --> 00:09:48,800
+it.
+
+154
+00:09:49,050 --> 00:09:50,650
+Four mistakes to avoid.
+
+155
+00:09:50,900 --> 00:09:53,300
+One: running New-VM without Generation 2.
+
+156
+00:09:53,550 --> 00:10:00,350
+You get Generation 1, and you cannot fix
+it; you delete the VM and create it again.
+
+157
+00:10:00,600 --> 00:10:04,600
+Two: booting or editing the parent of a
+differencing disk.
+
+158
+00:10:04,850 --> 00:10:08,050
+Every child breaks, so make the parent
+read-only.
+
+159
+00:10:08,300 --> 00:10:11,900
+Three: many dynamic disks on a small host
+volume.
+
+160
+00:10:12,150 --> 00:10:16,150
+They grow until the volume fills and the
+VMs pause.
+
+161
+00:10:16,400 --> 00:10:17,600
+Watch free space.
+
+162
+00:10:17,850 --> 00:10:23,050
+Four: missing the prompt Press any key to
+boot from CD or DVD.
+
+163
+00:10:23,300 --> 00:10:26,100
+Open VMConnect first, then start the VM.
+
+164
+00:10:26,350 --> 00:10:31,550
+Remember VM1: Generation 2, Dynamic Memory
+from 512 to 2048 megabytes, and a
+
+165
+00:10:31,800 --> 00:10:34,200
+differencing disk on the base image.
+
+166
+00:10:34,450 --> 00:10:38,450
+First, a VM must boot from a physical DVD
+drive.
+
+167
+00:10:38,700 --> 00:10:40,700
+Which generation do you choose?
+
+168
+00:10:40,950 --> 00:10:44,950
+Second, VM1 sits idle while the other VMs
+are busy.
+
+169
+00:10:45,200 --> 00:10:48,000
+What range of memory can it have?
+
+170
+00:10:48,250 --> 00:10:52,650
+Third, a classmate boots a VM straight
+from the base disk.
+
+171
+00:10:52,900 --> 00:10:54,500
+What happens to VM1?
+
+172
+00:10:54,750 --> 00:10:56,750
+Fourth, Copy-VMFile to VM1 fails.
+
+173
+00:10:57,000 --> 00:10:59,000
+Which integration service is missing?
+
+174
+00:10:59,250 --> 00:11:02,050
+Pause the video and answer all four.
+
+175
+00:11:02,300 --> 00:11:03,500
+The answers.
+
+176
+00:11:03,750 --> 00:11:04,950
+One: Generation 1.
+
+177
+00:11:05,200 --> 00:11:11,600
+Generation 2 VMs accept only ISO files in
+their DVD drive, and you can't change the
+
+178
+00:11:11,850 --> 00:11:13,050
+generation later.
+
+179
+00:11:13,300 --> 00:11:16,100
+Two: anywhere between 512 and 2048
+megabytes.
+
+180
+00:11:16,350 --> 00:11:21,950
+Hyper-V can take memory back down to the
+minimum, and memory weight decides who
+
+181
+00:11:22,200 --> 00:11:24,600
+wins when the host is short.
+
+182
+00:11:24,850 --> 00:11:30,450
+Three: VM1's disk breaks, because the
+parent changed under it and the blocks no
+
+183
+00:11:30,700 --> 00:11:31,900
+longer match.
+
+184
+00:11:32,150 --> 00:11:35,350
+That is exactly why the parent is
+read-only.
+
+185
+00:11:35,600 --> 00:11:40,400
+Four: Guest services, the one integration
+service that is off by default.
+
+186
+00:11:40,650 --> 00:11:43,050
+Let's see it in the pod.
+
+187
+00:11:43,300 --> 00:11:48,900
+On HV01 I make the base disk read-only and
+create VM1's differencing disk with
+
+188
+00:11:49,150 --> 00:11:50,350
+New-VHD.
+
+189
+00:11:50,600 --> 00:11:56,200
+In Hyper-V Manager I run the wizard: VM1,
+Generation 2, 2048 megabytes, the Internal
+
+190
+00:11:56,450 --> 00:11:58,450
+switch, and the existing disk.
+
+191
+00:11:58,700 --> 00:12:04,300
+In Settings I set the memory range, two
+processors, and turn on Guest services.
+
+192
+00:12:04,550 --> 00:12:07,350
+I start VM1 and set the password.
+
+193
+00:12:07,600 --> 00:12:14,800
+Then I build VM2 with a new 60 gigabyte
+disk and the ISO, press a key at the
+
+194
+00:12:15,050 --> 00:12:18,250
+prompt, and stop at the first Setup
+screen.
+
+195
+00:12:18,500 --> 00:12:20,100
+Get-VHD shows both disks.
+
+196
+00:12:20,350 --> 00:12:21,550
+To wrap up.
+
+197
+00:12:21,800 --> 00:12:27,000
+Choose Generation 2 unless you need old
+hardware, and remember the choice is
+
+198
+00:12:27,250 --> 00:12:28,450
+final.
+
+199
+00:12:28,700 --> 00:12:33,500
+Dynamic Memory moves memory between the
+minimum and the maximum you set.
+
+200
+00:12:33,750 --> 00:12:38,950
+Use VHDX; pick fixed for speed, dynamic
+for space, and differencing for many
+
+201
+00:12:39,200 --> 00:12:42,400
+copies of one image, with a read-only
+parent.
+
+202
+00:12:42,650 --> 00:12:48,250
+Guest services is off by default, and
+Enhanced Session Mode needs both the host
+
+203
+00:12:48,500 --> 00:12:49,700
+and the guest.
+
+204
+00:12:49,950 --> 00:12:51,150
+In Lab 7.
+
+205
+00:12:51,400 --> 00:12:55,800
+2, about 90 minutes and practice only, you
+rebuild Lab 7.
+
+206
+00:12:56,050 --> 00:12:59,650
+1, create VM1 and VM2, and compare their
+disks.

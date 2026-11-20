@@ -1,0 +1,5 @@
+MC	Which partition style is the default in Disk Management and Initialize-Disk?	GPT	correct	MBR	incorrect	Dynamic	incorrect	RAW	incorrect
+TF	A ReFS volume can be the boot volume C:.	false
+MC	How much usable space do six 4 TB drives give in RAID 5?	20 TB	correct	24 TB	incorrect	16 TB	incorrect	12 TB	incorrect
+MC	Which cmdlet changes the size of a partition to extend or shrink it?	Resize-Partition	correct	Format-Volume	incorrect	Initialize-Disk	incorrect	Set-Disk	incorrect
+TF	RAID protects you against a deleted or encrypted file.	false

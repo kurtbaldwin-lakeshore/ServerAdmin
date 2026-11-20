@@ -1,0 +1,5 @@
+MC	Which checkpoint type is the default?	Production	correct	Standard	incorrect	ProductionOnly	incorrect	Disabled	incorrect
+MC	What file extension do checkpoint differencing disks have?	.avhdx	correct	.vhd	incorrect	.iso	incorrect	.vmcx	incorrect
+TF	A checkpoint is a good replacement for a backup.	false
+MC	Which parameter makes Invoke-Command use PowerShell Direct?	-VMName	correct	-ComputerName	incorrect	-HostName	incorrect	-SwitchName	incorrect
+MC	Which teaming does Microsoft use for Hyper-V switches?	Switch Embedded Teaming (SET)	correct	LBFO NIC Teaming	incorrect	MAC address spoofing	incorrect	A Private switch	incorrect
